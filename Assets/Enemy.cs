@@ -20,4 +20,9 @@ public class Enemy : Unit
     {
         s_enemyList.Remove(this);
     }
+
+    public Vector3 GetUnitVectorToMe(Vector3 origin)
+    {
+        return (transform.position - origin).normalized;
+    }
 }
