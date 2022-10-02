@@ -5,8 +5,6 @@ using UnityEngine.Assertions;
 
 public class ProjectileController : MonoBehaviour
 {
-    public GameObject defaultProjectilePrefab;
-
     public static ProjectileController instance;
 
     private void Awake()

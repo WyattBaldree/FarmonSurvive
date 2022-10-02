@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 6448295423329910230}
   - component: {fileID: 8784842684804176803}
   - component: {fileID: 8784842684804176800}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FireBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -51,6 +51,7 @@ MonoBehaviour:
   rigidBody: {fileID: 6448295423329910230}
   damage: 1
   spriteRenderer: {fileID: 0}
+  destroyOnHit: 1
 --- !u!58 &1248380451115213961
 CircleCollider2D:
   m_ObjectHideFlags: 0

@@ -6,12 +6,15 @@ public class Enemy : Unit
 {
     public static List<Enemy> s_enemyList = new List<Enemy>();
 
-    
+    private int health = 3;
+
+    private void Awake()
+    {
+        s_enemyList.Add(this);
+    }
 
     private void Start()
     {
-        s_enemyList.Add(this);
-
         targetTransform = Player.instance.transform;
         targetDistance = 0;
     }
@@ -24,5 +27,14 @@ public class Enemy : Unit
     public Vector3 GetUnitVectorToMe(Vector3 origin)
     {
         return (transform.position - origin).normalized;
+    }
+
+    public void ChangeHeath(int amount)
+    {
+        health += amount;
+        if(health <= 0)
+        {
+            Destroy(gameObject);
+        }
     }
 }

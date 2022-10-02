@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class Projectile : MonoBehaviour
 {
@@ -23,14 +24,32 @@ public class Projectile : MonoBehaviour
 
     public SpriteRenderer spriteRenderer;
 
+    public bool destroyOnHit = true;
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        
+        Enemy enemy = collision.GetComponent<Enemy>();
+        if(enemy)
+        {
+            enemy.ChangeHeath(-damage);
+
+            if (destroyOnHit)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            Debug.LogError( "Projectile collided with something that it was not supposed to.", this );
+        }
     }
 
-    private void Start()
+    private void Update()
     {
-
+        if(Vector3.Distance(transform.position, Player.instance.transform.position) > 50)
+        {
+            Destroy(gameObject);
+        }
     }
 
 

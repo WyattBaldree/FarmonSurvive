@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 1441613974}
   - component: {fileID: 4814722020933401931}
   - component: {fileID: 4814722020933401928}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Farmon
-  m_TagString: Farmon
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -35,29 +35,18 @@ public class EnemyController : MonoBehaviour
 
     public void GetEnemyClosestToPlayer()
     {
+        ClosestEnemy = null;
         float closestEnemyDistance = float.MaxValue;
         foreach (Enemy e in Enemy.s_enemyList)
         {
-            if (ClosestEnemy == null)
+            float distanceToPlayer = Vector3.Distance(e.transform.position, Player.instance.transform.position);
+
+            if (distanceToPlayer < closestEnemyDistance)
             {
                 ClosestEnemy = e;
-            }
-            else
-            {
-                float distanceToPlayer = Vector3.Distance(e.transform.position, Player.instance.transform.position);
-
-                if (distanceToPlayer < closestEnemyDistance)
-                {
-                    ClosestEnemy = e;
-                    closestEnemyDistance = distanceToPlayer;
-                }
+                closestEnemyDistance = distanceToPlayer;
             }
         }
-    }
-
-    public void SpawnEnemy()
-    {
-        Debug.Log("Spawn Enemy");
     }
 
     IEnumerator SpawnBatsCoroutine()
@@ -66,7 +55,7 @@ public class EnemyController : MonoBehaviour
         {
             yield return new WaitForSeconds(3);
 
-            Vector3 spawnLocation = Random.rotation * new Vector3(0, 15, 0);
+            Vector3 spawnLocation = Quaternion.Euler(0, 0, Random.Range(0, 359)) * new Vector3(0, 15, 0);
 
             Instantiate(BatPrefab, spawnLocation, Quaternion.identity);
         }

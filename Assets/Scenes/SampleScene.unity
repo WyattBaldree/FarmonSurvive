@@ -362,7 +362,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ecb37603b0b374e9d5eb8b90eaf694, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultProjectilePrefab: {fileID: 466315370414337073, guid: 7f0103e6fc6c09547ab0101f390059ae, type: 3}
 --- !u!1001 &206142491897895040
 PrefabInstance:
   m_ObjectHideFlags: 0
