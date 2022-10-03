@@ -23,7 +23,7 @@ public class Farmon : Unit
 
     void MoveWithPlayer()
     {
-        myRigidBody.velocity += Player.instance.myRigidBody.velocity * .9f;
+        //myRigidBody.velocity += Player.instance.myRigidBody.velocity * .9f;
     }
 
     private void OnDrawGizmos()
