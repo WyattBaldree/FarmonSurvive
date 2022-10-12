@@ -13,8 +13,10 @@ public class Enemy : Unit
         s_enemyList.Add(this);
     }
 
-    private void Start()
+    protected override void Start()
     {
+        base.Start();
+
         targetTransform = Player.instance.transform;
         targetDistance = 0;
     }
@@ -22,6 +24,13 @@ public class Enemy : Unit
     private void OnDestroy()
     {
         s_enemyList.Remove(this);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+
+        MoveToTarget(speed);
     }
 
     public Vector3 GetUnitVectorToMe(Vector3 origin)

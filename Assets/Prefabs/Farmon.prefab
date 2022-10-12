@@ -34,7 +34,7 @@ Transform:
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &4814722020933401933
 SpriteRenderer:
@@ -102,7 +102,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
   myRigidBody: {fileID: 4814722020933401928}
-  speed: 1.2
+  myCollider: {fileID: 4814722020933401931}
+  speed: 1.5
   fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
 --- !u!58 &4814722020933401931
 CircleCollider2D:
