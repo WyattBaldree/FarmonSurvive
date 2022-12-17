@@ -7,8 +7,6 @@ public class EnemyController : MonoBehaviour
 {
     public GameObject BatPrefab;
 
-    [HideInInspector]
-    public Enemy ClosestEnemy = null;
 
     public static EnemyController instance;
 
@@ -28,32 +26,11 @@ public class EnemyController : MonoBehaviour
         instance = null;
     }
 
-    private void Update()
-    {
-        GetEnemyClosestToPlayer();
-    }
-
-    public void GetEnemyClosestToPlayer()
-    {
-        ClosestEnemy = null;
-        float closestEnemyDistance = float.MaxValue;
-        foreach (Enemy e in Enemy.s_enemyList)
-        {
-            float distanceToPlayer = Vector3.Distance(e.transform.position, Player.instance.transform.position);
-
-            if (distanceToPlayer < closestEnemyDistance)
-            {
-                ClosestEnemy = e;
-                closestEnemyDistance = distanceToPlayer;
-            }
-        }
-    }
-
     IEnumerator SpawnBatsCoroutine()
     {
         while (true)
         {
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(.1f);
 
             Vector3 spawnLocation = Quaternion.Euler(0, 0, Random.Range(0, 359)) * new Vector3(0, 15, 0);
 

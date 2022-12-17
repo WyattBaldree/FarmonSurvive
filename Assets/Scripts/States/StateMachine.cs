@@ -9,8 +9,6 @@ namespace Assets.Scripts.States
         StateMachineState _currentState;
         StateMachineState _prevState;
 
-        public Dictionary<string, StateMachineState> stateDictionary = new Dictionary<string, StateMachineState>();
-
         public StateMachineState CurrentState
         {
             get => _currentState;
@@ -34,18 +32,13 @@ namespace Assets.Scripts.States
 
             _currentState.Exit();
             _currentState = nextState;
+
+            nextState._stateMachine = this;
             nextState.Enter();
         }
         public void Tick()
         {
             CurrentState.Tick();
-        }
-
-        public void AddState( string stateName, StateMachineState newState )
-        {
-            newState._stateMachine = this;
-
-            stateDictionary.Add(stateName, newState);
         }
     }
 }

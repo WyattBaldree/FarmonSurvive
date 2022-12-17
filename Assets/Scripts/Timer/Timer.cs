@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Assets.Scripts.States
+namespace Assets.Scripts.Timer
 {
     public class Timer
     {
@@ -40,6 +40,11 @@ namespace Assets.Scripts.States
                 return true;
             }
             return false;
+        }
+
+        public float Percent
+        {
+            get => currentTime / maxTime;
         }
     }
 }

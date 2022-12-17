@@ -1,46 +1,43 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
-
-    /*public static Projectile MakeFreeShot(Vector3 position, Vector3 velocity, int damage, Sprite sprite)
-    {
-        GameObject newGameObject = Instantiate(ProjectileController.instance.defaultProjectilePrefab, position, Quaternion.identity);
-        Projectile newProjectile = newGameObject.GetComponent<Projectile>();
-
-        newProjectile.rigidBody.velocity = velocity;
-
-        newProjectile.damage = damage;
-
-        newProjectile.spriteRenderer.sprite = sprite;
-
-        return newProjectile;
-    }*/
-
-    public Rigidbody2D rigidBody;
+    public Farmon.TeamEnum team = Farmon.TeamEnum.player;
 
     public int damage = 1;
 
-    public SpriteRenderer spriteRenderer;
+    public int pierce = 1;
 
-    public bool destroyOnHit = true;
+    public float knockBack = 7.0f;
 
-    private void OnTriggerEnter2D(Collider2D collision)
+    public bool undodgeable = false;
+
+    public UnityEvent EventDestroy = new UnityEvent();
+
+    List<Farmon> hitFarmonList = new List<Farmon>();
+
+    private void OnDestroy()
     {
-        Enemy enemy = collision.GetComponent<Enemy>();
-        if(enemy)
-        {
-            enemy.ChangeHeath(-damage);
+        EventDestroy.Invoke();
+    }
 
-            if (destroyOnHit)
+    private void OnTriggerEnter(Collider collision)
+    {
+        Farmon unit = collision.GetComponent<Farmon>();
+        if (unit && unit.team != team && !hitFarmonList.Contains(unit))
+        {
+            unit.TakeDamage(damage, transform.position, knockBack, undodgeable);
+
+            hitFarmonList.Add(unit);
+
+            pierce--;
+            if (pierce <= 0)
             {
                 Destroy(gameObject);
             }
-        }
-        else
-        {
-            Debug.LogError( "Projectile collided with something that it was not supposed to.", this );
         }
     }
 
@@ -51,6 +48,4 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
-
-
 }

@@ -1,49 +1,91 @@
+using Assets.Scripts.States;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-public class Player : MonoBehaviour
+public class Player : Farmon
 {
     public static Player instance;
 
-    public Rigidbody2D myRigidBody;
+    public override void Attack(Farmon targetUnit)
+    {
+        
+    }
 
-    public float speed = 1;
-
-    private void Awake()
+    protected override void Awake()
     {
         Assert.IsNull(instance, "There should only ever be one player.");
         instance = this;
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         instance = null;
     }
 
-    private void Update()
+    protected override void Start()
     {
+        base.Start();
+
+        idleState = new PlayerState(this);
+        maxSpeed = 2;
+    }
+
+    protected void OnDrawGizmos()
+    {
+        DebugExtension.DrawCircle(transform.position, Vector3.up, Color.green, nearPlayerDistance);
+    }
+
+    public override float AttackTime()
+    {
+        return 0;
+    }
+}
+
+
+public class PlayerState : StateMachineState
+{
+    Farmon farmon;
+
+    public PlayerState(Farmon farmon)
+    {
+        this.farmon = farmon;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+
+        farmon.targetTransform = farmon.GetTargetEnemy().transform;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        Vector3 cameraForward = Vector3.ProjectOnPlane(Camera.main.transform.forward, Vector3.up).normalized;
+        Vector3 cameraRight = Vector3.ProjectOnPlane(Camera.main.transform.right, Vector3.up).normalized;
         Vector3 moveDirection = Vector3.zero;
 
         if (Input.GetKey(KeyCode.W))
         {
-            moveDirection += Vector3.up;
+            moveDirection += cameraForward;
         }
         else if (Input.GetKey(KeyCode.S))
         {
-            moveDirection += Vector3.down;
+            moveDirection -= cameraForward;
         }
 
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.D))
         {
-            moveDirection += Vector3.left;
+            moveDirection += cameraRight;
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (Input.GetKey(KeyCode.A))
         {
-            moveDirection += Vector3.right;
+            moveDirection -= cameraRight;
         }
 
-        myRigidBody.velocity = moveDirection.normalized * speed;
+        if (moveDirection != Vector3.zero) farmon.MoveInDirection(moveDirection);
     }
 }
