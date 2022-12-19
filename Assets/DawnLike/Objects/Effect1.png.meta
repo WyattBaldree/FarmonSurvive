@@ -115,6 +115,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: water1
+      rect:
+        serializedVersion: 2
+        x: 48
+        y: 64
+        width: 16
+        height: 16
+      alignment: 9
+      pivot: {x: 0.5, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 01571ab734b429e49a65173001508d93
+      internalID: 1433470422
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -127,6 +148,7 @@ TextureImporter:
     secondaryTextures: []
     nameFileIdTable:
       sound1: 447956819
+      water1: 1433470422
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

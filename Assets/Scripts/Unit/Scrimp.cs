@@ -16,6 +16,9 @@ public class Scrimp : Farmon
         fireBall.damage = 10 + (int)(10f * (float)Power / 5f);
         fireBall.transform.localScale *= (1f + (float)Focus / 5f);
         fireBall.pierce += Focus / 3;
+        fireBall.OnHitDelegate = (unit) => {
+            unit.EffectList.AddEffect(new Effect("burn;1;10"));
+        };
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         cv.velocity = unitToEnemy.normalized * (10f + Reflex/2f);
         cv.ignoreGravity = false;

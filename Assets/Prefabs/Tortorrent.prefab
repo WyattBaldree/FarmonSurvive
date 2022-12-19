@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4814722020933401932}
-  - component: {fileID: 1678015047459216085}
+  - component: {fileID: 7936810225150146819}
   - component: {fileID: 1541658663025156057}
   - component: {fileID: 1458763301434308330}
   m_Layer: 6
-  m_Name: Scruff
+  m_Name: Tortorrent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -33,9 +33,9 @@ Transform:
   m_Children:
   - {fileID: 569214195358937776}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1678015047459216085
+--- !u!114 &7936810225150146819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,40 +44,40 @@ MonoBehaviour:
   m_GameObject: {fileID: 4814722020933401929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d9778aff34e6a494886fe56bd2d64085, type: 3}
+  m_Script: {fileID: 11500000, guid: 536d06824db5e034aabfbd89dcdf976e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
   sphereCollider: {fileID: 0}
   maxSpeed: 0
   farmonHud: {fileID: 2705592001047434589}
-  targetingType: 1
-  mySpriteRenderer: {fileID: 7814566749491998264}
-  healthBar: {fileID: 3749070670789246562}
-  unitName: Scruff
+  targetingType: 0
+  mySpriteRenderer: {fileID: 0}
+  healthBar: {fileID: 0}
+  unitName: Tortorrent
   isPlayerFarmon: 1
   level: 1
   attributePoints: 1
   perkPoints: 1
   attackReady: 0
-  targetRange: 2
+  targetRange: 5
   attackTarget: {fileID: 0}
-  grit: 4
-  baseGrit: 4
-  power: 5
-  basePower: 5
-  reflex: 2
-  baseReflex: 2
-  focus: 2
-  baseFocus: 2
-  speed: 4
-  baseSpeed: 4
+  grit: 10
+  baseGrit: 10
+  power: 10
+  basePower: 10
+  reflex: 10
+  baseReflex: 10
+  focus: 10
+  baseFocus: 10
+  speed: 10
+  baseSpeed: 10
   ClosestEnemyUnit: {fileID: 0}
   ClosestEnemyUnitNearPlayer: {fileID: 0}
   ClosestFriendlyUnit: {fileID: 0}
   team: 1
   debugColor: {r: 1, g: 1, b: 1, a: 1}
-  scruffTacklePrefab: {fileID: 3556518770851303680, guid: 80c4bdb17fa28834f8c7309c19276abb, type: 3}
+  torrentSpinPrefab: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
 --- !u!54 &1541658663025156057
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -136,20 +136,28 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.1
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.1
+      value: 1.25
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.1
+      value: 1.25
       objectReference: {fileID: 0}
+    - target: {fileID: 1486338535116342019, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: f8fd13c16cd695644a453379a3dc2044, type: 2}
     - target: {fileID: 1872850952795384807, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Name
       value: FarmonHud
       objectReference: {fileID: 0}
+    - target: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 229613378, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
     - target: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_RootOrder
       value: -1
@@ -215,19 +223,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98294804d2ee0340b4f82530cbabd13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &3749070670789246562 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8563044669451488475, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4706a5585806b7d479f57915243ea200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!212 &7814566749491998264 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}

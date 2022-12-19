@@ -27,8 +27,9 @@ public class Scruff : Farmon
         Projectile tackle = Instantiate(scruffTacklePrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
         tackle.team = team;
         tackle.damage = 15 + (int)(10f * (float)Power / 3f);
-        //tackle.transform.localScale *= (1f + (float)Focus / 5f);
-        //tackle.pierce += Focus / 3;
+        tackle.transform.localScale *= sphereCollider.radius * 1.2f / .35f;
+        tackle.pierce = 0;
+        tackle.specificTarget = targetEnemy;
 
         tackle.EventDestroy.AddListener(AttackOver);
 

@@ -12,9 +12,10 @@ public class FloatingText : MonoBehaviour
 
     Timer floatTimer = new Timer();
 
-    internal void Setup(string text, float duration = 1f)
+    internal void Setup(string text, Color color, float duration = 1f)
     {
         tmp.text = text;
+        tmp.color = color;
 
         floatTimer.SetTime(duration);
     }
@@ -26,7 +27,7 @@ public class FloatingText : MonoBehaviour
             Destroy(gameObject);
         }
 
-        tmp.color = new Color(1, 1, 1, floatTimer.Percent);
+        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, floatTimer.Percent);
 
         transform.Translate(Vector3.up * 3 * Time.deltaTime);
     }

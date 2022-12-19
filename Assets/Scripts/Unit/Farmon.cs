@@ -49,6 +49,7 @@ public abstract class Farmon : Vehicle
     public bool attackReady = false;
     Timer attackTimer = new Timer();
 
+    public EffectList EffectList = new EffectList();
 
     public float targetRange = 5f;
 
@@ -64,6 +65,9 @@ public abstract class Farmon : Vehicle
     //States
     public StateMachineState idleState;
     public StateMachineState spawnState;
+
+    //Effects
+    private Timer burnTimer = new Timer();
 
     [SerializeField, HideInInspector]
     private int grit = 1;
@@ -85,7 +89,7 @@ public abstract class Farmon : Vehicle
 
             // Set the size of the farmon
             SetSize(grit);
-            mySpriteRenderer.transform.localScale = (1f + (grit / 40f)) * Vector3.one;
+            farmonHud.SpriteQuad.GetComponent<SpriteRenderer>().transform.localScale = (1f + (grit / 40f)) * Vector3.one;
             if (shadow)
             {
                 shadow.transform.position = sphereCollider.transform.position + sphereCollider.center + (sphereCollider.radius * Vector3.down * .8f);
@@ -204,6 +208,9 @@ public abstract class Farmon : Vehicle
 
         attackTimer.autoReset = true;
         attackTimer.SetTime(AttackTime());
+
+        burnTimer.autoReset = true;
+        burnTimer.SetTime(1.5f);
     }
 
     private void OnValidate()
@@ -265,18 +272,22 @@ public abstract class Farmon : Vehicle
     {
         base.Update();
 
-        GetClosestEnemyUnit();
-        GetClosestFriendlyUnit();
-
-
-
-        if (attackReady == false && attackTimer.Tick(Time.deltaTime))
-        {
-            attackReady = true;
-        }
-
         if (!FarmonController.paused)
         {
+            GetClosestEnemyUnit();
+            GetClosestFriendlyUnit();
+
+            if (attackReady == false && attackTimer.Tick(Time.deltaTime))
+            {
+                attackReady = true;
+            }
+
+            if (EffectList.Burn > 0 && burnTimer.Tick(Time.deltaTime))
+            {
+                TakeDamage((int)EffectList.Burn, Vector3.zero, 0, true);
+            }
+
+            EffectList.UpdateEffects(Time.deltaTime);
             farmonStateMachine.Tick();
         }
     }
@@ -304,7 +315,7 @@ public abstract class Farmon : Vehicle
     public void TakeDamage(int damage, Vector3 damageLocation, float knockBack = 5f, bool undodgeable = false)
     {
         Vector3 toMe = (damageLocation - transform.position).normalized;
-        if(UnityEngine.Random.value < Reflex / 70f)
+        if(!undodgeable && UnityEngine.Random.value < Reflex / 70f)
         {
             //Get the dodge direction
             Vector3 dodgeDirection;
@@ -319,12 +330,15 @@ public abstract class Farmon : Vehicle
 
             rb.AddForce(dodgeDirection * 7f, ForceMode.Impulse);
             FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
-            floatingText.Setup("Dodged!");
+            floatingText.Setup("Dodged!", Color.white);
         }
         else
         {
             rb.AddForce(toMe * knockBack, ForceMode.Impulse);
             ChangeHeath(-damage);
+
+            FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
+            floatingText.Setup(damage.ToString(), Color.red);
         }
     }
 
@@ -642,6 +656,8 @@ public class IdleState : StateMachineState
             unit.debugColor = Color.green;
             if (unit.isPlayerFarmon)
             {
+                unit.maxSpeed = Player.instance.GetMovementSpeed() + 1.5f;
+
                 WanderPlayer();
             }
             else
@@ -667,7 +683,7 @@ public class IdleState : StateMachineState
     {
         unit.targetTransform = flag;
 
-        unit.SeekPosition();
+        unit.Arrive();
 
         if (changeTargetLocationTimer.Tick(Time.deltaTime))
         {

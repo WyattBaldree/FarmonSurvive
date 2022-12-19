@@ -15,6 +15,8 @@ public class Projectile : MonoBehaviour
 
     public bool undodgeable = false;
 
+    public Farmon specificTarget = null;
+
     public UnityEvent EventDestroy = new UnityEvent();
 
     List<Farmon> hitFarmonList = new List<Farmon>();
@@ -24,14 +26,25 @@ public class Projectile : MonoBehaviour
         EventDestroy.Invoke();
     }
 
+    private void Start()
+    {
+        
+    }
+
     private void OnTriggerEnter(Collider collision)
     {
-        Farmon unit = collision.GetComponent<Farmon>();
-        if (unit && unit.team != team && !hitFarmonList.Contains(unit))
+        Farmon farmon = collision.GetComponent<Farmon>();
+        if (farmon && farmon.team != team && !hitFarmonList.Contains(farmon))
         {
-            unit.TakeDamage(damage, transform.position, knockBack, undodgeable);
+            if(specificTarget != null && specificTarget != farmon)
+            {
+                return;
+            }
 
-            hitFarmonList.Add(unit);
+            farmon.TakeDamage(damage, transform.position, knockBack, undodgeable);
+            OnHitDelegate(farmon);
+
+            hitFarmonList.Add(farmon);
 
             pierce--;
             if (pierce <= 0)
@@ -48,4 +61,8 @@ public class Projectile : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    public delegate void OnHit(Farmon hitFarmon);
+
+    public OnHit OnHitDelegate = (unit) => { };
 }
