@@ -16,9 +16,12 @@ public class Scrimp : Farmon
         fireBall.damage = 10 + (int)(10f * (float)Power / 5f);
         fireBall.transform.localScale *= (1f + (float)Focus / 5f);
         fireBall.pierce += Focus / 3;
+        fireBall.knockBack = 4;
+        fireBall.hitStunTime = .15f;
         fireBall.OnHitDelegate = (unit) => {
             unit.EffectList.AddEffect(new Effect("burn;1;10"));
         };
+        fireBall.owner = this;
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         cv.velocity = unitToEnemy.normalized * (10f + Reflex/2f);
         cv.ignoreGravity = false;
@@ -28,17 +31,12 @@ public class Scrimp : Farmon
 
         //fireBall = Farmon.Instantiate(farmon.fireBallPrefab, farmon.transform.position, farmon.transform.rotation).GetComponent<Projectile>();
         //fireBall.rigidBody.velocity = Quaternion.Euler(0, -15, 0) * unitToEnemy * 5f;
-    }
 
-    protected override void Start()
-    {
-        base.Start();
-
-        idleState = new IdleState(this);
+        AttackComplete();
     }
 
     public override float AttackTime()
     {
-        return 3.5f - GetModifiedFocus() / 30f - GetModifiedSpeed() / 30f;
+        return 2f - GetModifiedFocus() / 80f - GetModifiedSpeed() / 80f;
     }
 }

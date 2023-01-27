@@ -13,6 +13,13 @@ public class FarmonController : MonoBehaviour
 
     public GameObject FloatingTextPrefab;
 
+    public AudioClip HitSound;
+    public AudioClip HitSound2;
+    public AudioClip DieSound;
+
+    public AudioClip DodgeSound;
+    public AudioClip DashSound;
+
     private void Awake()
     {
         Assert.IsNull(instance, "There should only be one FarmonController");

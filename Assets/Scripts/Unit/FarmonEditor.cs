@@ -56,6 +56,10 @@ public class FarmonEditor : Editor
             {
                 ((Farmon)target).LevelUp();
             }
+            if (GUILayout.Button("Die"))
+            {
+                ((Farmon)target).Die();
+            }
         }
     }
 

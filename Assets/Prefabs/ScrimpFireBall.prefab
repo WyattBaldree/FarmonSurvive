@@ -119,6 +119,11 @@ MonoBehaviour:
   damage: 1
   pierce: 1
   knockBack: 1
+  undodgeable: 0
+  specificTarget: {fileID: 0}
+  EventDestroy:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!135 &512737457654959908
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -179,6 +184,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 473489778, guid: d06555ff391b37447b1059c8267fb297, type: 3}
+    - target: {fileID: 1627712274483016202, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 473489778, guid: d06555ff391b37447b1059c8267fb297, type: 3}
     - target: {fileID: 2920596985776968086, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_Controller
       value: 
@@ -231,6 +240,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpriteQuad
       objectReference: {fileID: 0}
+    - target: {fileID: 6304663264297178235, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 2725226a2c34d744aaa1234fde200793, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

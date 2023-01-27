@@ -8,11 +8,13 @@ public class Scruff : Farmon
     public GameObject scruffTacklePrefab;
     private ScruffTackleState tackleState;
 
+    public float hitStunTime = .2f;
+
     protected override void Start()
     {
         base.Start();
 
-        idleState = new IdleState(this);
+        mainState = new IdleState(this);
 
         tackleState = new ScruffTackleState(this);
     }
@@ -28,17 +30,21 @@ public class Scruff : Farmon
         tackle.team = team;
         tackle.damage = 15 + (int)(10f * (float)Power / 3f);
         tackle.transform.localScale *= sphereCollider.radius * 1.2f / .35f;
+        tackle.knockBack = 6;
+        tackle.hitStunTime = hitStunTime;
         tackle.pierce = 0;
         tackle.specificTarget = targetEnemy;
+        tackle.owner = this;
 
-        tackle.EventDestroy.AddListener(AttackOver);
+        tackle.EventDestroy.AddListener(AttackComplete);
 
         SetState(tackleState);
     }
 
-    private void AttackOver()
+    protected override void AttackComplete()
     {
-        SetState(idleState);
+        base.AttackComplete();
+        HitStopSelf(hitStunTime);
     }
 
     public override float AttackTime()
@@ -59,8 +65,13 @@ public class ScruffTackleState : StateMachineState
     public override void Enter()
     {
         base.Enter();
+        farmon.ImmuneToHitStop = true;
+    }
 
-        farmon.targetTransform = farmon.GetTargetEnemy().transform;
+    public override void Exit()
+    {
+        base.Exit();
+        farmon.ImmuneToHitStop = false;
     }
 
     public override void Tick()
@@ -69,7 +80,7 @@ public class ScruffTackleState : StateMachineState
 
         if(!farmon.targetTransform || !farmon.attackTarget)
         {
-            _stateMachine.ChangeState(farmon.idleState);
+            _stateMachine.ChangeState(farmon.mainState);
             return;
         }
 

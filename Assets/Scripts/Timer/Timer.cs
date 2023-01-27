@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -44,7 +45,18 @@ namespace Assets.Scripts.Timer
 
         public float Percent
         {
-            get => currentTime / maxTime;
+            get{
+                if(maxTime == 0)
+                {
+                    return 0;
+                }
+                return currentTime / maxTime; 
+            }
+        }
+
+        public float GetTime()
+        {
+            return Mathf.Max(0, currentTime);
         }
     }
 }

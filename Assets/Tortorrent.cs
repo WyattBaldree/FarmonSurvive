@@ -11,6 +11,11 @@ public class Tortorrent : Farmon
     public TorrentSpinChargeState SpinChargeState;
     public TorrentSpinAttackState SpinAttackState;
 
+    public AudioClip ChargeUpSound;
+    public AudioClip ThunkSound;
+
+    public float hitStunTime = .2f;
+
     public override void Attack(Farmon targetEnemy)
     {
         SetState(SpinChargeState);
@@ -25,7 +30,6 @@ public class Tortorrent : Farmon
     {
         base.Start();
 
-        idleState = new IdleState(this);
         SpinChargeState = new TorrentSpinChargeState(this);
         SpinAttackState = new TorrentSpinAttackState(this);
     }
@@ -35,16 +39,24 @@ public class Tortorrent : Farmon
         Projectile spin = Instantiate(torrentSpinPrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
         spin.team = team;
         spin.damage = 15 + (int)(10f * (float)Power / 3f);
+        spin.knockBack = 6;
+        spin.hitStunTime = hitStunTime;
         spin.specificTarget = targetFarmon;
+        spin.owner = this;
 
-        spin.EventDestroy.AddListener(AttackOver);
+        spin.EventDestroy.AddListener(AttackComplete);
 
         return spin;
     }
 
-    private void AttackOver()
+    protected override void AttackComplete()
     {
-        SetState(idleState);
+        base.AttackComplete();
+        HitStopSelf(hitStunTime);
+
+        Hud.AudioSource.clip = ThunkSound;
+        Hud.AudioSource.volume = .4f;
+        Hud.AudioSource.Play();
     }
 }
 
@@ -65,8 +77,26 @@ public class TorrentSpinChargeState : StateMachineState
 
         tortorrent.targetTransform = tortorrent.attackTarget.transform;
 
-        chargeTimer.SetTime(2.5f - tortorrent.Speed/40);
-        flipTimer.SetTime((chargeTimer.Percent/1.5f) + .01f);
+        chargeTimer.SetTime(2f - tortorrent.Speed/40);
+        flipTimer.SetTime(.001f);
+
+        tortorrent.Hud.AudioSource.clip = tortorrent.ChargeUpSound;
+        tortorrent.Hud.AudioSource.volume = .3f;
+        tortorrent.Hud.AudioSource.Play();
+
+        tortorrent.ImmuneToHitStop = true;
+
+        Animator animator = tortorrent.Hud.Animator;
+        animator.speed = 0;
+        animator.Play(animator.GetCurrentAnimatorStateInfo(0).shortNameHash,0, .6f);
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        tortorrent.ImmuneToHitStop = false;
+
+        tortorrent.Hud.Animator.speed = 1;
     }
 
     public override void Tick()
@@ -77,19 +107,19 @@ public class TorrentSpinChargeState : StateMachineState
         {
             tortorrent.mySpriteRenderer.flipX = !tortorrent.mySpriteRenderer.flipX;
 
-            if(chargeTimer.Percent > .7f)
+            if(chargeTimer.Percent > .8f)
             {
-                flipTimer.SetTime(chargeTimer.Percent - 0.7f + .05f);
+                flipTimer.SetTime(.15f);
             }
             else
             {
-                flipTimer.SetTime(.1f);
+                flipTimer.SetTime(.08f);
             }
         }
 
         if (!tortorrent.targetTransform || !tortorrent.attackTarget)
         {
-            _stateMachine.ChangeState(tortorrent.idleState);
+            tortorrent.SetState(tortorrent.mainState);
             return;
         }
 
@@ -126,6 +156,15 @@ public class TorrentSpinAttackState : StateMachineState
         flipTimer.autoReset = true;
 
         timeoutTimer.SetTime(4f);
+
+        farmon.Hud.AudioSource.clip = FarmonController.instance.DashSound;
+        farmon.Hud.AudioSource.volume = .4f;
+        farmon.Hud.AudioSource.Play();
+
+        farmon.maxSpeed = (farmon.GetMovementSpeed() + 2) * 3;
+
+        Vector3 seek = farmon.Seek();
+        farmon.rb.AddForce(seek, ForceMode.Impulse);
     }
 
     public override void Tick()
@@ -134,7 +173,7 @@ public class TorrentSpinAttackState : StateMachineState
 
         if (timeoutTimer.Tick(Time.deltaTime))
         {
-            _stateMachine.ChangeState(farmon.idleState);
+            farmon.SetState(farmon.mainState);
             return;
         }
 
@@ -145,7 +184,7 @@ public class TorrentSpinAttackState : StateMachineState
 
         if (!farmon.targetTransform || !farmon.attackTarget)
         {
-            _stateMachine.ChangeState(farmon.idleState);
+            farmon.SetState(farmon.mainState);
             return;
         }
 

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 819992706}
   - component: {fileID: 5560959815387225581}
   - component: {fileID: 5263220638264986268}
-  m_Layer: 6
+  m_Layer: 7
   m_Name: Scrimp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -33,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 569214195358937776}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &819992706
 MonoBehaviour:
@@ -50,13 +50,30 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   sphereCollider: {fileID: 0}
   maxSpeed: 0
-  farmonHud: {fileID: 2705592001047434589}
-  targetingType: 0
-  mySpriteRenderer: {fileID: 7814566749491998264}
+  rb: {fileID: 0}
+  PathNodeReachedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  Hud: {fileID: 0}
+  mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 3749070670789246562}
   unitName: Scrimp
+  isPlayerFarmon: 1
   level: 1
-  targetRange: 5
+  attributePoints: 1
+  perkPoints: 1
+  MaxHealth: 20
+  Selected: 0
+  dead: 0
+  attackReady: 0
+  targetRange: 6
+  attackTarget: {fileID: 0}
+  protectTarget: {fileID: 0}
+  team: 1
+  GridSpaceChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  GridSpaceIndex: {x: 0, y: 0, z: 0}
   grit: 2
   baseGrit: 2
   power: 5
@@ -67,9 +84,8 @@ MonoBehaviour:
   baseFocus: 5
   speed: 3
   baseSpeed: 2
-  ClosestEnemyUnit: {fileID: 0}
-  ClosestFriendlyUnit: {fileID: 0}
-  team: 1
+  LastFarmonToDamageMe: {fileID: 0}
+  debugColor: {r: 1, g: 1, b: 1, a: 1}
   fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
 --- !u!54 &5560959815387225581
 Rigidbody:
@@ -141,7 +157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.35000002
+      value: -0.3499999
       objectReference: {fileID: 0}
     - target: {fileID: 1486338535116342019, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Controller
@@ -151,6 +167,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: FarmonHud
       objectReference: {fileID: 0}
+    - target: {fileID: 3079980324178878623, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -126739719, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
     - target: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -203,6 +223,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7734417427859425006, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: bb972d2a5d344b84f92946a59e1601fe, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -213,17 +237,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
   m_PrefabInstance: {fileID: 4814722021979009721}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &2705592001047434589 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7448221218846353380, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d98294804d2ee0340b4f82530cbabd13, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3749070670789246562 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 8563044669451488475, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
@@ -235,8 +248,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4706a5585806b7d479f57915243ea200, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!212 &7814566749491998264 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}

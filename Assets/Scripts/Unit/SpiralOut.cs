@@ -12,6 +12,8 @@ public class SpiralOut : MonoBehaviour
     float moveAwaySpeed = 1;
     [SerializeField]
     float rotationSpeed = 1;
+    [SerializeField]
+    float maxSpeed = 5;
 
     Vector3 origin;
 
@@ -26,7 +28,14 @@ public class SpiralOut : MonoBehaviour
     {
         time += Time.deltaTime;
 
-        myRigidBody.MovePosition(origin + GetPosition());
+        Vector3 targetVelocity = (origin + GetPosition()) - transform.position;
+
+        if(targetVelocity.magnitude > maxSpeed)
+        {
+            targetVelocity = targetVelocity.normalized * maxSpeed;
+        }
+
+        myRigidBody.velocity = new Vector3(targetVelocity.x, myRigidBody.velocity.y, targetVelocity.z);
     }
 
     Vector3 GetPosition()

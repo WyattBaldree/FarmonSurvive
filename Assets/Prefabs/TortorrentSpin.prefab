@@ -88,6 +88,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1433470422, guid: 26ba563c750b8bb4eb5f6436ec173156, type: 3}
+    - target: {fileID: 1627712274483016202, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2114608576, guid: 854974560c9ee93409427ff7b731538b, type: 3}
     - target: {fileID: 2920596985776968086, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_Controller
       value: 
@@ -102,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.25
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -140,6 +144,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpriteQuad
       objectReference: {fileID: 0}
+    - target: {fileID: 6255656076970425094, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6304663264297178235, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: 846892711982a1841add2713ff55281b, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

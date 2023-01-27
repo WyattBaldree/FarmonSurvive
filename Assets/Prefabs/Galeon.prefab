@@ -50,34 +50,44 @@ MonoBehaviour:
   targetTransform: {fileID: 0}
   sphereCollider: {fileID: 0}
   maxSpeed: 0
-  farmonHud: {fileID: 8469189590445317935}
-  targetingType: 0
-  mySpriteRenderer: {fileID: 4356741804871345226}
+  rb: {fileID: 2880789924510743861}
+  PathNodeReachedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  Hud: {fileID: 0}
+  mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 7206873698199254032}
   unitName: Galeon
   isPlayerFarmon: 0
   level: 1
   attributePoints: 1
   perkPoints: 1
+  MaxHealth: 230
+  Selected: 0
+  dead: 0
   attackReady: 0
-  targetRange: 5
+  targetRange: 6
   attackTarget: {fileID: 0}
-  grit: 7
+  protectTarget: {fileID: 0}
+  team: 0
+  GridSpaceChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  GridSpaceIndex: {x: 0, y: 0, z: 0}
+  grit: 23
   baseGrit: 7
   power: 6
   basePower: 6
-  reflex: 40
+  reflex: 5
   baseReflex: 5
   focus: 8
   baseFocus: 8
   speed: 6
   baseSpeed: 6
-  ClosestEnemyUnit: {fileID: 0}
-  ClosestEnemyUnitNearPlayer: {fileID: 0}
-  ClosestFriendlyUnit: {fileID: 0}
-  team: 0
+  LastFarmonToDamageMe: {fileID: 0}
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   tornadoPrefab: {fileID: 3556518770851303680, guid: 4cb9abc1afe5d71409a8c8af97845f1c, type: 3}
+  TornadoSound: {fileID: 8300000, guid: 8b8e44abe98b8ce49a6e1f253f51ab96, type: 3}
   fireballPrefab: {fileID: 3556518770851303680, guid: 9be6dbedb5d3eaf418da4f7e1ee6e62b, type: 3}
 --- !u!54 &2880789924510743861
 Rigidbody:
@@ -137,15 +147,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.175
+      value: 1.575
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.175
+      value: 1.575
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.175
+      value: 1.575
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalPosition.y
@@ -209,22 +219,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9848078
+      value: 0.7187179
       objectReference: {fileID: 0}
     - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.1736482
+      value: 0.12672935
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.6732689
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.11871548
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044670415558374, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
---- !u!212 &4356741804871345226 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 1357270911303088331}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6332883321718405314 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
@@ -239,16 +256,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4706a5585806b7d479f57915243ea200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8469189590445317935 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7448221218846353380, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 1357270911303088331}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d98294804d2ee0340b4f82530cbabd13, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

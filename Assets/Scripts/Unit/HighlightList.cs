@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public class HighlightList : MonoBehaviour
 {
@@ -10,9 +11,11 @@ public class HighlightList : MonoBehaviour
 
     SpriteRenderer rend;
 
-    private void Start()
+    private void Awake()
     {
-        rend = GetComponent<SpriteRenderer>();
+        rend = GetComponentInChildren<SpriteRenderer>();
+        Assert.IsNotNull(rend);
+
         UpdateHighlight();
     }
 
