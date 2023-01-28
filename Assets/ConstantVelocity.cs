@@ -18,6 +18,8 @@ public class ConstantVelocity : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (rb.isKinematic) return;
+
         if (ignoreGravity)
         {
             rb.velocity = new Vector3(velocity.x, rb.velocity.y, velocity.z);

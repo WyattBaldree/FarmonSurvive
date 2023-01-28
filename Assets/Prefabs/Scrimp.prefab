@@ -87,6 +87,8 @@ MonoBehaviour:
   LastFarmonToDamageMe: {fileID: 0}
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
+  shootSound: {fileID: 8300000, guid: e222777c0a2e580498e744afb371ca6f, type: 3}
+  hitSound: {fileID: 8300000, guid: 03a6fd151475e434098feb542e5dfd80, type: 3}
 --- !u!54 &5560959815387225581
 Rigidbody:
   m_ObjectHideFlags: 0

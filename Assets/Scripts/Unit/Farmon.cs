@@ -35,6 +35,7 @@ public abstract class Farmon : Vehicle
     [HideInInspector]
     public int perkPoints = 1;
 
+    [HideInInspector]
     public int MaxHealth = 3;
     private int health = 3;
 
@@ -1287,6 +1288,8 @@ public class DieState : StateMachineState
         farmon.Hud.AudioSource.clip = FarmonController.instance.DieSound;
         farmon.Hud.AudioSource.volume = .3f;
         farmon.Hud.AudioSource.Play();
+
+        farmon.rb.AddForce(Vector3.up * 3, ForceMode.Impulse);
     }
 
     public override void Tick()

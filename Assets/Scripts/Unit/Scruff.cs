@@ -10,6 +10,9 @@ public class Scruff : Farmon
 
     public float hitStunTime = .2f;
 
+    public AudioClip tackleSound;
+    public AudioClip hitSound;
+
     protected override void Start()
     {
         base.Start();
@@ -35,6 +38,8 @@ public class Scruff : Farmon
         tackle.pierce = 0;
         tackle.specificTarget = targetEnemy;
         tackle.owner = this;
+        tackle.CreateSound = tackleSound;
+        tackle.HitSound = hitSound;
 
         tackle.EventDestroy.AddListener(AttackComplete);
 

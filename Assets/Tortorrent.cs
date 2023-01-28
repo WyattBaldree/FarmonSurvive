@@ -43,6 +43,8 @@ public class Tortorrent : Farmon
         spin.hitStunTime = hitStunTime;
         spin.specificTarget = targetFarmon;
         spin.owner = this;
+        spin.CreateSound = ChargeUpSound;
+        spin.HitSound = ThunkSound;
 
         spin.EventDestroy.AddListener(AttackComplete);
 
@@ -53,10 +55,6 @@ public class Tortorrent : Farmon
     {
         base.AttackComplete();
         HitStopSelf(hitStunTime);
-
-        Hud.AudioSource.clip = ThunkSound;
-        Hud.AudioSource.volume = .4f;
-        Hud.AudioSource.Play();
     }
 }
 
@@ -65,6 +63,9 @@ public class TorrentSpinChargeState : StateMachineState
     Tortorrent tortorrent;
     Timer chargeTimer = new Timer();
     Timer flipTimer = new Timer();
+
+    Collider spinCollider;
+    SpriteRenderer spinSpriteRenderer;
 
     public TorrentSpinChargeState(Tortorrent tortorrent)
     {
@@ -80,15 +81,16 @@ public class TorrentSpinChargeState : StateMachineState
         chargeTimer.SetTime(2f - tortorrent.Speed/40);
         flipTimer.SetTime(.001f);
 
-        tortorrent.Hud.AudioSource.clip = tortorrent.ChargeUpSound;
-        tortorrent.Hud.AudioSource.volume = .3f;
-        tortorrent.Hud.AudioSource.Play();
-
         tortorrent.ImmuneToHitStop = true;
 
         Animator animator = tortorrent.Hud.Animator;
         animator.speed = 0;
         animator.Play(animator.GetCurrentAnimatorStateInfo(0).shortNameHash,0, .6f);
+
+        Projectile spin = tortorrent.MakeSpin(tortorrent.attackTarget);
+        spinCollider = spin.GetComponent<Collider>();
+        spinCollider.enabled = false;
+        spinSpriteRenderer = spin.GetComponentInChildren<SpriteRenderer>();
     }
 
     public override void Exit()
@@ -97,6 +99,8 @@ public class TorrentSpinChargeState : StateMachineState
         tortorrent.ImmuneToHitStop = false;
 
         tortorrent.Hud.Animator.speed = 1;
+
+        spinCollider.enabled = true;
     }
 
     public override void Tick()
@@ -123,9 +127,13 @@ public class TorrentSpinChargeState : StateMachineState
             return;
         }
 
+        spinSpriteRenderer.color = new Color(spinSpriteRenderer.color.r,
+                                             spinSpriteRenderer.color.g,
+                                             spinSpriteRenderer.color.b, 
+                                             1.0f - chargeTimer.Percent);
+
         if (chargeTimer.Tick(Time.deltaTime))
         {
-            Projectile spin = tortorrent.MakeSpin(tortorrent.attackTarget);
             tortorrent.SetState(tortorrent.SpinAttackState);
             return;
         }

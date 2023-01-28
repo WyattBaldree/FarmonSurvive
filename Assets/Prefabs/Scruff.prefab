@@ -88,6 +88,8 @@ MonoBehaviour:
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   scruffTacklePrefab: {fileID: 3556518770851303680, guid: 80c4bdb17fa28834f8c7309c19276abb, type: 3}
   hitStunTime: 0.23
+  tackleSound: {fileID: 8300000, guid: 66fdb83c6689dea4d9b3ca549ae2412c, type: 3}
+  hitSound: {fileID: 8300000, guid: a437023166403e64b82d2780df9fab44, type: 3}
 --- !u!54 &1541658663025156057
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -216,6 +218,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: 7878d27165710a74b970fef0edd74f4e, type: 2}
+    - target: {fileID: 8563044670415558374, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

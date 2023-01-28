@@ -22,6 +22,12 @@ public class Projectile : MonoBehaviour
 
     public bool undodgeable = false;
 
+    public AudioClip CreateSound;
+    public AudioClip HitSound;
+    public AudioClip DestroySound;
+
+    private AudioSource audioSource;
+
     public Farmon specificTarget = null;
 
     public UnityEvent EventDestroy = new UnityEvent();
@@ -32,18 +38,26 @@ public class Projectile : MonoBehaviour
 
     Rigidbody rb;
 
-    private void OnDestroy()
-    {
-        EventDestroy.Invoke();
-    }
+    bool destroyed = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+
+        audioSource = GetComponent<AudioSource>();
+
+        if (audioSource && CreateSound)
+        {
+            audioSource.clip = CreateSound;
+            audioSource.volume = .4f;
+            audioSource.Play();
+        }
     }
 
     private void OnTriggerEnter(Collider collision)
     {
+        if (destroyed) return;
+
         Farmon farmon = collision.GetComponent<Farmon>();
 
         if (farmon && farmon.team != team && !hitFarmonList.Contains(farmon))
@@ -56,46 +70,99 @@ public class Projectile : MonoBehaviour
             bool hit = false;
             if (rb)
             {
-                hit = farmon.TakeDamage(damage, rb.velocity.normalized, owner, hitStunTime, knockBack, undodgeable);
+                hit = farmon.TakeDamage(damage, H.Flatten(rb.velocity).normalized, owner, hitStunTime, knockBack, undodgeable);
             }
             else
             {
-                Vector3 awayFromProjectile = (farmon.transform.position - transform.position).normalized;
+                Vector3 awayFromProjectile = H.Flatten(farmon.transform.position - transform.position).normalized;
                 hit = farmon.TakeDamage(damage, awayFromProjectile, owner, hitStunTime, knockBack, undodgeable);
             }
 
-            //Spawn a hit effect.
-            Vector3 farmonToMe = transform.position + GetComponent<Collider>().bounds.center - farmon.transform.position;
-            GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, farmon.transform);
-            hitEffect.transform.position = farmon.transform.position + farmonToMe.normalized * farmon.sphereCollider.radius;
-            hitEffect.transform.localScale = (.2f + 2.5f * hitStunTime) * Vector3.one;
+            if (hit)
+            {
+                //Spawn a hit effect.
+                Vector3 farmonToMe = transform.position + GetComponent<Collider>().bounds.center - farmon.transform.position;
+                GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, farmon.transform);
+                hitEffect.transform.position = farmon.transform.position + farmonToMe.normalized * farmon.sphereCollider.radius;
+                hitEffect.transform.localScale = (.2f + 2.5f * hitStunTime) * Vector3.one;
 
 
-            OnHitDelegate(farmon);
+                OnHitDelegate(farmon);
+
+                if (hitStunTime > 0)
+                {
+                    HitStop();
+                }
+
+                pierce--;
+                if (pierce <= 0)
+                {
+                    BeginDestroy();
+                }
+
+                if (audioSource)
+                {
+                    if (destroyed && DestroySound)
+                    {
+                        audioSource.clip = HitSound;
+                        audioSource.volume = .4f;
+                        audioSource.Play();
+                    }
+                    else if (HitSound)
+                    {
+                        audioSource.clip = HitSound;
+                        audioSource.volume = .4f;
+                        audioSource.Play();
+                    }
+                }
+                
+            }
+
 
             hitFarmonList.Add(farmon);
-
-            pierce--;
-            if (pierce <= 0)
-            {
-                Destroy(gameObject);
-                return;
-            }
-
-            if (rb && hit && hitStunTime > 0)
-            {
-                HitStop();
-            }
         }
+    }
+
+    private void BeginDestroy()
+    {
+        destroyed = true;
+
+        foreach(SpriteRenderer sr in GetComponentsInChildren<SpriteRenderer>())
+        {
+            sr.enabled = false;
+        }
+
+        Collider collider = GetComponent<Collider>();
+
+        if (collider)
+        {
+            collider.enabled = false;
+        }
+
+        if (rb)
+        {
+            rb.isKinematic = true;
+        }
+
+        EventDestroy.Invoke();
     }
 
     private void Update()
     {
+        if (destroyed)
+        {
+            if (!audioSource.isPlaying)
+            {
+                Destroy(gameObject);
+            }
+            return;
+        };
+
         lifeTime -= Time.deltaTime;
 
         if (lifeTime <= 0 || Vector3.Distance(transform.position, Player.instance.transform.position) > 50)
         {
-            Destroy(gameObject);
+            BeginDestroy();
             return;
         }
 
@@ -107,7 +174,7 @@ public class Projectile : MonoBehaviour
 
     public void HitStop()
     {
-        rb.constraints = RigidbodyConstraints.FreezeAll;
+        if(rb) rb.constraints = RigidbodyConstraints.FreezeAll;
 
         lifeTime += hitStunTime - hitStopTimer.GetTime();
 

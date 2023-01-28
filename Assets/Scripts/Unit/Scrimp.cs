@@ -8,6 +8,9 @@ public class Scrimp : Farmon
 {
     public GameObject fireBallPrefab;
 
+    public AudioClip shootSound;
+    public AudioClip hitSound;
+
     public override void Attack(Farmon targetEnemy)
     {
         Vector3 unitToEnemy = targetEnemy.GetUnitVectorToMe(transform.position);
@@ -22,6 +25,9 @@ public class Scrimp : Farmon
             unit.EffectList.AddEffect(new Effect("burn;1;10"));
         };
         fireBall.owner = this;
+        fireBall.CreateSound = shootSound;
+        fireBall.HitSound = hitSound;
+
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         cv.velocity = unitToEnemy.normalized * (10f + Reflex/2f);
         cv.ignoreGravity = false;

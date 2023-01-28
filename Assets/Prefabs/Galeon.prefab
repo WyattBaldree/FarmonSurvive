@@ -62,7 +62,7 @@ MonoBehaviour:
   level: 1
   attributePoints: 1
   perkPoints: 1
-  MaxHealth: 230
+  MaxHealth: 140
   Selected: 0
   dead: 0
   attackReady: 0
@@ -74,7 +74,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   GridSpaceIndex: {x: 0, y: 0, z: 0}
-  grit: 23
+  grit: 14
   baseGrit: 7
   power: 6
   basePower: 6

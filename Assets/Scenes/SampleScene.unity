@@ -2130,7 +2130,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7206873698091609645, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.013043478
+      value: 0.021428572
       objectReference: {fileID: 0}
     - target: {fileID: 7206873698199254033, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7360,10 +7360,6 @@ PrefabInstance:
       value: -0.16266735
       objectReference: {fileID: 0}
     - target: {fileID: 3997600842425106075, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
-      propertyPath: attackTarget
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3997600842425106075, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
       propertyPath: targetTransform
       value: 
       objectReference: {fileID: 1681703089}
@@ -7373,7 +7369,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7206873698091609645, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.013043478
+      value: 0.021428572
       objectReference: {fileID: 0}
     - target: {fileID: 7206873698199254033, guid: a1a947252ca3ecb43a2e4c844323068a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -11254,7 +11250,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1109647683}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
