@@ -10,13 +10,12 @@ public class FarmonController : MonoBehaviour
     public static bool paused = false;
 
     public GameObject ShadowPrefab;
-
     public GameObject FloatingTextPrefab;
+    public GameObject HitEffectPrefab;
 
     public AudioClip HitSound;
     public AudioClip HitSound2;
     public AudioClip DieSound;
-
     public AudioClip DodgeSound;
     public AudioClip DashSound;
 

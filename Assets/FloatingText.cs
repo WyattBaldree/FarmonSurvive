@@ -10,24 +10,20 @@ public class FloatingText : MonoBehaviour
     [SerializeField]
     TextMeshPro tmp;
 
-    Timer floatTimer = new Timer();
+    DestroyAfterTime destroyAfterTime;
 
     internal void Setup(string text, Color color, float duration = 1f)
     {
         tmp.text = text;
         tmp.color = color;
 
-        floatTimer.SetTime(duration);
+        destroyAfterTime = gameObject.AddComponent<DestroyAfterTime>();
+        destroyAfterTime.duration = duration;
     }
 
     private void Update()
     {
-        if (floatTimer.Tick(Time.deltaTime)) 
-        {
-            Destroy(gameObject);
-        }
-
-        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, floatTimer.Percent);
+        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, destroyAfterTime.FloatTimer.Percent);
 
         transform.Translate(Vector3.up * 3 * Time.deltaTime);
     }

@@ -45,6 +45,7 @@ public class Projectile : MonoBehaviour
     private void OnTriggerEnter(Collider collision)
     {
         Farmon farmon = collision.GetComponent<Farmon>();
+
         if (farmon && farmon.team != team && !hitFarmonList.Contains(farmon))
         {
             if(specificTarget != null && specificTarget != farmon)
@@ -62,7 +63,13 @@ public class Projectile : MonoBehaviour
                 Vector3 awayFromProjectile = (farmon.transform.position - transform.position).normalized;
                 hit = farmon.TakeDamage(damage, awayFromProjectile, owner, hitStunTime, knockBack, undodgeable);
             }
-            
+
+            //Spawn a hit effect.
+            Vector3 farmonToMe = transform.position + GetComponent<Collider>().bounds.center - farmon.transform.position;
+            GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, farmon.transform);
+            hitEffect.transform.position = farmon.transform.position + farmonToMe.normalized * farmon.sphereCollider.radius;
+            hitEffect.transform.localScale = (.2f + 2.5f * hitStunTime) * Vector3.one;
+
 
             OnHitDelegate(farmon);
 
