@@ -13,9 +13,11 @@ public abstract class Farmon : Vehicle
 
     public enum TeamEnum
     {
-        enemy,
-        player
+        team1,
+        team2
     }
+
+    public uint uniqueID = 0;
 
     [HideInInspector]
     public FarmonHud Hud;
@@ -27,9 +29,14 @@ public abstract class Farmon : Vehicle
 
     private StateMachine farmonStateMachine;
 
-    public string unitName = "Unit";
-    public bool isPlayerFarmon = false;
+    public string farmonName = "Unit";
+    public string nickname = "";
     public int level = 1;
+    public int experience = 0;
+    public bool canJump = false;
+
+    public TextAsset perkFile;
+
     [HideInInspector]
     public int attributePoints = 1;
     [HideInInspector]
@@ -39,19 +46,19 @@ public abstract class Farmon : Vehicle
     public int MaxHealth = 3;
     private int health = 3;
 
+    [HideInInspector]
     public bool Selected = false;
 
+    [HideInInspector]
     public bool dead = false;
 
+    [HideInInspector]
     public bool attackReady = false;
     Timer attackTimer = new Timer();
 
     public EffectList EffectList = new EffectList();
 
     public float targetRange = 5f;
-
-    public static float alertDistance = 7;
-    public static float giveUpDistance = 9f;
 
     public Farmon attackTarget;
     public Farmon protectTarget;
@@ -76,6 +83,9 @@ public abstract class Farmon : Vehicle
     public EventHandler statsChangedEvent;
 
     [HideInInspector]
+    public Farmon LastFarmonToDamageMe = null;
+
+    [HideInInspector]
     public UnityEvent GridSpaceChangedEvent = new UnityEvent();
     [HideInInspector]
     public Vector3Int GridSpaceIndex;
@@ -86,28 +96,31 @@ public abstract class Farmon : Vehicle
     private bool immuneToHitStop = false;
     public bool ImmuneToHitStop { get => immuneToHitStop; set => immuneToHitStop = value; }
 
-    [SerializeField, HideInInspector]
-    private int grit = 1;
-    [SerializeField]
-    private int baseGrit = 10;
-
-    #region Grit Property
+    #region Grit
     public int Grit {
-        get => grit;
+        get => GritBase + gritBonus;
+    }
+
+    public int GritBase = 10;
+
+    [SerializeField, HideInInspector]
+    private int gritBonus = 0;
+    public int GritBonus {
+        get => gritBonus;
         set
         {
-            grit = Math.Min(Math.Max(baseGrit, value), 40);
+            gritBonus = value;
 
             // Update max health
             float healthPercent = (float)health / (float)MaxHealth;
-            MaxHealth = grit * 10;
+            MaxHealth = Grit * 10;
 
             // Adjust remaining health after the maxHealthChange
             SetHealth((int)Mathf.Ceil((float)MaxHealth * healthPercent));
 
             // Set the size of the farmon
-            SetSize(grit);
-            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + (grit / 40f)) * Vector3.one;
+            SetSize(Grit);
+            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + (Grit / 40f)) * Vector3.one;
             if (shadow)
             {
                 shadow.transform.localScale = sphereCollider.radius * 2f * Vector3.one;
@@ -118,70 +131,86 @@ public abstract class Farmon : Vehicle
     }
     #endregion
 
-    [SerializeField, HideInInspector]
-    private int power = 1;
-    [SerializeField]
-    private int basePower = 10;
-
-    #region Power Property
+    #region Power
     public int Power
     {
-        get => power;
+        get => PowerBase + PowerBonus;
+    }
+
+    public int PowerBase = 10;
+
+    [SerializeField, HideInInspector]
+    int powerBonus = 0;
+    public int PowerBonus
+    {
+        get => powerBonus;
         set
         {
-            power = Math.Min(Math.Max(basePower, value), 40);
+            powerBonus = value;
             maxForce = 50;
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
     #endregion
 
-    [SerializeField, HideInInspector]
-    private int reflex = 1;
-    [SerializeField]
-    private int baseReflex = 10;
-
-    #region Reflex Property
+    #region Reflex
     public int Reflex
     {
-        get => reflex;
+        get => ReflexBase + ReflexBonus;
+    }
+
+    public int ReflexBase = 10;
+
+    [SerializeField, HideInInspector]
+    int reflexBonus = 0;
+    public int ReflexBonus
+    {
+        get => reflexBonus;
         set
         {
-            reflex = Math.Min(Math.Max(baseReflex, value), 40);
+            reflexBonus = value;
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
     #endregion
 
-    [SerializeField, HideInInspector]
-    private int focus = 1;
-    [SerializeField]
-    private int baseFocus = 10;
-
-    #region Focus Property
+    #region Focus
     public int Focus
     {
-        get => focus;
+        get => FocusBase + FocusBonus;
+    }
+
+    public int FocusBase = 10;
+
+    [SerializeField, HideInInspector]
+    int focusBonus = 0;
+    public int FocusBonus
+    {
+        get => focusBonus;
         set
         {
-            focus = Math.Min(Math.Max(baseFocus, value), 40);
+            focusBonus = value;
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
     #endregion
 
-    [SerializeField, HideInInspector]
-    private int speed = 1;
-    [SerializeField]
-    private int baseSpeed = 10;
-
-    #region Speed Property
+    #region Speed
     public int Speed
     {
-        get => speed;
+        get => SpeedBase + SpeedBonus;
+    }
+
+    public int SpeedBase = 10;
+
+    [SerializeField, HideInInspector]
+    int speedBonus = 0;
+    public int SpeedBonus
+    {
+        get => speedBonus;
         set
         {
-            speed = Math.Min(Math.Max(baseSpeed, value), 40);
+            speedBonus = value;
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -220,7 +249,7 @@ public abstract class Farmon : Vehicle
 
         _highlightList = mySpriteRenderer.GetComponentInParent<HighlightList>();
 
-        if (isPlayerFarmon)
+        if (team == Player.instance.playerTeam)
         {
             _highlightList.AddHighlight(Color.white, 100);
         }
@@ -231,11 +260,7 @@ public abstract class Farmon : Vehicle
 
         GridSpaceIndex = H.Vector3ToGridPosition(transform.position, LevelController.Instance.gridSize);
 
-        Grit = grit;
-        Power = power;
-        Reflex = reflex;
-        Focus = focus;
-        Speed = speed;
+        RefreshStats();
 
         SetHealth(MaxHealth);
 
@@ -243,16 +268,21 @@ public abstract class Farmon : Vehicle
         attackTimer.SetTime(AttackTime());
 
         burnTimer.autoReset = true;
-        burnTimer.SetTime(1.5f);
+        burnTimer.SetTime(1f);
     }
 
     private void OnValidate()
     {
-        Grit = grit;
-        Power = power;
-        Reflex = reflex;
-        Focus = focus;
-        Speed = speed;
+        RefreshStats();
+    }
+
+    void RefreshStats()
+    {
+        GritBonus = gritBonus;
+        PowerBonus = powerBonus;
+        ReflexBonus = reflexBonus;
+        FocusBonus = focusBonus;
+        SpeedBonus = speedBonus;
     }
 
     public virtual float GetMovementSpeed()
@@ -287,7 +317,7 @@ public abstract class Farmon : Vehicle
     {
         base.Update();
 
-        if (!FarmonController.paused)
+        if (!FarmonController.Paused)
         {
             if (attackReady == false && attackTimer.Tick(Time.deltaTime))
             {
@@ -307,6 +337,11 @@ public abstract class Farmon : Vehicle
             }
 
             EffectList.UpdateEffects(Time.deltaTime);
+        }
+
+        // only tick if the game isn't paused or we are in the die state.
+        if(!FarmonController.Paused || farmonStateMachine.CurrentState.GetType() == typeof(DieState))
+        {
             farmonStateMachine.Tick();
         }
 
@@ -404,14 +439,15 @@ public abstract class Farmon : Vehicle
 
         health = value;
 
+        if (health <= 0)
+        {
+            health = 0;
+            Die();
+        }
+
         if (healthBar)
         {
             healthBar.SetPercent((float)health / MaxHealth);
-        }
-
-        if (health <= 0)
-        {
-            Die();
         }
     }
 
@@ -420,11 +456,9 @@ public abstract class Farmon : Vehicle
         SetHealth(health + amount);
     }
 
-    public Farmon LastFarmonToDamageMe = null;
-
     public bool TakeDamage(int damage, Vector3 knockBackDirection, Farmon owner, float hitStopTime = 0.3f, float knockBack = 5f, bool undodgeable = false)
     {        
-        if(!undodgeable && UnityEngine.Random.value < Reflex / 70f)
+        if(!undodgeable && UnityEngine.Random.value < Reflex / 100f)
         {
             //Get the dodge direction
             Vector3 dodgeDirection;
@@ -459,7 +493,14 @@ public abstract class Farmon : Vehicle
                 ChangeHeath(-damage);
 
                 FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
-                floatingText.Setup(damage.ToString(), Color.red);
+                float severityPercent = Mathf.Min(damage / 40, 1f);
+                floatingText.transform.localScale = (0.7f + 0.4f * severityPercent) * Vector3.one;
+
+                Color color1 = new Color(1.0f, 0.549f, 0.004f);
+                Color color2 = new Color(0.929f, 0.161f, 0.220f);
+                Color damageColor = Color.Lerp(color1, color2, severityPercent);
+
+                floatingText.Setup(damage.ToString(), damageColor);
             }
 
             return true;
@@ -513,11 +554,14 @@ public abstract class Farmon : Vehicle
         attributePoints++;
         perkPoints++;
         statsChangedEvent.Invoke(this, EventArgs.Empty);
+
+        FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
+        floatingText.Setup("LEVEL UP!", Color.yellow);
     }
 
     public int GetModifiedGrit()
     {
-        return Grit;
+        return GritBonus;
     }
 
     public int GetModifiedPower()
@@ -766,7 +810,7 @@ public class FollowPathState : StateMachineState
 
             GridSpace myGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(myPoint, gridSize));
             GridSpace targetGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(targetPoint, gridSize));
-            path = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
+            path = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, farmon.canJump, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
 
             jump = ShouldJumpForNextLink();
         }
@@ -802,7 +846,7 @@ public class FollowPathState : StateMachineState
         {
             BlockLink nextLink = path.PeekNode().OutputBlockLink;
 
-            if (nextLink != null && nextLink.HeightDifference > .5f)
+            if (nextLink != null && !nextLink.walkable && nextLink.jumpable)
             {
                 return true;
             }
@@ -1296,7 +1340,7 @@ public class DieState : StateMachineState
     {
         base.Tick();
 
-        farmon.transform.Rotate(new Vector3(0, 1, 0), 400f * Time.deltaTime);
+        farmon.Hud.SpriteQuad.transform.Rotate(new Vector3(0, 1, 0), 400f * Time.deltaTime);
 
         farmon.maxSpeed = 0;
         farmon.MovementIdle();

@@ -97,7 +97,7 @@ Transform:
   m_GameObject: {fileID: 3556518770851303680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.25, y: 1.25, z: 1.25}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 8549285057627197418}
@@ -127,6 +127,7 @@ MonoBehaviour:
   undodgeable: 0
   CreateSound: {fileID: 0}
   HitSound: {fileID: 0}
+  DestroySound: {fileID: 0}
   specificTarget: {fileID: 0}
   EventDestroy:
     m_PersistentCalls:
@@ -322,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.5
+      value: -0.4
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -330,11 +331,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.3446454
+      value: -0.34464538
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.060770284
+      value: -0.060770277
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.y

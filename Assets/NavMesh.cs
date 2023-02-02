@@ -93,10 +93,10 @@ public class NavMesh : MonoBehaviour
         GridSpace startingSpace = GetGridSpaceArray(H.Vector3ToGridPosition(debugTransform1.position, levelController.gridSize));
         GridSpace endingSpace = GetGridSpaceArray(H.Vector3ToGridPosition(debugTransform2.position, levelController.gridSize));
 
-        return GetPath(startingSpace, endingSpace, (x) => { return Vector3.Distance(x.Center, endingSpace.Center); });
+        return GetPath(startingSpace, endingSpace, false, (x) => { return Vector3.Distance(x.Center, endingSpace.Center); });
     }
 
-    public Path GetPath(GridSpace startingPosition, GridSpace targetLocation, HeuristicDelegate heuristic)
+    public Path GetPath(GridSpace startingPosition, GridSpace targetLocation, bool canJump, HeuristicDelegate heuristic)
     {
         // a sorted list contating spaces that still need to be checked sorted by thier heuristic
         List<GridSpace> openSet = new List<GridSpace>();
@@ -134,7 +134,6 @@ public class NavMesh : MonoBehaviour
 
                     BlockLink inputBlockLink = currentLink;
 
-
                     path.AddNode(new PathNode(currentGridSpace, inputBlockLink, previousLink));
 
                     previousLink = currentLink;
@@ -149,15 +148,28 @@ public class NavMesh : MonoBehaviour
             openSet.RemoveAt(0);
             foreach(BlockLink link in current.BlockLinks)
             {
-                //if (link.HeightDifference > .2f)
-                //{
-                //    continue;
-                //}
+                bool jump = false;
+                if (!link.walkable)
+                {
+                    if (canJump && link.jumpable)
+                    {
+                        //thisLink is jumpable
+                        jump = true;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
 
                 GridSpace neighbor = link.ToGridSpace;
 
                 // tentative_gScore is the distance from start to the neighbor through current
                 float tentativeGScore = gScore[current] + 1;// Vector3.Distance(current.Center, neighbor.Center);
+                if (jump)
+                {
+                    tentativeGScore += .1f;
+                }
 
                 float neighborGScore = gScore.TryGetValue(neighbor, out float value) ? value : float.PositiveInfinity;
 
@@ -332,7 +344,18 @@ public class NavMesh : MonoBehaviour
                     {
                         foreach(BlockLink link in _gridSpaceMatrix[i, j, k].BlockLinks)
                         {
-                            Gizmos.color = Color.black;
+                            if (link.walkable)
+                            {
+                                Gizmos.color = Color.black;
+                            }
+                            else if (link.jumpable)
+                            {
+                                Gizmos.color = Color.green;
+                            }
+                            else
+                            {
+                                Gizmos.color = Color.red;
+                            }
 
                             Vector3 offset = Vector3.Cross(Vector3.up, link.ToHit.point - link.FromHit.point).normalized * .1f;
                             Gizmos.DrawLine(link.FromHit.point + offset, link.ToHit.point + offset);
@@ -385,6 +408,9 @@ public class BlockLink
 
     public float HeightDifference { get; private set; }
 
+    public bool walkable = false;
+    public bool jumpable = false;
+
     public BlockLink(GridSpace fromGridSpace, GridSpace toGridSpace, RaycastHit fromHit, RaycastHit toHit, float heightDifference)
     {
         FromGridSpace = fromGridSpace;
@@ -392,6 +418,9 @@ public class BlockLink
         FromHit = fromHit;
         ToHit = toHit;
         HeightDifference = heightDifference;
+
+        walkable = HeightDifference < LevelController.Instance.gridSize / 5;
+        jumpable = HeightDifference < LevelController.Instance.gridSize * 1.25f;
     }
 }
 
@@ -486,7 +515,7 @@ public class GridSpace
         float halfSize = GridSize / 2;
 
         Vector3 positionFloat = new Vector3(Position.x, Position.y, Position.z);
-        float StartingHeight = .95f;
+        float StartingHeight = .98f;
 
         NorthRaycastPosition = WorldPosition + StartingHeight * GridSize * Vector3.up + (halfSize * Vector3.right) + (GridSize * Vector3.forward) - (GridSize * BorderSize * Vector3.forward);
         EastRaycastPosition = WorldPosition + StartingHeight * GridSize * Vector3.up + (GridSize * Vector3.right) + (halfSize * Vector3.forward) - (GridSize * BorderSize * Vector3.right);

@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<FarmonSaveData xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <uniqueID>0</uniqueID>
+  <FarmonName>Galeon</FarmonName>
+  <Nickname />
+  <GritBonus>1</GritBonus>
+  <PowerBonus>0</PowerBonus>
+  <ReflexBonus>0</ReflexBonus>
+  <FocusBonus>0</FocusBonus>
+  <SpeedBonus>0</SpeedBonus>
+  <Level>1</Level>
+  <experience>0</experience>
+  <perkPoints>1</perkPoints>
+  <attributePoints>1</attributePoints>
+</FarmonSaveData>

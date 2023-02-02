@@ -33,7 +33,7 @@ Transform:
   m_Children:
   - {fileID: 569214195358937776}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &819992706
 MonoBehaviour:
@@ -54,15 +54,18 @@ MonoBehaviour:
   PathNodeReachedEvent:
     m_PersistentCalls:
       m_Calls: []
+  uniqueID: 0
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 3749070670789246562}
-  unitName: Scrimp
-  isPlayerFarmon: 1
+  farmonName: Scrimp
+  nickname: 
   level: 1
+  experience: 0
+  canJump: 0
   attributePoints: 1
   perkPoints: 1
-  MaxHealth: 20
+  MaxHealth: 100
   Selected: 0
   dead: 0
   attackReady: 0
@@ -70,21 +73,21 @@ MonoBehaviour:
   attackTarget: {fileID: 0}
   protectTarget: {fileID: 0}
   team: 1
+  LastFarmonToDamageMe: {fileID: 0}
   GridSpaceChangedEvent:
     m_PersistentCalls:
       m_Calls: []
   GridSpaceIndex: {x: 0, y: 0, z: 0}
-  grit: 2
-  baseGrit: 2
-  power: 5
-  basePower: 5
-  reflex: 3
-  baseReflex: 3
-  focus: 5
-  baseFocus: 5
-  speed: 3
-  baseSpeed: 2
-  LastFarmonToDamageMe: {fileID: 0}
+  GritBase: 10
+  gritBonus: 0
+  PowerBase: 10
+  powerBonus: 0
+  ReflexBase: 10
+  reflexBonus: 0
+  FocusBase: 10
+  focusBonus: 0
+  SpeedBase: 10
+  speedBonus: 0
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
   shootSound: {fileID: 8300000, guid: e222777c0a2e580498e744afb371ca6f, type: 3}
@@ -229,6 +232,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: bb972d2a5d344b84f92946a59e1601fe, type: 2}
+    - target: {fileID: 8563044670415558374, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

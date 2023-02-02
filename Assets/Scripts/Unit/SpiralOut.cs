@@ -4,16 +4,16 @@ using UnityEngine;
 
 public class SpiralOut : MonoBehaviour
 {
-    public float rotationOffset = 0;
-
     [SerializeField]
     Rigidbody myRigidBody;
-    [SerializeField]
-    float moveAwaySpeed = 1;
-    [SerializeField]
-    float rotationSpeed = 1;
-    [SerializeField]
-    float maxSpeed = 5;
+    
+    public float RotationOffset = 0;
+
+    public float MoveAwaySpeed = 1;
+
+    public float RotationSpeed = 1;
+
+    public float MaxSpeed = 5;
 
     Vector3 origin;
 
@@ -30,9 +30,9 @@ public class SpiralOut : MonoBehaviour
 
         Vector3 targetVelocity = (origin + GetPosition()) - transform.position;
 
-        if(targetVelocity.magnitude > maxSpeed)
+        if(targetVelocity.magnitude > MaxSpeed)
         {
-            targetVelocity = targetVelocity.normalized * maxSpeed;
+            targetVelocity = targetVelocity.normalized * MaxSpeed;
         }
 
         myRigidBody.velocity = new Vector3(targetVelocity.x, myRigidBody.velocity.y, targetVelocity.z);
@@ -40,9 +40,9 @@ public class SpiralOut : MonoBehaviour
 
     Vector3 GetPosition()
     {
-        Vector3 unrotated = new Vector3(time * moveAwaySpeed, 0);
+        Vector3 unrotated = new Vector3(time * MoveAwaySpeed, 0);
 
-        Vector3 rotated = Quaternion.Euler(0, rotationOffset + time * rotationSpeed, 0) * unrotated;
+        Vector3 rotated = Quaternion.Euler(0, RotationOffset + time * RotationSpeed, 0) * unrotated;
 
         return rotated;
     }

@@ -16,15 +16,16 @@ public class Scrimp : Farmon
         Vector3 unitToEnemy = targetEnemy.GetUnitVectorToMe(transform.position);
 
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-        fireBall.damage = 10 + (int)(10f * (float)Power / 5f);
+        fireBall.damage = 5 + Power / 5;
         fireBall.transform.localScale *= (1f + (float)Focus / 5f);
         fireBall.pierce += Focus / 3;
         fireBall.knockBack = 4;
         fireBall.hitStunTime = .15f;
         fireBall.OnHitDelegate = (unit) => {
-            unit.EffectList.AddEffect(new Effect("burn;1;10"));
+            unit.EffectList.AddEffect(new Effect("burn;3;4"));
         };
         fireBall.owner = this;
+        fireBall.team = team;
         fireBall.CreateSound = shootSound;
         fireBall.HitSound = hitSound;
 
@@ -43,6 +44,6 @@ public class Scrimp : Farmon
 
     public override float AttackTime()
     {
-        return 2f - GetModifiedFocus() / 80f - GetModifiedSpeed() / 80f;
+        return 6f - GetModifiedFocus() / 30f - GetModifiedSpeed() / 30f;
     }
 }

@@ -23,8 +23,8 @@ public class FloatingText : MonoBehaviour
 
     private void Update()
     {
-        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, destroyAfterTime.FloatTimer.Percent);
+        tmp.color = new Color(tmp.color.r, tmp.color.g, tmp.color.b, Mathf.Min(1, destroyAfterTime.FloatTimer.Percent * 1.2f));
 
-        transform.Translate(Vector3.up * 3 * Time.deltaTime);
+        transform.Translate(Vector3.up * 2 * Time.deltaTime);
     }
 }

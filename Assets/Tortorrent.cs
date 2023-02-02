@@ -23,7 +23,7 @@ public class Tortorrent : Farmon
 
     public override float AttackTime()
     {
-        return 4f;
+        return 10f;
     }
 
     protected override void Start()
@@ -37,12 +37,12 @@ public class Tortorrent : Farmon
     public Projectile MakeSpin(Farmon targetFarmon)
     {
         Projectile spin = Instantiate(torrentSpinPrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
-        spin.team = team;
-        spin.damage = 15 + (int)(10f * (float)Power / 3f);
+        spin.damage = 15 + Power / 3;
         spin.knockBack = 6;
         spin.hitStunTime = hitStunTime;
         spin.specificTarget = targetFarmon;
         spin.owner = this;
+        spin.team = team;
         spin.CreateSound = ChargeUpSound;
         spin.HitSound = ThunkSound;
 

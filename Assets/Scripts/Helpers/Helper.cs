@@ -17,4 +17,13 @@ public class H
 
         return new Vector3Int(x, y, z);
     }
+
+    public static Vector3 GridPositionToVector3(Vector3Int v, float gridSize)
+    {
+        float x = v.x * gridSize;
+        float y = v.y * gridSize;
+        float z = v.z * gridSize;
+
+        return new Vector3(x, y, z);
+    }
 }

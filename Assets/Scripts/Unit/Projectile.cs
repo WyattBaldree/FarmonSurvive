@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
-    public Farmon.TeamEnum team = Farmon.TeamEnum.player;
+    public Farmon.TeamEnum team = Farmon.TeamEnum.team1;
 
     public Farmon owner = null;
 
@@ -60,7 +60,7 @@ public class Projectile : MonoBehaviour
 
         Farmon farmon = collision.GetComponent<Farmon>();
 
-        if (farmon && farmon.team != team && !hitFarmonList.Contains(farmon))
+        if (farmon && !farmon.dead && farmon.team != team && !hitFarmonList.Contains(farmon))
         {
             if(specificTarget != null && specificTarget != farmon)
             {

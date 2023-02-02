@@ -10,27 +10,31 @@ public class FarmonEditor : Editor
 {
     GUIStyle centeredStyle;
 
-    SerializedProperty grit;
-    SerializedProperty power;
-    SerializedProperty reflex;
-    SerializedProperty focus;
-    SerializedProperty speed;
+    SerializedProperty gritBonus;
+    SerializedProperty powerBonus;
+    SerializedProperty reflexBonus;
+    SerializedProperty focusBonus;
+    SerializedProperty speedBonus;
 
     float statButtonWidth = 20;
     float statLabelValueWidth = 15;
     float statLabelNameWidth = 50;
 
+    string saveName;
+
     void OnEnable()
     {
-        grit = serializedObject.FindProperty("grit");
-        power = serializedObject.FindProperty("power");
-        reflex = serializedObject.FindProperty("reflex");
-        focus = serializedObject.FindProperty("focus");
-        speed = serializedObject.FindProperty("speed");
+        gritBonus = serializedObject.FindProperty("gritBonus");
+        powerBonus = serializedObject.FindProperty("powerBonus");
+        reflexBonus = serializedObject.FindProperty("reflexBonus");
+        focusBonus = serializedObject.FindProperty("focusBonus");
+        speedBonus = serializedObject.FindProperty("speedBonus");
     }
 
     public override void OnInspectorGUI()
     {
+        Farmon unit = (Farmon)target;
+
         base.DrawDefaultInspector();
 
         centeredStyle = GUI.skin.GetStyle("Label");
@@ -39,16 +43,13 @@ public class FarmonEditor : Editor
         GUILayout.Space(20f);
         GUILayout.Label("Stats", EditorStyles.boldLabel);
 
-        CreateStatBlock("Grit", grit, (u) => u.Grit, (u, i) => u.Grit = i); 
-        CreateStatBlock("Power", power, (u) => u.Power, (u, i) => u.Power = i);
-        CreateStatBlock("Reflex", reflex, (u) => u.Reflex, (u, i) => u.Reflex = i);
-        CreateStatBlock("Focus", focus, (u) => u.Focus, (u, i) => u.Focus = i);
-        CreateStatBlock("Speed", speed, (u) => u.Speed, (u, i) => u.Speed = i);
+        CreateStatBlock("Grit",unit.GritBase, gritBonus, (u) => u.GritBonus, (u, i) => u.GritBonus = i); 
+        CreateStatBlock("Power", unit.PowerBase, powerBonus, (u) => u.PowerBonus, (u, i) => u.PowerBonus = i);
+        CreateStatBlock("Reflex", unit.ReflexBase, reflexBonus, (u) => u.ReflexBonus, (u, i) => u.ReflexBonus = i);
+        CreateStatBlock("Focus", unit.FocusBase, focusBonus, (u) => u.FocusBonus, (u, i) => u.FocusBonus = i);
+        CreateStatBlock("Speed", unit.SpeedBase, speedBonus, (u) => u.SpeedBonus, (u, i) => u.SpeedBonus = i);
 
         // Apply changes to the serializedProperty - always do this at the end of OnInspectorGUI.
-
-        if(Application.isPlaying) serializedObject.Update();
-        serializedObject.ApplyModifiedProperties();
 
         if (Application.isPlaying)
         {
@@ -60,10 +61,43 @@ public class FarmonEditor : Editor
             {
                 ((Farmon)target).Die();
             }
+
+            if (GUILayout.Button("Save Player"))
+            {
+                SaveController.SavePlayer();
+            }
+            if (GUILayout.Button("Load Player"))
+            {
+                SaveController.LoadPlayer();
+            }
+
+            if (GUILayout.Button("Save Player Farmon"))
+            {
+                Player.instance.FarmonSquadIds[0] = SaveController.SaveFarmonPlayer(unit);
+            }
+            if (GUILayout.Button("Load Player Farmon"))
+            {
+                if (Player.instance.FarmonSquadIds[0] != 0)
+                {
+                    SaveController.LoadFarmonPlayer(Player.instance.FarmonSquadIds[0]);
+                }
+            }
         }
+        saveName = GUILayout.TextField(saveName);
+        if (GUILayout.Button("Save"))
+        {
+            SaveController.SaveFarmon(unit, saveName);
+        }
+        if (GUILayout.Button("Load"))
+        {
+            SaveController.LoadFarmon(saveName);
+        }
+
+        if (Application.isPlaying) serializedObject.Update();
+        serializedObject.ApplyModifiedProperties();
     }
 
-    private void CreateStatBlock(string statName, SerializedProperty statSerializedProperty, Func<Farmon, int> statPropertyGet, Action<Farmon, int> statPropertySet)
+    private void CreateStatBlock(string statName, int baseStat, SerializedProperty statSerializedProperty, Func<Farmon, int> statPropertyGet, Action<Farmon, int> statPropertySet)
     {
         Farmon unit = (Farmon)target;
 
@@ -78,14 +112,21 @@ public class FarmonEditor : Editor
         GUILayout.Space(10);
         if (GUILayout.Button("-", GUILayout.Width(statButtonWidth)))
         {
-            statPropertySet(unit, statPropertyGet(unit) - 1);
-            statSerializedProperty.intValue = statPropertyGet(unit);
+            if(statPropertyGet(unit) > 0)
+            {
+                statPropertySet(unit, statPropertyGet(unit) - 1);
+                statSerializedProperty.intValue = statPropertyGet(unit);
+            }
         }
-        GUILayout.Label(statPropertyGet(unit).ToString(), centeredStyle, GUILayout.Width(statLabelValueWidth));
+        GUILayout.Label((baseStat + statPropertyGet(unit)).ToString(), centeredStyle, GUILayout.Width(statLabelValueWidth));
         if (GUILayout.Button("+", GUILayout.Width(statButtonWidth)))
         {
-            statPropertySet(unit, statPropertyGet(unit) + 1);
-            statSerializedProperty.intValue = statPropertyGet(unit);
+            int potentialStatValue = unit.GritBase + statPropertyGet(unit) + 1;
+            if (potentialStatValue <= 40)
+            {
+                statPropertySet(unit, statPropertyGet(unit) + 1);
+                statSerializedProperty.intValue = statPropertyGet(unit);
+            }
         }
         GUILayout.EndHorizontal();
     }

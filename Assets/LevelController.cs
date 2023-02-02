@@ -18,12 +18,12 @@ public class LevelController : MonoBehaviour
 
     private void Awake()
     {
-        Instance = this;
         Initialize();
     }
 
     public void Initialize()
     {
+        Instance = this;
         BlockArray = new LevelBlock[levelSize.x, levelSize.y, levelSize.z];
         for (int i = 0; i < BlockArray.GetLength(0); i++)
         {

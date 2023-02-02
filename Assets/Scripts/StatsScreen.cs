@@ -23,8 +23,6 @@ public class StatsScreen : MonoBehaviour
                 targetUnit.statsChangedEvent += UpdateStatsScreen;
                 gameObject.SetActive(true);
 
-                FarmonController.paused = true;
-
                 UpdateStatsScreen(targetUnit, EventArgs.Empty);
             }
             else
@@ -81,8 +79,11 @@ public class StatsScreen : MonoBehaviour
     {
         if(targetUnit.attributePoints > 0)
         {
-            targetUnit.attributePoints--;
-            targetUnit.Grit++;
+            if (targetUnit.GritBase + targetUnit.GritBonus < 40)
+            {
+                targetUnit.attributePoints--;
+                targetUnit.GritBonus++;
+            }
         }
     }
 
@@ -90,8 +91,11 @@ public class StatsScreen : MonoBehaviour
     {
         if (targetUnit.attributePoints > 0)
         {
-            targetUnit.attributePoints--;
-            targetUnit.Power++;
+            if (targetUnit.PowerBase + targetUnit.PowerBonus < 40)
+            {
+                targetUnit.attributePoints--;
+                targetUnit.PowerBonus++;
+            }
         }
     }
 
@@ -99,8 +103,11 @@ public class StatsScreen : MonoBehaviour
     {
         if (targetUnit.attributePoints > 0)
         {
-            targetUnit.attributePoints--;
-            targetUnit.Reflex++;
+            if (targetUnit.ReflexBase + targetUnit.ReflexBonus < 40)
+            {
+                targetUnit.attributePoints--;
+                targetUnit.ReflexBonus++;
+            }
         }
     }
 
@@ -108,8 +115,11 @@ public class StatsScreen : MonoBehaviour
     {
         if (targetUnit.attributePoints > 0)
         {
-            targetUnit.attributePoints--;
-            targetUnit.Focus++;
+            if (targetUnit.FocusBase + targetUnit.FocusBonus < 40)
+            {
+                targetUnit.attributePoints--;
+                targetUnit.FocusBonus++;
+            }
         }
     }
 
@@ -117,8 +127,11 @@ public class StatsScreen : MonoBehaviour
     {
         if (targetUnit.attributePoints > 0)
         {
-            targetUnit.attributePoints--;
-            targetUnit.Speed++;
+            if (targetUnit.SpeedBase + targetUnit.SpeedBonus < 40)
+            {
+                targetUnit.attributePoints--;
+                targetUnit.SpeedBonus++;
+            }
         }
     }
 
@@ -142,18 +155,18 @@ public class StatsScreen : MonoBehaviour
 
     private void UpdateStatsScreen(object sender, EventArgs e)
     {
-        nameText.text = targetUnit.unitName;
+        nameText.text = targetUnit.farmonName;
 
         levelText.text = "Level " + targetUnit.level;
 
         characterImage.sprite = targetUnit.mySpriteRenderer.sprite;
 
         gritText.text = targetUnit.GetModifiedGrit().ToString();
-        if(targetUnit.GetModifiedGrit() > targetUnit.Grit)
+        if(targetUnit.GetModifiedGrit() > targetUnit.GritBonus)
         {
             gritText.color = Color.green;
         }
-        else if(targetUnit.GetModifiedGrit() < targetUnit.Grit)
+        else if(targetUnit.GetModifiedGrit() < targetUnit.GritBonus)
         {
             gritText.color = Color.red;
         }

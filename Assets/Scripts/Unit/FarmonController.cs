@@ -7,7 +7,25 @@ public class FarmonController : MonoBehaviour
 {
     public static FarmonController instance;
 
-    public static bool paused = false;
+    public static bool Paused
+    {
+        get
+        {
+            bool shouldPause = false;
+
+            if (RoundController.Instance)
+            {
+                shouldPause = shouldPause || !RoundController.Instance.RoundPlaying;
+            }
+
+            if (StatsScreen.instance)
+            {
+                shouldPause = shouldPause || StatsScreen.instance.TargetUnit != null;
+            }
+
+            return shouldPause;
+        }
+    }
 
     public GameObject ShadowPrefab;
     public GameObject FloatingTextPrefab;
@@ -28,13 +46,5 @@ public class FarmonController : MonoBehaviour
     private void OnDestroy()
     {
         instance = null;
-    }
-
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            paused = !paused;
-        }
     }
 }

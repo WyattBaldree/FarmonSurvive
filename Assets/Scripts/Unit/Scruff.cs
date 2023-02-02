@@ -17,27 +17,20 @@ public class Scruff : Farmon
     {
         base.Start();
 
-        mainState = new IdleState(this);
-
         tackleState = new ScruffTackleState(this);
-    }
-
-    protected override void Update()
-    {
-        base.Update();
     }
 
     public override void Attack(Farmon targetEnemy)
     {
         Projectile tackle = Instantiate(scruffTacklePrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
-        tackle.team = team;
-        tackle.damage = 15 + (int)(10f * (float)Power / 3f);
+        tackle.damage = 10 + Power / 3;
         tackle.transform.localScale *= sphereCollider.radius * 1.2f / .35f;
         tackle.knockBack = 6;
         tackle.hitStunTime = hitStunTime;
         tackle.pierce = 0;
         tackle.specificTarget = targetEnemy;
         tackle.owner = this;
+        tackle.team = team;
         tackle.CreateSound = tackleSound;
         tackle.HitSound = hitSound;
 
@@ -54,7 +47,7 @@ public class Scruff : Farmon
 
     public override float AttackTime()
     {
-        return 4f - GetModifiedSpeed()/13;
+        return 10f - GetModifiedSpeed()/8;
     }
 }
 

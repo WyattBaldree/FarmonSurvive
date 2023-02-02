@@ -137,9 +137,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b978fcee34b48844ea1939903d3118c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SaveName: 
+  StoryProgress: 0
+  FarmonSquadIds: 000000000000000000000000000000000000000000000000
+  selectionRect: {fileID: 0}
   cameraRig: {fileID: 5190284729526266811}
-  cameraSpeed: 3
-  cameraSpeedHyper: 6
+  cameraSpeed: 4
+  cameraSpeedHyper: 7
   cameraRotationSpeed: 20
   cameraRotationSpeedHyper: 40
   cameraZoomSpeed: 2
