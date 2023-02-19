@@ -65,7 +65,7 @@ MonoBehaviour:
   canJump: 0
   attributePoints: 1
   perkPoints: 1
-  MaxHealth: 100
+  MaxHealth: 115
   Selected: 0
   dead: 0
   attackReady: 0
@@ -78,15 +78,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   GridSpaceIndex: {x: 0, y: 0, z: 0}
-  GritBase: 10
-  gritBonus: 0
-  PowerBase: 10
-  powerBonus: 0
-  ReflexBase: 10
+  GritBase: 2
+  gritBonus: 19
+  PowerBase: 6
+  powerBonus: 24
+  ReflexBase: 3
   reflexBonus: 0
-  FocusBase: 10
+  FocusBase: 6
   focusBonus: 0
-  SpeedBase: 10
+  SpeedBase: 3
   speedBonus: 0
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
@@ -181,7 +181,7 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 883306241, guid: de97c0aabfa91ad448f64b26b0e23969, type: 3}
     - target: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}

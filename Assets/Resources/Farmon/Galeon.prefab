@@ -63,10 +63,9 @@ MonoBehaviour:
   level: 1
   experience: 0
   canJump: 0
-  perkFile: {fileID: 0}
   attributePoints: 1
   perkPoints: 1
-  MaxHealth: 100
+  MaxHealth: 50
   Selected: 0
   dead: 0
   attackReady: 0
@@ -79,15 +78,15 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   GridSpaceIndex: {x: 0, y: 0, z: 0}
-  GritBase: 10
+  GritBase: 8
   gritBonus: 0
-  PowerBase: 10
+  PowerBase: 7
   powerBonus: 0
-  ReflexBase: 10
+  ReflexBase: 4
   reflexBonus: 0
-  FocusBase: 10
+  FocusBase: 7
   focusBonus: 0
-  SpeedBase: 10
+  SpeedBase: 4
   speedBonus: 0
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   tornadoPrefab: {fileID: 3556518770851303680, guid: 4cb9abc1afe5d71409a8c8af97845f1c, type: 3}

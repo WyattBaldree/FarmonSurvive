@@ -53,6 +53,10 @@ public class FarmonEditor : Editor
 
         if (Application.isPlaying)
         {
+            if (GUILayout.Button("Give Jump Perk"))
+            {
+                ((Farmon)target).AddPerk(new PerkJump());
+            }
             if (GUILayout.Button("LevelUp"))
             {
                 ((Farmon)target).LevelUp();
@@ -122,7 +126,7 @@ public class FarmonEditor : Editor
         if (GUILayout.Button("+", GUILayout.Width(statButtonWidth)))
         {
             int potentialStatValue = unit.GritBase + statPropertyGet(unit) + 1;
-            if (potentialStatValue <= 40)
+            if (potentialStatValue <= Farmon.StatMax)
             {
                 statPropertySet(unit, statPropertyGet(unit) + 1);
                 statSerializedProperty.intValue = statPropertyGet(unit);

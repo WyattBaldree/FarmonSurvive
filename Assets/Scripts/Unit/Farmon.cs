@@ -11,6 +11,8 @@ public abstract class Farmon : Vehicle
     public static List<Vehicle> farmonList = new List<Vehicle>();
     private static float followRange = 3;
 
+    public static int StatMax = 40;
+
     public enum TeamEnum
     {
         team1,
@@ -35,7 +37,7 @@ public abstract class Farmon : Vehicle
     public int experience = 0;
     public bool canJump = false;
 
-    public TextAsset perkFile;
+    public Dictionary<string, int> perkList = new Dictionary<string, int>();
 
     [HideInInspector]
     public int attributePoints = 1;
@@ -56,7 +58,6 @@ public abstract class Farmon : Vehicle
     public bool attackReady = false;
     Timer attackTimer = new Timer();
 
-    public EffectList EffectList = new EffectList();
 
     public float targetRange = 5f;
 
@@ -74,6 +75,7 @@ public abstract class Farmon : Vehicle
     public StateMachineState spawnState;
 
     //Effects
+    public EffectList EffectList = new EffectList();
     private Timer burnTimer = new Timer();
 
     GameObject shadow;
@@ -109,18 +111,29 @@ public abstract class Farmon : Vehicle
         get => gritBonus;
         set
         {
-            gritBonus = value;
+            if (GritBase + value > StatMax)
+            {
+                int dif = GritBase + value - StatMax;
+                gritBonus = value - dif;
+
+                attributePoints += dif;
+            }
+            else
+            {
+                gritBonus = value;
+            }
+
 
             // Update max health
             float healthPercent = (float)health / (float)MaxHealth;
-            MaxHealth = Grit * 10;
+            MaxHealth = 10 + Grit * 5;
 
             // Adjust remaining health after the maxHealthChange
             SetHealth((int)Mathf.Ceil((float)MaxHealth * healthPercent));
 
             // Set the size of the farmon
             SetSize(Grit);
-            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + (Grit / 40f)) * Vector3.one;
+            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + (Grit / StatMax)) * Vector3.one;
             if (shadow)
             {
                 shadow.transform.localScale = sphereCollider.radius * 2f * Vector3.one;
@@ -146,7 +159,18 @@ public abstract class Farmon : Vehicle
         get => powerBonus;
         set
         {
-            powerBonus = value;
+            if (PowerBase + value > StatMax)
+            {
+                int dif = PowerBase + value - StatMax;
+                powerBonus = value - dif;
+
+                attributePoints += dif;
+            }
+            else
+            {
+                powerBonus = value;
+            }
+
             maxForce = 50;
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
@@ -168,7 +192,18 @@ public abstract class Farmon : Vehicle
         get => reflexBonus;
         set
         {
-            reflexBonus = value;
+            if (ReflexBase + value > StatMax)
+            {
+                int dif = ReflexBase + value - StatMax;
+                reflexBonus = value - dif;
+
+                attributePoints += dif;
+            }
+            else
+            {
+                reflexBonus = value;
+            }
+
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -189,7 +224,18 @@ public abstract class Farmon : Vehicle
         get => focusBonus;
         set
         {
-            focusBonus = value;
+            if (FocusBase + value > StatMax)
+            {
+                int dif = FocusBase + value - StatMax;
+                focusBonus = value - dif;
+
+                attributePoints += dif;
+            }
+            else
+            {
+                focusBonus = value;
+            }
+
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -210,7 +256,18 @@ public abstract class Farmon : Vehicle
         get => speedBonus;
         set
         {
-            speedBonus = value;
+            if (SpeedBase + value > StatMax)
+            {
+                int dif = SpeedBase + value - StatMax;
+                speedBonus = value - dif;
+
+                attributePoints += dif;
+            }
+            else
+            {
+                speedBonus = value;
+            }
+
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
         }
     }
@@ -344,6 +401,10 @@ public abstract class Farmon : Vehicle
         {
             farmonStateMachine.Tick();
         }
+        else
+        {
+            MovementIdle();
+        }
 
         Vector3Int currentGridSpaceIndex = H.Vector3ToGridPosition(transform.position, LevelController.Instance.gridSize);
 
@@ -353,9 +414,9 @@ public abstract class Farmon : Vehicle
             GridSpaceChangedEvent.Invoke();
         }
 
-        if (Physics.SphereCast(transform.position, .1f, Vector3.down, out RaycastHit hitInfo, 100, LayerMask.GetMask("Default")))
+        if (Physics.BoxCast(transform.position, sphereCollider.radius/2 * Vector3.one, Vector3.down, out RaycastHit hitInfo, Quaternion.identity, 100, LayerMask.GetMask("Default")))
         {
-            shadow.transform.position = hitInfo.point + .01f * Vector3.up;
+            shadow.transform.position = transform.position + ((hitInfo.distance + (sphereCollider.radius / 2) - 0.01f) * Vector3.down);
         }
     }
 
@@ -492,19 +553,24 @@ public abstract class Farmon : Vehicle
             {
                 ChangeHeath(-damage);
 
-                FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
-                float severityPercent = Mathf.Min(damage / 40, 1f);
-                floatingText.transform.localScale = (0.7f + 0.4f * severityPercent) * Vector3.one;
-
-                Color color1 = new Color(1.0f, 0.549f, 0.004f);
-                Color color2 = new Color(0.929f, 0.161f, 0.220f);
-                Color damageColor = Color.Lerp(color1, color2, severityPercent);
-
-                floatingText.Setup(damage.ToString(), damageColor);
+                MakeDamageNumber(damage);
             }
 
             return true;
         }
+    }
+
+    public void MakeDamageNumber(int damage)
+    {
+        FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
+        float severityPercent = Mathf.Min(damage / StatMax, 1f);
+        floatingText.transform.localScale = (0.7f + 0.4f * severityPercent) * Vector3.one;
+
+        Color color1 = new Color(1.0f, 0.549f, 0.004f);
+        Color color2 = new Color(0.929f, 0.161f, 0.220f);
+        Color damageColor = Color.Lerp(color1, color2, severityPercent);
+
+        floatingText.Setup(damage.ToString(), damageColor);
     }
 
     public void Die()
@@ -519,6 +585,15 @@ public abstract class Farmon : Vehicle
         hitStopTimer.SetTime(stopTime);
 
         Hud.Animator.speed = 0;
+    }
+
+    public void AddPerk(Perk perk)
+    {
+        perkList.TryGetValue(perk.PerkName, out int perkCurrentValue);
+
+        perkList[perk.PerkName] = perkCurrentValue + 1;
+
+        statsChangedEvent?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector3 GetRandomLocationAround(float radius, float minimumRadius)
@@ -548,20 +623,87 @@ public abstract class Farmon : Vehicle
         if(sphereCollider) Gizmos.DrawWireSphere(transform.position + sphereCollider.center, sphereCollider.radius);
     }
 
-    public void LevelUp()
+    public int GetXpRequiredForNextLevel()
+    {
+        return 100;
+    }
+
+    internal void GiveXp(int xp)
+    {
+        experience += xp;
+
+        if (experience >= GetXpRequiredForNextLevel())
+        {
+            experience -= GetXpRequiredForNextLevel();
+            LevelUp();
+        }
+    }
+
+    public virtual void LevelUp()
     {
         level++;
-        attributePoints++;
         perkPoints++;
-        statsChangedEvent.Invoke(this, EventArgs.Empty);
+        statsChangedEvent?.Invoke(this, EventArgs.Empty);
+
+        GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus);
+
+
+        int gritPrev = Grit;
+        int powerPrev = Power;
+        int reflexPrev = Reflex;
+        int focusPrev = Focus;
+        int speedPrev = Speed;
+        int pointsPrev = attributePoints;
+
+        GritBonus += gritPlus;
+        PowerBonus += powerPlus;
+        ReflexBonus += reflexPlus;
+        FocusBonus += focusPlus;
+        SpeedBonus += speedPlus;
+        attributePoints += pointsPlus;
+
+        LevelUpScreen.instance.Popup(this, gritPrev, powerPrev, reflexPrev, focusPrev, speedPrev, pointsPrev);
 
         FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
         floatingText.Setup("LEVEL UP!", Color.yellow);
+
+        
+    }
+
+    protected virtual void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus)
+    {
+        gritPlus = 0;
+        powerPlus = 0;
+        reflexPlus = 0;
+        focusPlus = 0;
+        speedPlus = 0;
+        pointsPlus = 0;
+
+        switch ((int)UnityEngine.Random.Range(0, 4.999f))
+        {
+            case 0:
+                gritPlus++;
+                break;
+            case 1:
+                powerPlus++;
+                break;
+            case 2:
+                reflexPlus++;
+                break;
+            case 3:
+                focusPlus++;
+                break;
+            case 4:
+                speedPlus++;
+                break;
+        }
+
+        pointsPlus++;
     }
 
     public int GetModifiedGrit()
     {
-        return GritBonus;
+        return Grit;
     }
 
     public int GetModifiedPower()
@@ -642,9 +784,9 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public void SeekPosition()
+    public void SeekPosition(bool localAvoidance = true)
     {
-        Vector3 seek = Seek();
+        Vector3 seek = Seek(localAvoidance);
         Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
         Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
 
@@ -660,7 +802,7 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public void SeekUnit()
+    public void SeekUnit(bool localAvoidance = true)
     {
         Vehicle targetVehicle = targetTransform.GetComponentInParent<Vehicle>();
         Assert.IsNotNull(targetVehicle);
@@ -670,11 +812,11 @@ public abstract class Farmon : Vehicle
         float d = Vector3.Distance(transform.position, targetVehicle.transform.position);
         if (d > sphereCollider.radius + targetVehicle.sphereCollider.radius + 0.15f)
         {
-            seek = Seek();
+            seek = Seek(localAvoidance);
         }
         else
         {
-            seek = new Vector3();
+            seek = Vector3.zero;
         }
         Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
         Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
@@ -691,9 +833,9 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public void FollowPath(Path path)
+    public void FollowPath(Path path, bool localAvoidance = true)
     {
-        Vector3 seekPath = SeekPath(path);
+        Vector3 seekPath = SeekPath(path, localAvoidance);
         Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
         Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
 
@@ -709,9 +851,9 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public void Arrive()
+    public void Arrive(bool localAvoidance = true)
     {
-        Vector3 arrive = Arrive(Mathf.Sqrt(maxSpeed) / 2);
+        Vector3 arrive = Arrive(localAvoidance, Mathf.Sqrt(maxSpeed) / 2);
         Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
         Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
 
@@ -810,7 +952,9 @@ public class FollowPathState : StateMachineState
 
             GridSpace myGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(myPoint, gridSize));
             GridSpace targetGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(targetPoint, gridSize));
-            path = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, farmon.canJump, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
+
+            farmon.perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
+            path = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, jumpAbility, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
 
             jump = ShouldJumpForNextLink();
         }
@@ -1269,10 +1413,7 @@ public class HitStopState2 : StateMachineState
         base.Enter();
         farmon.rb.AddForce(bounceVector, ForceMode.Impulse);
 
-        FloatingText floatingText = Farmon.Instantiate(FarmonController.instance.FloatingTextPrefab, farmon.transform.position, Quaternion.identity).GetComponent<FloatingText>();
-        floatingText.Setup(damage.ToString(), Color.red);
-
-        if(damage > farmon.MaxHealth / 10)
+        if (damage > farmon.MaxHealth / 10)
         {
             farmon.Hud.AudioSource.clip = FarmonController.instance.HitSound2;
             farmon.Hud.AudioSource.volume = .3f;
@@ -1280,6 +1421,7 @@ public class HitStopState2 : StateMachineState
         }
 
         farmon.ChangeHeath(-damage);
+        farmon.MakeDamageNumber(damage);
     }
 
     public override void Tick()
@@ -1350,7 +1492,7 @@ public class DieState : StateMachineState
 
         if (dieTimer.Tick(Time.deltaTime))
         {
-            GameObject.Destroy(farmon.gameObject);
+            farmon.gameObject.SetActive(false);
             return;
         }
 

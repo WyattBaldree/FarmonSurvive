@@ -8,4 +8,13 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Hill.unity
     guid: 2cda990e2423bbf4892e6590ba056729
+  - enabled: 1
+    path: Assets/Scenes/StartingScene.unity
+    guid: 75c6260621f72a4469b07e622c67488a
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 0e4820770e8eb574996432538c163e26
+  - enabled: 1
+    path: Assets/Scenes/PersistentScene.unity
+    guid: bd505c9b020d67045bb72d68092caec9
   m_configObjects: {}

@@ -22,7 +22,13 @@ public class Scrimp : Farmon
         fireBall.knockBack = 4;
         fireBall.hitStunTime = .15f;
         fireBall.OnHitDelegate = (unit) => {
-            unit.EffectList.AddEffect(new Effect("burn;3;4"));
+            perkList.TryGetValue(new PerkFiendFire().PerkName, out int fiendFireAbility);
+
+            if (fiendFireAbility > 0)
+            {
+                int fireDamage = 3 * fiendFireAbility;
+                unit.EffectList.AddEffect(new Effect("burn;" + fireDamage + ";4"));
+            }
         };
         fireBall.owner = this;
         fireBall.team = team;
@@ -45,5 +51,31 @@ public class Scrimp : Farmon
     public override float AttackTime()
     {
         return 6f - GetModifiedFocus() / 30f - GetModifiedSpeed() / 30f;
+    }
+
+    public override void LevelUp()
+    {
+        base.LevelUp();
+
+        switch (level)
+        {
+            case 2:
+                AddPerk(new PerkFiendFire());
+                break;
+        }
+    }
+
+    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus)
+    {
+        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out reflexPlus, out focusPlus, out speedPlus, out pointsPlus);
+
+        if(level%2 == 0)
+        {
+            powerPlus++;
+        }
+        else
+        {
+            reflexPlus++;
+        }
     }
 }

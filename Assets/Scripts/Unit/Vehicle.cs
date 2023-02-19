@@ -12,7 +12,7 @@ public class Vehicle : MonoBehaviour
 
     [HideInInspector]
     public Transform targetTransform;
-    [HideInInspector]
+    
     public SphereCollider sphereCollider;
 
     float startingRadius;
@@ -111,10 +111,12 @@ public class Vehicle : MonoBehaviour
         rb.velocity = new Vector3(v.x, rb.velocity.y, v.z);
     }
 
-    public Vector3 Seek()
+    public Vector3 Seek(bool localAvoidance = true)
     {
         Vector3 desired = GetDesiredVelocity();
 
+        if (localAvoidance) desired = LocalAvoidance(desired);
+
         Vector3 steer = desired - rb.velocity;
         steer.y = 0;
 
@@ -123,10 +125,12 @@ public class Vehicle : MonoBehaviour
         return steer;
     }
 
-    public Vector3 Seek(Vector3 position)
+    public Vector3 Seek(Vector3 position, bool localAvoidance = true)
     {
         Vector3 desired = GetDesiredVelocity(position);
 
+        if (localAvoidance) desired = LocalAvoidance(desired);
+
         Vector3 steer = desired - rb.velocity;
         steer.y = 0;
 
@@ -135,7 +139,7 @@ public class Vehicle : MonoBehaviour
         return steer;
     }
 
-    public Vector3 SeekPath(Path path)
+    public Vector3 SeekPath(Path path, bool localAvoidance = true)
     {
         if(path.nodeList.Count < 1)
         {
@@ -145,6 +149,8 @@ public class Vehicle : MonoBehaviour
         Vector3 targetPoint = H.Flatten(path.PeekNode().GridSpace.Center);
 
         Vector3 desired = GetDesiredVelocity(targetPoint, true);
+
+        if(localAvoidance) desired = LocalAvoidance(desired);
 
         Vector3 currentPosition = H.Flatten(transform.position);
 
@@ -210,7 +216,7 @@ public class Vehicle : MonoBehaviour
         }
     }
 
-    protected Vector3 Arrive(float arriveDistance = -1)
+    protected Vector3 Arrive(bool localAvoidance = true, float arriveDistance = -1)
     {
         if (arriveDistance == -1) arriveDistance = maxSpeed / 2;
 
@@ -227,6 +233,8 @@ public class Vehicle : MonoBehaviour
         {
             desired *= maxSpeed;
         }
+
+        if (localAvoidance) desired = LocalAvoidance(desired);
 
         Vector3 steer = desired - rb.velocity;
         steer.y = 0;
@@ -386,6 +394,20 @@ public class Vehicle : MonoBehaviour
         }
 
         return Vector3.zero;
+    }
+
+    protected Vector3 LocalAvoidance(Vector3 intendedMove)
+    {
+        bool HittingOtherFarmon = Physics.SphereCast(transform.position + sphereCollider.center, sphereCollider.radius, intendedMove.normalized, out RaycastHit hitInfo, sphereCollider.radius, LayerMask.GetMask("Farmon"));
+
+        if (HittingOtherFarmon)
+        {
+            Vector3 rotatedIntendedMove = Quaternion.Euler(0, 90, 0) * intendedMove;
+
+            return rotatedIntendedMove;
+        }
+
+        return intendedMove;
     }
 
     protected Vector3 SoftSeperate(List<Vehicle> vehicles, float desiredSeparation, float scale = 4)

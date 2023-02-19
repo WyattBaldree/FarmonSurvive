@@ -54,7 +54,6 @@ public class Player : MonoBehaviour
 
     protected void Awake()
     {
-        DontDestroyOnLoad(gameObject);
         Assert.IsNull(instance, "There should only ever be one player.");
         instance = this;
         SaveController.LoadPlayer();
@@ -287,6 +286,11 @@ public class Player : MonoBehaviour
                     }
                 }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            if(selectionList.Count > 0 && selectionList[0]) StatsScreen.instance.TargetUnit = selectionList[0];
         }
     }
 }

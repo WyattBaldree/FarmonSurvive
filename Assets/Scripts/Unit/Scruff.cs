@@ -84,6 +84,6 @@ public class ScruffTackleState : StateMachineState
 
         farmon.maxSpeed = (farmon.GetMovementSpeed() + 2) * 3;
 
-        farmon.SeekUnit();
+        farmon.SeekUnit(false);
     }
 }

@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Galeon : Enemy
+public class Galeon : Farmon
 {
     [SerializeField]
     GameObject tornadoPrefab;
