@@ -7,11 +7,9 @@ public class HoverForInfo : MonoBehaviour, IPointerEnterHandler
 {
     public InfoBox infoBox;
 
-    [SerializeField]
-    string plateText;
+    public string plateText;
 
-    [SerializeField]
-    string descriptionText;
+    public string descriptionText;
 
     public void OnPointerEnter(PointerEventData eventData)
     {

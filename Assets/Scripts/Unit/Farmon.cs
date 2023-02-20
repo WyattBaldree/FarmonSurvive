@@ -33,6 +33,7 @@ public abstract class Farmon : Vehicle
 
     public string farmonName = "Unit";
     public string nickname = "";
+    public string Description = "Default description.";
     public int level = 1;
     public int experience = 0;
     public bool canJump = false;
@@ -177,31 +178,31 @@ public abstract class Farmon : Vehicle
     }
     #endregion
 
-    #region Reflex
-    public int Reflex
+    #region Agility
+    public int Agility
     {
-        get => ReflexBase + ReflexBonus;
+        get => AgilityBase + AgilityBonus;
     }
 
-    public int ReflexBase = 10;
+    public int AgilityBase = 10;
 
     [SerializeField, HideInInspector]
-    int reflexBonus = 0;
-    public int ReflexBonus
+    int agilityBonus = 0;
+    public int AgilityBonus
     {
-        get => reflexBonus;
+        get => agilityBonus;
         set
         {
-            if (ReflexBase + value > StatMax)
+            if (AgilityBase + value > StatMax)
             {
-                int dif = ReflexBase + value - StatMax;
-                reflexBonus = value - dif;
+                int dif = AgilityBase + value - StatMax;
+                agilityBonus = value - dif;
 
                 attributePoints += dif;
             }
             else
             {
-                reflexBonus = value;
+                agilityBonus = value;
             }
 
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
@@ -241,31 +242,31 @@ public abstract class Farmon : Vehicle
     }
     #endregion
 
-    #region Speed
-    public int Speed
+    #region Luck
+    public int Luck
     {
-        get => SpeedBase + SpeedBonus;
+        get => LuckBase + LuckBonus;
     }
 
-    public int SpeedBase = 10;
+    public int LuckBase = 10;
 
     [SerializeField, HideInInspector]
-    int speedBonus = 0;
-    public int SpeedBonus
+    int luckBonus = 0;
+    public int LuckBonus
     {
-        get => speedBonus;
+        get => luckBonus;
         set
         {
-            if (SpeedBase + value > StatMax)
+            if (LuckBase + value > StatMax)
             {
-                int dif = SpeedBase + value - StatMax;
-                speedBonus = value - dif;
+                int dif = LuckBase + value - StatMax;
+                luckBonus = value - dif;
 
                 attributePoints += dif;
             }
             else
             {
-                speedBonus = value;
+                luckBonus = value;
             }
 
             statsChangedEvent?.Invoke(this, EventArgs.Empty);
@@ -337,14 +338,14 @@ public abstract class Farmon : Vehicle
     {
         GritBonus = gritBonus;
         PowerBonus = powerBonus;
-        ReflexBonus = reflexBonus;
+        AgilityBonus = agilityBonus;
         FocusBonus = focusBonus;
-        SpeedBonus = speedBonus;
+        LuckBonus = luckBonus;
     }
 
     public virtual float GetMovementSpeed()
     {
-        return 3 + Speed / 6;
+        return 3 + Agility / 6;
     }
 
     protected override void Awake()
@@ -519,7 +520,7 @@ public abstract class Farmon : Vehicle
 
     public bool TakeDamage(int damage, Vector3 knockBackDirection, Farmon owner, float hitStopTime = 0.3f, float knockBack = 5f, bool undodgeable = false)
     {        
-        if(!undodgeable && UnityEngine.Random.value < Reflex / 100f)
+        if(!undodgeable && UnityEngine.Random.value < Agility / 100f)
         {
             //Get the dodge direction
             Vector3 dodgeDirection;
@@ -645,24 +646,24 @@ public abstract class Farmon : Vehicle
         perkPoints++;
         statsChangedEvent?.Invoke(this, EventArgs.Empty);
 
-        GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus);
+        GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus);
 
 
         int gritPrev = Grit;
         int powerPrev = Power;
-        int reflexPrev = Reflex;
+        int agilityPrev = Agility;
         int focusPrev = Focus;
-        int speedPrev = Speed;
+        int luckPrev = Luck;
         int pointsPrev = attributePoints;
 
         GritBonus += gritPlus;
         PowerBonus += powerPlus;
-        ReflexBonus += reflexPlus;
+        AgilityBonus += agilityPlus;
         FocusBonus += focusPlus;
-        SpeedBonus += speedPlus;
+        LuckBonus += luckPlus;
         attributePoints += pointsPlus;
 
-        LevelUpScreen.instance.Popup(this, gritPrev, powerPrev, reflexPrev, focusPrev, speedPrev, pointsPrev);
+        LevelUpScreen.instance.Popup(this, gritPrev, powerPrev, agilityPrev, focusPrev, luckPrev, pointsPrev);
 
         FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
         floatingText.Setup("LEVEL UP!", Color.yellow);
@@ -670,13 +671,13 @@ public abstract class Farmon : Vehicle
         
     }
 
-    protected virtual void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus)
+    protected virtual void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
     {
         gritPlus = 0;
         powerPlus = 0;
-        reflexPlus = 0;
+        agilityPlus = 0;
         focusPlus = 0;
-        speedPlus = 0;
+        luckPlus = 0;
         pointsPlus = 0;
 
         switch ((int)UnityEngine.Random.Range(0, 4.999f))
@@ -688,13 +689,13 @@ public abstract class Farmon : Vehicle
                 powerPlus++;
                 break;
             case 2:
-                reflexPlus++;
+                agilityPlus++;
                 break;
             case 3:
                 focusPlus++;
                 break;
             case 4:
-                speedPlus++;
+                luckPlus++;
                 break;
         }
 
@@ -711,9 +712,9 @@ public abstract class Farmon : Vehicle
         return Power;
     }
 
-    public int GetModifiedReflex()
+    public int GetModifiedAgility()
     {
-        return Reflex;
+        return Agility;
     }
 
     public int GetModifiedFocus()
@@ -721,9 +722,9 @@ public abstract class Farmon : Vehicle
         return Focus;
     }
 
-    public int GetModifiedSpeed()
+    public int GetModifiedLuck()
     {
-        return Speed;
+        return Luck;
     }
 
     public void MovementIdle()
@@ -805,7 +806,11 @@ public abstract class Farmon : Vehicle
     public void SeekUnit(bool localAvoidance = true)
     {
         Vehicle targetVehicle = targetTransform.GetComponentInParent<Vehicle>();
-        Assert.IsNotNull(targetVehicle);
+
+        if (!targetVehicle)
+        {
+            return;
+        }
 
         Vector3 seek;
 

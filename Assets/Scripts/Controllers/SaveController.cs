@@ -18,9 +18,9 @@ public class FarmonSaveData
     // bonus Stats
     public int GritBonus;
     public int PowerBonus;
-    public int ReflexBonus;
+    public int AgilityBonus;
     public int FocusBonus;
-    public int SpeedBonus;
+    public int LuckBonus;
 
     // Level and experience
     public int Level;
@@ -47,9 +47,9 @@ public class FarmonSaveData
 
         GritBonus = farmon.GritBonus;
         PowerBonus = farmon.PowerBonus;
-        ReflexBonus = farmon.ReflexBonus;
+        AgilityBonus = farmon.AgilityBonus;
         FocusBonus = farmon.FocusBonus;
-        SpeedBonus = farmon.SpeedBonus;
+        LuckBonus = farmon.LuckBonus;
 
         Level = farmon.level;
         experience = farmon.experience;
@@ -223,9 +223,9 @@ public class SaveController : MonoBehaviour
                       "\nAttribute Points: " + data.attributePoints +
                       "\n\nGrit Bonus: " + data.GritBonus +
                       "\nPower Bonus: " + data.PowerBonus +
-                      "\nReflex Bonus: " + data.ReflexBonus +
+                      "\nAgility Bonus: " + data.AgilityBonus +
                       "\nFocus Bonus: " + data.FocusBonus +
-                      "\nSpeed Bonus: " + data.SpeedBonus);
+                      "\nLuck Bonus: " + data.LuckBonus);
         }
 
         GameObject farmonPrefab = Resources.Load("Farmon/" + data.FarmonName) as GameObject;
@@ -240,9 +240,9 @@ public class SaveController : MonoBehaviour
 
         farmon.GritBonus = data.GritBonus;
         farmon.PowerBonus = data.PowerBonus;
-        farmon.ReflexBonus = data.ReflexBonus;
+        farmon.AgilityBonus = data.AgilityBonus;
         farmon.FocusBonus = data.FocusBonus;
-        farmon.SpeedBonus = data.SpeedBonus;
+        farmon.LuckBonus = data.LuckBonus;
 
         farmon.level = data.Level;
         farmon.experience = data.experience;

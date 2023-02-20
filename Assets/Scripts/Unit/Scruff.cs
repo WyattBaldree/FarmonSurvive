@@ -47,7 +47,21 @@ public class Scruff : Farmon
 
     public override float AttackTime()
     {
-        return 10f - GetModifiedSpeed()/8;
+        return 10f - GetModifiedAgility()/8;
+    }
+
+    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
+    {
+        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out agilityPlus, out focusPlus, out luckPlus, out pointsPlus);
+
+        if (level % 2 == 0)
+        {
+            powerPlus++;
+        }
+        else
+        {
+            agilityPlus++;
+        }
     }
 }
 

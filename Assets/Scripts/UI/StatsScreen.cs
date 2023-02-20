@@ -24,6 +24,12 @@ public class StatsScreen : MonoBehaviour
                 gameObject.SetActive(true);
 
                 UpdateStatsScreen(targetUnit, EventArgs.Empty);
+
+                infoBox.plateText.text = targetUnit.farmonName;
+                infoBox.SetText(targetUnit.farmonName, targetUnit.Description);
+
+                portraitHoverForInfo.plateText = targetUnit.farmonName;
+                portraitHoverForInfo.descriptionText = targetUnit.Description;
             }
             else
             {
@@ -43,12 +49,12 @@ public class StatsScreen : MonoBehaviour
     public Button gritUpgradeButton;
     public TextMeshProUGUI powerText;
     public Button powerUpgradeButton;
-    public TextMeshProUGUI reflexText;
-    public Button reflexUpgradeButton;
+    public TextMeshProUGUI agilityText;
+    public Button agilityUpgradeButton;
     public TextMeshProUGUI focusText;
     public Button focusUpgradeButton;
-    public TextMeshProUGUI speedText;
-    public Button speedUpgradeButton;
+    public TextMeshProUGUI luckText;
+    public Button luckUpgradeButton;
 
     public TextMeshProUGUI attributePointsText;
 
@@ -57,7 +63,13 @@ public class StatsScreen : MonoBehaviour
     public TextMeshProUGUI perkPointsText;
     public TextMeshProUGUI perkPointsList;
 
+    //InfoBox
+    [Header("InfoBox")]
+    [SerializeField]
+    InfoBox infoBox;
 
+    [SerializeField]
+    HoverForInfo portraitHoverForInfo;
 
     public void Awake()
     {
@@ -66,9 +78,9 @@ public class StatsScreen : MonoBehaviour
 
         gritUpgradeButton.onClick.AddListener(UpgradeGrit);
         powerUpgradeButton.onClick.AddListener(UpgradePower);
-        reflexUpgradeButton.onClick.AddListener(UpgradeReflex);
+        agilityUpgradeButton.onClick.AddListener(UpgradeAgility);
         focusUpgradeButton.onClick.AddListener(UpgradeFocus);
-        speedUpgradeButton.onClick.AddListener(UpgradeSpeed);
+        luckUpgradeButton.onClick.AddListener(UpgradeLuck);
     }
 
     private void Start()
@@ -95,12 +107,12 @@ public class StatsScreen : MonoBehaviour
         }
     }
 
-    private void UpgradeReflex()
+    private void UpgradeAgility()
     {
         if (targetUnit.attributePoints > 0)
         {
             targetUnit.attributePoints--;
-            targetUnit.ReflexBonus++;
+            targetUnit.AgilityBonus++;
         }
     }
 
@@ -113,12 +125,12 @@ public class StatsScreen : MonoBehaviour
         }
     }
 
-    private void UpgradeSpeed()
+    private void UpgradeLuck()
     {
         if (targetUnit.attributePoints > 0)
         {
             targetUnit.attributePoints--;
-            targetUnit.SpeedBonus++;
+            targetUnit.LuckBonus++;
         }
     }
 
@@ -183,18 +195,18 @@ public class StatsScreen : MonoBehaviour
             powerText.color = Color.white;
         }
 
-        reflexText.text = targetUnit.GetModifiedReflex().ToString();
-        if (targetUnit.GetModifiedReflex() > targetUnit.Reflex)
+        agilityText.text = targetUnit.GetModifiedAgility().ToString();
+        if (targetUnit.GetModifiedAgility() > targetUnit.Agility)
         {
-            reflexText.color = Color.green;
+            agilityText.color = Color.green;
         }
-        else if (targetUnit.GetModifiedReflex() < targetUnit.Reflex)
+        else if (targetUnit.GetModifiedAgility() < targetUnit.Agility)
         {
-            reflexText.color = Color.red;
+            agilityText.color = Color.red;
         }
         else
         {
-            reflexText.color = Color.white;
+            agilityText.color = Color.white;
         }
 
         focusText.text = targetUnit.GetModifiedFocus().ToString();
@@ -211,18 +223,18 @@ public class StatsScreen : MonoBehaviour
             focusText.color = Color.white;
         }
 
-        speedText.text = targetUnit.GetModifiedSpeed().ToString();
-        if (targetUnit.GetModifiedSpeed() > targetUnit.Speed)
+        luckText.text = targetUnit.GetModifiedLuck().ToString();
+        if (targetUnit.GetModifiedLuck() > targetUnit.Luck)
         {
-            speedText.color = Color.green;
+            luckText.color = Color.green;
         }
-        else if (targetUnit.GetModifiedSpeed() < targetUnit.Speed)
+        else if (targetUnit.GetModifiedLuck() < targetUnit.Luck)
         {
-            speedText.color = Color.red;
+            luckText.color = Color.red;
         }
         else
         {
-            speedText.color = Color.white;
+            luckText.color = Color.white;
         }
 
         attributePointsText.text = targetUnit.attributePoints.ToString();
@@ -230,9 +242,9 @@ public class StatsScreen : MonoBehaviour
         bool enableAttributeButtons = targetUnit.attributePoints > 0;
         gritUpgradeButton.gameObject.SetActive(enableAttributeButtons);
         powerUpgradeButton.gameObject.SetActive(enableAttributeButtons);
-        reflexUpgradeButton.gameObject.SetActive(enableAttributeButtons);
+        agilityUpgradeButton.gameObject.SetActive(enableAttributeButtons);
         focusUpgradeButton.gameObject.SetActive(enableAttributeButtons);
-        speedUpgradeButton.gameObject.SetActive(enableAttributeButtons);
+        luckUpgradeButton.gameObject.SetActive(enableAttributeButtons);
 
 
         perkPointsText.text = targetUnit.perkPoints.ToString();

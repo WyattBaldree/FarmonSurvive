@@ -7,7 +7,7 @@ using UnityEngine;
 public class InfoBox : MonoBehaviour
 {
     public TextMeshProUGUI plateText;
-    public TextMeshProUGUI descriptionText;
+    public DynamicText descriptionText;
 
     [SerializeField]
     string startingText;
@@ -15,6 +15,6 @@ public class InfoBox : MonoBehaviour
     internal void SetText(string newPlateText, string newDescriptionText)
     {
         plateText.text = newPlateText;
-        descriptionText.text = startingText + newDescriptionText;
+        descriptionText.SetText(startingText + newDescriptionText);
     }
 }

@@ -12,9 +12,9 @@ public class FarmonEditor : Editor
 
     SerializedProperty gritBonus;
     SerializedProperty powerBonus;
-    SerializedProperty reflexBonus;
+    SerializedProperty agilityBonus;
     SerializedProperty focusBonus;
-    SerializedProperty speedBonus;
+    SerializedProperty luckBonus;
 
     float statButtonWidth = 20;
     float statLabelValueWidth = 15;
@@ -26,9 +26,9 @@ public class FarmonEditor : Editor
     {
         gritBonus = serializedObject.FindProperty("gritBonus");
         powerBonus = serializedObject.FindProperty("powerBonus");
-        reflexBonus = serializedObject.FindProperty("reflexBonus");
+        agilityBonus = serializedObject.FindProperty("agilityBonus");
         focusBonus = serializedObject.FindProperty("focusBonus");
-        speedBonus = serializedObject.FindProperty("speedBonus");
+        luckBonus = serializedObject.FindProperty("luckBonus");
     }
 
     public override void OnInspectorGUI()
@@ -45,9 +45,9 @@ public class FarmonEditor : Editor
 
         CreateStatBlock("Grit",unit.GritBase, gritBonus, (u) => u.GritBonus, (u, i) => u.GritBonus = i); 
         CreateStatBlock("Power", unit.PowerBase, powerBonus, (u) => u.PowerBonus, (u, i) => u.PowerBonus = i);
-        CreateStatBlock("Reflex", unit.ReflexBase, reflexBonus, (u) => u.ReflexBonus, (u, i) => u.ReflexBonus = i);
+        CreateStatBlock("Agility", unit.AgilityBase, agilityBonus, (u) => u.AgilityBonus, (u, i) => u.AgilityBonus = i);
         CreateStatBlock("Focus", unit.FocusBase, focusBonus, (u) => u.FocusBonus, (u, i) => u.FocusBonus = i);
-        CreateStatBlock("Speed", unit.SpeedBase, speedBonus, (u) => u.SpeedBonus, (u, i) => u.SpeedBonus = i);
+        CreateStatBlock("Luck", unit.LuckBase, luckBonus, (u) => u.LuckBonus, (u, i) => u.LuckBonus = i);
 
         // Apply changes to the serializedProperty - always do this at the end of OnInspectorGUI.
 

@@ -5,9 +5,9 @@
   <Nickname />
   <GritBonus>1</GritBonus>
   <PowerBonus>0</PowerBonus>
-  <ReflexBonus>0</ReflexBonus>
+  <AgilityBonus>0</AgilityBonus>
   <FocusBonus>0</FocusBonus>
-  <SpeedBonus>0</SpeedBonus>
+  <LuckBonus>0</LuckBonus>
   <Level>1</Level>
   <experience>0</experience>
   <perkPoints>1</perkPoints>

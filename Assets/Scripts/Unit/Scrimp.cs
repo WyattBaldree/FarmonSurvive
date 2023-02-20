@@ -36,7 +36,7 @@ public class Scrimp : Farmon
         fireBall.HitSound = hitSound;
 
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
-        cv.velocity = unitToEnemy.normalized * (10f + Reflex/2f);
+        cv.velocity = unitToEnemy.normalized * (10f + Agility/2f);
         cv.ignoreGravity = false;
 
         //fireBall = Farmon.Instantiate(farmon.fireBallPrefab, farmon.transform.position, farmon.transform.rotation).GetComponent<Projectile>();
@@ -50,7 +50,7 @@ public class Scrimp : Farmon
 
     public override float AttackTime()
     {
-        return 6f - GetModifiedFocus() / 30f - GetModifiedSpeed() / 30f;
+        return 6f - GetModifiedFocus() / 30f - GetModifiedAgility() / 30f;
     }
 
     public override void LevelUp()
@@ -65,9 +65,9 @@ public class Scrimp : Farmon
         }
     }
 
-    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int reflexPlus, out int focusPlus, out int speedPlus, out int pointsPlus)
+    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
     {
-        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out reflexPlus, out focusPlus, out speedPlus, out pointsPlus);
+        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out agilityPlus, out focusPlus, out luckPlus, out pointsPlus);
 
         if(level%2 == 0)
         {
@@ -75,7 +75,7 @@ public class Scrimp : Farmon
         }
         else
         {
-            reflexPlus++;
+            agilityPlus++;
         }
     }
 }

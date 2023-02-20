@@ -54,7 +54,7 @@ public class DynamicText : MonoBehaviour
         defaultFontSize = fontSize;
         defaultReadDelay = readDelay;
 
-        UpdateGUI();
+        ResetText();
     }
 
     public void SetText(string str)
@@ -591,7 +591,7 @@ public class DynamicText : MonoBehaviour
         return lines.Count * (lineSpacing + fontSize) * transform.lossyScale.y;
     }
 
-    public void UpdateGUI()
+    public void ResetText()
     {
         defaultFontSize = fontSize;
         defaultReadDelay = readDelay;
@@ -628,7 +628,7 @@ public class EntryEditor : Editor
         DynamicText myScript = (DynamicText)target;
         if (GUILayout.Button("Update Text"))
         {
-            myScript.UpdateGUI();
+            myScript.ResetText();
         }
 
         if (GUILayout.Button("Skip Reading"))

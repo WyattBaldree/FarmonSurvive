@@ -57,9 +57,11 @@ MonoBehaviour:
   uniqueID: 0
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
-  healthBar: {fileID: 3749070670789246562}
+  healthBar: {fileID: 0}
   farmonName: Scrimp
   nickname: 
+  Description: Widely known for thier mischeivous behavior, Scrimps tend to lead
+    lonely lives.
   level: 1
   experience: 0
   canJump: 0
@@ -246,14 +248,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
   m_PrefabInstance: {fileID: 4814722021979009721}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3749070670789246562 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8563044669451488475, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4706a5585806b7d479f57915243ea200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

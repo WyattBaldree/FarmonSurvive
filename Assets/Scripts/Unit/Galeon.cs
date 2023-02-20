@@ -43,7 +43,7 @@ public class Galeon : Farmon
         unitToEnemy = Vector3.ProjectOnPlane(unitToEnemy, Vector3.up).normalized;
 
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
-        cv.velocity = unitToEnemy.normalized * (5f + Reflex/10f);
+        cv.velocity = unitToEnemy.normalized * (5f + Agility/10f);
         cv.ignoreGravity = true;
 
         AttackComplete();
@@ -51,7 +51,7 @@ public class Galeon : Farmon
 
     public override float AttackTime()
     {
-        return 9f - GetModifiedSpeed()/15;
+        return 9f - GetModifiedAgility()/15;
     }
 
     private void FireballHit()
@@ -88,7 +88,21 @@ public class Galeon : Farmon
             spiralOut.MaxSpeed = 6;
         }
 
-        
+
+    }
+
+    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
+    {
+        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out agilityPlus, out focusPlus, out luckPlus, out pointsPlus);
+
+        if (level % 2 == 0)
+        {
+            gritPlus++;
+        }
+        else
+        {
+            focusPlus++;
+        }
     }
 }
 

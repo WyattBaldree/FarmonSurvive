@@ -49,7 +49,7 @@ public class Projectile : MonoBehaviour
         if (audioSource && CreateSound)
         {
             audioSource.clip = CreateSound;
-            audioSource.volume = .4f;
+            audioSource.volume = .3f;
             audioSource.Play();
         }
     }
@@ -105,13 +105,13 @@ public class Projectile : MonoBehaviour
                     if (destroyed && DestroySound)
                     {
                         audioSource.clip = HitSound;
-                        audioSource.volume = .4f;
+                        audioSource.volume = .3f;
                         audioSource.Play();
                     }
                     else if (HitSound)
                     {
                         audioSource.clip = HitSound;
-                        audioSource.volume = .4f;
+                        audioSource.volume = .3f;
                         audioSource.Play();
                     }
                 }

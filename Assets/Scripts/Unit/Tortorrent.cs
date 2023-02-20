@@ -56,6 +56,20 @@ public class Tortorrent : Farmon
         base.AttackComplete();
         HitStopSelf(hitStunTime);
     }
+
+    protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
+    {
+        base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out agilityPlus, out focusPlus, out luckPlus, out pointsPlus);
+
+        if (level % 2 == 0)
+        {
+            gritPlus++;
+        }
+        else
+        {
+            agilityPlus++;
+        }
+    }
 }
 
 public class TorrentSpinChargeState : StateMachineState
@@ -78,7 +92,7 @@ public class TorrentSpinChargeState : StateMachineState
 
         tortorrent.targetTransform = tortorrent.attackTarget.transform;
 
-        chargeTimer.SetTime(2f - tortorrent.Speed/Farmon.StatMax);
+        chargeTimer.SetTime(2f - tortorrent.Agility/Farmon.StatMax);
         flipTimer.SetTime(.001f);
 
         tortorrent.ImmuneToHitStop = true;
@@ -166,7 +180,7 @@ public class TorrentSpinAttackState : StateMachineState
         timeoutTimer.SetTime(4f);
 
         farmon.Hud.AudioSource.clip = FarmonController.instance.DashSound;
-        farmon.Hud.AudioSource.volume = .4f;
+        farmon.Hud.AudioSource.volume = .2f;
         farmon.Hud.AudioSource.Play();
 
         farmon.ImmuneToHitStop = true;

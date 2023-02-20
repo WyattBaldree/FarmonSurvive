@@ -10,13 +10,16 @@ public class LevelUpScreen : MonoBehaviour
     public static LevelUpScreen instance;
 
     [SerializeField]
-    TextMeshProUGUI gritText, powerText, reflexText, focusText, speedText, pointsText, levelText;
+    TextMeshProUGUI gritText, powerText, agilityText, focusText, luckText, pointsText, levelText;
 
     [SerializeField]
     Image farmonPortrait;
 
     [SerializeField]
     AudioSource audioSource;
+
+    [SerializeField]
+    DynamicText textBox;
 
     Farmon targetFarmon;
 
@@ -36,7 +39,7 @@ public class LevelUpScreen : MonoBehaviour
         gameObject.SetActive(false);
     }
 
-    public void Popup(Farmon farmon, int gritPrev, int powerPrev, int reflexPrev, int focusPrev, int speedPrev, int pointsPrev)
+    public void Popup(Farmon farmon, int gritPrev, int powerPrev, int agilityPrev, int focusPrev, int luckPrev, int pointsPrev)
     {
         targetFarmon = farmon;
 
@@ -48,12 +51,14 @@ public class LevelUpScreen : MonoBehaviour
 
         gritText.text = StatChangeString(gritPrev, farmon.Grit);
         powerText.text = StatChangeString(powerPrev, farmon.Power);
-        reflexText.text = StatChangeString(reflexPrev, farmon.Reflex);
+        agilityText.text = StatChangeString(agilityPrev, farmon.Agility);
         focusText.text = StatChangeString(focusPrev, farmon.Focus);
-        speedText.text = StatChangeString(speedPrev, farmon.Speed);
+        luckText.text = StatChangeString(luckPrev, farmon.Luck);
         pointsText.text = StatChangeString(pointsPrev, farmon.attributePoints);
 
         levelText.text = "Level " + targetFarmon.level;
+
+        textBox.SetText(farmon.nickname + " has reached level <color.yellow>" + farmon.level + "<default>!");
     }
 
     private string StatChangeString(int statOld, int statNew)
