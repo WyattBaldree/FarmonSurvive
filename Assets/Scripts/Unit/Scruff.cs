@@ -63,6 +63,11 @@ public class Scruff : Farmon
             agilityPlus++;
         }
     }
+
+    public override void DistributeLevelUpPerks()
+    {
+
+    }
 }
 
 public class ScruffTackleState : StateMachineState

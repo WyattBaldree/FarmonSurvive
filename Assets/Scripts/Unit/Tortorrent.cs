@@ -70,6 +70,11 @@ public class Tortorrent : Farmon
             agilityPlus++;
         }
     }
+
+    public override void DistributeLevelUpPerks()
+    {
+
+    }
 }
 
 public class TorrentSpinChargeState : StateMachineState

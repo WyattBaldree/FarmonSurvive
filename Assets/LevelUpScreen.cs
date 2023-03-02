@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class LevelUpScreen : MonoBehaviour
+public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
 {
     public static LevelUpScreen instance;
 
@@ -65,7 +66,7 @@ public class LevelUpScreen : MonoBehaviour
     {
         if (statOld != statNew)
         {
-            return statOld + "->" + statNew;
+            return statOld + ">" + statNew;
         }
         else
         {
@@ -76,6 +77,7 @@ public class LevelUpScreen : MonoBehaviour
     public void Close()
     {
         gameObject.SetActive(false);
+        targetFarmon.DistributeLevelUpPerks();
     }
 
     private void Update()
@@ -93,5 +95,17 @@ public class LevelUpScreen : MonoBehaviour
         }
 
         return s;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (textBox.reading)
+        {
+            textBox.SkipReading();
+        }
+        else
+        {
+            Close();
+        }
     }
 }

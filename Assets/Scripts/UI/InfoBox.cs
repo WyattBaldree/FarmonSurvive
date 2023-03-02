@@ -14,7 +14,7 @@ public class InfoBox : MonoBehaviour
 
     internal void SetText(string newPlateText, string newDescriptionText)
     {
-        plateText.text = newPlateText;
+        if(plateText) plateText.text = newPlateText;
         descriptionText.SetText(startingText + newDescriptionText);
     }
 }

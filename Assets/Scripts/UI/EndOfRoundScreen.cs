@@ -128,7 +128,7 @@ public class EndOfRoundScreen : MonoBehaviour
             return;
         }
 
-        if (LevelUpScreen.instance.gameObject.activeSelf)
+        if (LevelUpScreen.instance.gameObject.activeSelf || PerkSelectionScreen.instance.gameObject.activeSelf)
         {
             return;
         }
@@ -184,7 +184,7 @@ public class EndOfRoundScreen : MonoBehaviour
         int totalXP = 0;
         for (int i = 0; i < caller.FarmonTeam2.Count; i++)
         {
-            totalXP += caller.FarmonTeam2[i].level * 10;
+            totalXP += caller.FarmonTeam2[i].level * 40;
         }
 
         return totalXP;

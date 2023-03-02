@@ -104,6 +104,11 @@ public class Galeon : Farmon
             focusPlus++;
         }
     }
+
+    public override void DistributeLevelUpPerks()
+    {
+        
+    }
 }
 
 

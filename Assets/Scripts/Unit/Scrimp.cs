@@ -53,14 +53,21 @@ public class Scrimp : Farmon
         return 6f - GetModifiedFocus() / 30f - GetModifiedAgility() / 30f;
     }
 
-    public override void LevelUp()
+    public override void DistributeLevelUpPerks()
     {
-        base.LevelUp();
-
         switch (level)
         {
             case 2:
-                AddPerk(new PerkFiendFire());
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire() });
+                break;
+            case 6:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFlameAspect() });
+                break;
+            case 10:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFrenzy(), new PerkSecretStash() });
+                break;
+            case 14:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkForked() });
                 break;
         }
     }

@@ -42,6 +42,8 @@ public class FarmonController : MonoBehaviour
     {
         Assert.IsNull(instance, "There should only be one FarmonController");
         instance = this;
+
+        Perk.CreatePerks();
     }
 
     private void OnDestroy()

@@ -60,8 +60,7 @@ public class StatsScreen : MonoBehaviour
 
     //Perks
     [Header("Perks")]
-    public TextMeshProUGUI perkPointsText;
-    public TextMeshProUGUI perkPointsList;
+    public PerkList perkList;
 
     //InfoBox
     [Header("InfoBox")]
@@ -247,16 +246,6 @@ public class StatsScreen : MonoBehaviour
         luckUpgradeButton.gameObject.SetActive(enableAttributeButtons);
 
 
-        perkPointsText.text = targetUnit.perkPoints.ToString();
-
-        string s = "";
-        foreach(var perk in targetUnit.perkList)
-        {
-            if(perk.Value > 0)
-            {
-                s += perk.Key + " " + perk.Value + "\n";
-            }
-        }
-        perkPointsList.text = s;
+        perkList.GeneratePerkList(targetUnit, infoBox);
     }
 }

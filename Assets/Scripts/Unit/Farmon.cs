@@ -667,9 +667,9 @@ public abstract class Farmon : Vehicle
 
         FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
         floatingText.Setup("LEVEL UP!", Color.yellow);
-
-        
     }
+
+    public abstract void DistributeLevelUpPerks();
 
     protected virtual void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
     {

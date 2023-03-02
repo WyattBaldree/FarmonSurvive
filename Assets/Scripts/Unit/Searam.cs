@@ -31,6 +31,11 @@ public class Searam : Farmon
             agilityPlus++;
         }
     }
+
+    public override void DistributeLevelUpPerks()
+    {
+
+    }
 }
 
 public class JumpState : StateMachineState

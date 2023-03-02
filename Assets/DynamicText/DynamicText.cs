@@ -9,6 +9,8 @@ using UnityEngine.Events;
 
 public class DynamicText : MonoBehaviour
 {
+    public static List<DynamicText> dynamicTextList = new List<DynamicText>();
+
     public enum HorizontalAlignmentEnum { left, middle, right };
     public enum VerticalAlignmentEnum { bottom, middle, top };
 
@@ -25,7 +27,11 @@ public class DynamicText : MonoBehaviour
     public string text;
     public bool readText = true;
     public float readDelay = 0.2f;
+    //How many characters need to be read in order to trigger the character noise.
+    public int readSoundInterval = 1;
     public AudioClip readSound;
+
+    private int readSoundIntervalCurrent = 0;
 
     [HideInInspector]
     public bool reading = false;
@@ -44,10 +50,27 @@ public class DynamicText : MonoBehaviour
     private float defaultFontSize;
     private float defaultReadDelay;
     private int readProgress = 0;
+    char prevChar = ' ';
     private AudioSource audioSource;
 
+    bool initialized = false;
+
+    private void Awake()
+    {
+        dynamicTextList.Add(this);
+    }
+
+    private void OnDestroy()
+    {
+        dynamicTextList.Remove(this);
+    }
 
     private void Start()
+    {
+        if (!initialized) Initialize();
+    }
+
+    void Initialize()
     {
         audioSource = GetComponent<AudioSource>();
         Assert.IsNotNull(audioSource, "Missing AudioSource component.");
@@ -55,6 +78,13 @@ public class DynamicText : MonoBehaviour
         defaultReadDelay = readDelay;
 
         ResetText();
+
+        initialized = true;
+    }
+
+    private void OnEnable()
+    {
+        if (!initialized) Initialize();
     }
 
     public void SetText(string str)
@@ -96,12 +126,20 @@ public class DynamicText : MonoBehaviour
     {
         HideContainers();
 
+        readSoundIntervalCurrent = 0;
         readProgress = 0;
         RestartCoroutine(ref readCouroutine, ReadText());
     }
 
     IEnumerator ReadText()
     {
+        foreach(DynamicText dt in dynamicTextList)
+        {
+            if (dt == this) continue;
+
+            if(dt.reading) dt.SkipReading();
+        }
+
         reading = true;
         while (true)
         {
@@ -111,7 +149,18 @@ public class DynamicText : MonoBehaviour
 
             if (containers[readProgress] != null) containers[readProgress].gameObject.SetActive(true);
             bool isSpace = containers[readProgress].textMesh.text == " ";
-            if(readSound && !isSpace) audioSource.PlayOneShot(readSound);
+            readSoundIntervalCurrent--;
+
+            if (readSound && !isSpace && readSoundIntervalCurrent <= 0)
+            {
+                readSoundIntervalCurrent = readSoundInterval;
+                audioSource.pitch = 1 + (.1f * UnityEngine.Random.Range(-1f, 1f));
+                audioSource.PlayOneShot(readSound);
+            }
+
+            //After a space, always make a sound regardless of the read sound interval.
+            if (isSpace) readSoundIntervalCurrent = 0;
+
             readProgress++;
         }
         reading = false;
@@ -164,6 +213,7 @@ public class DynamicText : MonoBehaviour
 
         containers = new List<CharacterContainer>();
 
+        prevChar = ' ';
         char[] cArray = text.ToCharArray();
 
         List<CharacterContainer> newList = new List<CharacterContainer>();
@@ -330,10 +380,28 @@ public class DynamicText : MonoBehaviour
                 tm.fontStyle = FontStyles.Normal;
             }
 
-            newChar.readDelay = readDelay;
+            float finalReadDelay = readDelay;
+
+            if(i > 0)
+            {
+                if(prevChar == '.' || prevChar == '?' || prevChar == '!')
+                {
+                    finalReadDelay *= 30;
+                }
+                else if(prevChar == ',')
+                {
+                    finalReadDelay *= 13;
+                }
+            }
+
+            finalReadDelay += readDelay / 10 * UnityEngine.Random.Range(-1, 0);
+
+            newChar.readDelay = finalReadDelay;
 
             newList.Add(newChar);
             tm.ForceMeshUpdate();
+
+            prevChar = c;
         }
 
         containers = newList;

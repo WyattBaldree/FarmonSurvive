@@ -58,7 +58,7 @@ public class FarmonSaveData
 
         foreach(var perk in farmon.perkList)
         {
-            perks.Add(perk.Key + " " + perk.Value);
+            perks.Add(perk.Key + ":" + perk.Value);
         }
     }
 }
@@ -251,7 +251,7 @@ public class SaveController : MonoBehaviour
 
         foreach(string perkString in data.perks)
         {
-            string[] perkStringSplit = perkString.Split(" ");
+            string[] perkStringSplit = perkString.Split(":");
 
             farmon.perkList[perkStringSplit[0]] = int.Parse(perkStringSplit[1]);
         }
