@@ -77,13 +77,13 @@ public class FarmonEditor : Editor
 
             if (GUILayout.Button("Save Player Farmon"))
             {
-                Player.instance.FarmonSquadIds[0] = SaveController.SaveFarmonPlayer(unit);
+                Player.instance.FarmonSquadSaveIds[0] = SaveController.SaveFarmonPlayer(unit);
             }
             if (GUILayout.Button("Load Player Farmon"))
             {
-                if (Player.instance.FarmonSquadIds[0] != 0)
+                if (Player.instance.FarmonSquadSaveIds[0] != 0)
                 {
-                    SaveController.LoadFarmonPlayer(Player.instance.FarmonSquadIds[0]);
+                    SaveController.LoadFarmonPlayer(Player.instance.FarmonSquadSaveIds[0]);
                 }
             }
         }
@@ -94,7 +94,7 @@ public class FarmonEditor : Editor
         }
         if (GUILayout.Button("Load"))
         {
-            SaveController.LoadFarmon(saveName);
+            Farmon.ConstructFarmon(SaveController.LoadFarmon(saveName));
         }
 
         if (Application.isPlaying) serializedObject.Update();

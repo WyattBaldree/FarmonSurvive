@@ -9,11 +9,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4814722020933401932}
-  - component: {fileID: 819992706}
+  - component: {fileID: 3036889687281043701}
   - component: {fileID: 5560959815387225581}
   - component: {fileID: 5263220638264986268}
   m_Layer: 7
-  m_Name: Scrimp
+  m_Name: Screevil
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -35,7 +35,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &819992706
+--- !u!114 &3036889687281043701
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -44,7 +44,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4814722020933401929}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d35a9f3b194e2d446a044c0045a89d09, type: 3}
+  m_Script: {fileID: 11500000, guid: d728102fcdc1da848ad651ed5e228141, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   targetTransform: {fileID: 0}
@@ -58,40 +58,41 @@ MonoBehaviour:
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 0}
-  farmonName: Scrimp
+  loadedFarmonMapId: 0
+  farmonName: Screevil
   nickname: 
-  Description: Widely known for thier mischeivous behavior, Scrimps tend to lead
-    lonely lives.
+  Description: Most screevil give in to thier darker tendencies but those who are
+    shown compassion develop a profound sense of justice.
   level: 1
   experience: 0
   canJump: 0
   attributePoints: 1
   perkPoints: 1
-  MaxHealth: 20
+  MaxHealth: 30
   Selected: 0
   dead: 0
   attackReady: 0
   targetRange: 6
-  attackTarget: {fileID: 0}
-  protectTarget: {fileID: 0}
-  team: 1
+  attackTarget: 0
+  protectTarget: 0
+  team: 0
   LastFarmonToDamageMe: {fileID: 0}
   GridSpaceChangedEvent:
     m_PersistentCalls:
       m_Calls: []
   GridSpaceIndex: {x: 0, y: 0, z: 0}
-  GritBase: 2
+  GritBase: 4
   gritBonus: 0
-  PowerBase: 10
-  powerBonus: 0
-  AgilityBase: 6
+  PowerBase: 14
+  powerBonus: 4
+  AgilityBase: 8
   agilityBonus: 0
-  FocusBase: 10
+  FocusBase: 15
   focusBonus: 0
-  LuckBase: 6
+  LuckBase: 8
   luckBonus: 0
   debugColor: {r: 1, g: 1, b: 1, a: 1}
-  fireBallPrefab: {fileID: 3556518770851303680, guid: 6bdbd3c80504a7a4e95f854bc726e860, type: 3}
+  fireBallPrefab: {fileID: 3556518770851303680, guid: 2d012e90b35d6254590d293167682a1b, type: 3}
   shootSound: {fileID: 8300000, guid: e222777c0a2e580498e744afb371ca6f, type: 3}
   hitSound: {fileID: 8300000, guid: 03a6fd151475e434098feb542e5dfd80, type: 3}
 --- !u!54 &5560959815387225581
@@ -152,19 +153,39 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.05
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.05
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.05
+      value: 1.2
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.3499999
+      value: -0.35
+      objectReference: {fileID: 0}
+    - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.90984374
+      objectReference: {fileID: 0}
+    - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.16043
+      objectReference: {fileID: 0}
+    - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.3768696
+      objectReference: {fileID: 0}
+    - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.06645228
+      objectReference: {fileID: 0}
+    - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1486338535116342019, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Controller
@@ -177,7 +198,7 @@ PrefabInstance:
     - target: {fileID: 3079980324178878623, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: -126739719, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
+      objectReference: {fileID: 718799061, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
     - target: {fileID: 3360739913879493761, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -233,7 +254,23 @@ PrefabInstance:
     - target: {fileID: 7734417427859425006, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: bb972d2a5d344b84f92946a59e1601fe, type: 2}
+      objectReference: {fileID: 9100000, guid: 9d8eea1ac51ca8b4db7efbbcfa59962a, type: 2}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.90984374
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.16043
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.3768696
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563044669451488474, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.06645228
+      objectReference: {fileID: 0}
     - target: {fileID: 8563044670415558374, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalScale.x
       value: 1

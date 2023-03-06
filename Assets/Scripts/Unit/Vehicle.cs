@@ -57,17 +57,29 @@ public class Vehicle : MonoBehaviour
         vehicleList.Remove(this);
     }
     
-    public void SetSize(float newSize)
+    public void SetSize(float percent)
     {
         if (sphereCollider)
         {
-            sphereCollider.radius = startingRadius + (startingRadius * newSize / 40);
+            sphereCollider.radius = startingRadius + (startingRadius * percent);
         }
     }
+
+    protected bool initialized = false;
 
     // Start is called before the first frame update
     protected virtual void Start()
     {
+        if (!initialized)
+        {
+            Initialize();
+        }
+    }
+
+    public virtual void Initialize()
+    {
+        if (initialized) return;
+
         rb = GetComponent<Rigidbody>();
         Assert.IsNotNull(rb);
 
@@ -75,6 +87,8 @@ public class Vehicle : MonoBehaviour
         Assert.IsNotNull(sphereCollider);
 
         startingRadius = sphereCollider.radius;
+
+        initialized = true;
     }
 
     protected virtual void Update()

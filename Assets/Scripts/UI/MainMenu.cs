@@ -13,8 +13,8 @@ public class MainMenu : MonoBehaviour
     public void NewGame()
     {
         Player.instance.StoryProgress = 0;
-        Player.instance.FarmonSquadIds = new uint[Player.farmonPerTeam];
-        Player.instance.FarmonSquadIds[0] = 1;
+        Player.instance.FarmonSquadSaveIds = new uint[Player.farmonPerTeam];
+        Player.instance.FarmonSquadSaveIds[0] = 1;
         Player.instance.SaveName = "New Player";
         Player.instance.gameObject.SetActive(true);
         SceneManager.LoadScene("Hill");

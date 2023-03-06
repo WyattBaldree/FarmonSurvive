@@ -9,6 +9,8 @@ using UnityEngine.Events;
 public abstract class Farmon : Vehicle
 {
     public static List<Vehicle> farmonList = new List<Vehicle>();
+    public static Dictionary<uint, Farmon> loadedFarmonMap = new Dictionary<uint, Farmon>();
+    private static uint loadedFarmonMapCurrentIndex = 1;
     private static float followRange = 3;
 
     public static int StatMax = 40;
@@ -30,6 +32,8 @@ public abstract class Farmon : Vehicle
     public Bar healthBar;
 
     private StateMachine farmonStateMachine;
+
+    public uint loadedFarmonMapId = 0;
 
     public string farmonName = "Unit";
     public string nickname = "";
@@ -62,8 +66,8 @@ public abstract class Farmon : Vehicle
 
     public float targetRange = 5f;
 
-    public Farmon attackTarget;
-    public Farmon protectTarget;
+    public uint attackTarget;
+    public uint protectTarget;
 
     //Hover Highlight
     Highlight _hoverHighlight;
@@ -98,6 +102,92 @@ public abstract class Farmon : Vehicle
     [HideInInspector]
     private bool immuneToHitStop = false;
     public bool ImmuneToHitStop { get => immuneToHitStop; set => immuneToHitStop = value; }
+    public static GameObject ConstructFarmon(FarmonSaveData data, bool playerFarmon = false, Farmon farmonToReplace = null)
+    {
+        if (Debug.isDebugBuild)
+        {
+            Debug.Log("Loading data:" +
+                      "\nNickname: " + data.Nickname +
+                      "\nFarmon Name: " + data.FarmonName +
+                      "\n\nLevel: " + data.Level +
+                      "\nExperience: " + data.experience +
+                      "\nPerk Points: " + data.perkPoints +
+                      "\nAttribute Points: " + data.attributePoints +
+                      "\n\nGrit Bonus: " + data.GritBonus +
+                      "\nPower Bonus: " + data.PowerBonus +
+                      "\nAgility Bonus: " + data.AgilityBonus +
+                      "\nFocus Bonus: " + data.FocusBonus +
+                      "\nLuck Bonus: " + data.LuckBonus);
+        }
+
+        GameObject farmonPrefab = Resources.Load("Farmon/" + data.FarmonName) as GameObject;
+        GameObject farmonGameObject = GameObject.Instantiate(farmonPrefab);
+
+        Farmon farmon = farmonGameObject.GetComponent<Farmon>();
+
+        farmon.uniqueID = data.uniqueID;
+
+        farmon.farmonName = data.FarmonName;
+        farmon.nickname = data.Nickname;
+
+        farmon.GritBonus = data.GritBonus;
+        farmon.PowerBonus = data.PowerBonus;
+        farmon.AgilityBonus = data.AgilityBonus;
+        farmon.FocusBonus = data.FocusBonus;
+        farmon.LuckBonus = data.LuckBonus;
+
+        farmon.level = data.Level;
+        farmon.experience = data.experience;
+        farmon.perkPoints = data.perkPoints;
+        farmon.attributePoints = data.attributePoints;
+
+        farmon.mainState = new IdleState(farmon);
+
+        foreach (string perkString in data.perks)
+        {
+            string[] perkStringSplit = perkString.Split(":");
+
+            farmon.perkList[perkStringSplit[0]] = int.Parse(perkStringSplit[1]);
+        }
+
+        if (farmon.nickname == "")
+        {
+            farmonGameObject.name = farmon.farmonName;
+        }
+        else
+        {
+            farmonGameObject.name = farmon.nickname;
+        }
+
+        //Lastly, add the farmon to the farmon map. If we are replacing a farmon, replace its entry in the loadedFarmonMap
+        if (farmonToReplace)
+        {
+            loadedFarmonMap[farmonToReplace.loadedFarmonMapId] = farmon;
+            farmon.loadedFarmonMapId = farmonToReplace.loadedFarmonMapId;
+        }
+        else
+        {
+            loadedFarmonMap[loadedFarmonMapCurrentIndex] = farmon;
+            farmon.loadedFarmonMapId = loadedFarmonMapCurrentIndex;
+            loadedFarmonMapCurrentIndex++;
+        }
+
+        if(playerFarmon) Player.instance.LoadedFarmon.Add(farmon.loadedFarmonMapId);
+
+        return farmonGameObject;
+    }
+
+    public static void UnloadFarmon()
+    {
+        Player.instance.LoadedFarmon.Clear();
+        foreach(var tuple in loadedFarmonMap)
+        {
+            Destroy((tuple.Value as Farmon).gameObject);
+        }
+
+        loadedFarmonMap.Clear();
+        loadedFarmonMapCurrentIndex = 1;
+    }
 
     #region Grit
     public int Grit {
@@ -133,8 +223,9 @@ public abstract class Farmon : Vehicle
             SetHealth((int)Mathf.Ceil((float)MaxHealth * healthPercent));
 
             // Set the size of the farmon
-            SetSize(Grit);
-            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + (Grit / StatMax)) * Vector3.one;
+            float scaleIncrease = (float)Grit / ((float)StatMax * 2f);
+            SetSize(scaleIncrease);
+            if(Hud) Hud.SpriteQuad.transform.localScale = (1f + scaleIncrease) * Vector3.one;
             if (shadow)
             {
                 shadow.transform.localScale = sphereCollider.radius * 2f * Vector3.one;
@@ -276,9 +367,11 @@ public abstract class Farmon : Vehicle
 
     public abstract float AttackTime();
 
-    protected override void Start()
+    public override void Initialize()
     {
-        base.Start();
+        if (initialized) return;
+
+        base.Initialize();
 
         Hud = GetComponentInChildren<FarmonHud>();
         Assert.IsNotNull(Hud);
@@ -292,14 +385,7 @@ public abstract class Farmon : Vehicle
         farmonStateMachine = new StateMachine();
         spawnState = new SpawnState(this);
 
-        if(attackTarget != null)
-        {
-            mainState = new AttackState(this);
-        }
-        else
-        {
-            mainState = new IdleState(this);
-        }
+        mainState = new IdleState(this);
 
         farmonStateMachine.InitializeStateMachine(spawnState);
 
@@ -437,18 +523,74 @@ public abstract class Farmon : Vehicle
 
     public void EnterAttackState(Farmon target)
     {
-        protectTarget = null;
-        attackTarget = target;
+        protectTarget = 0;
+        attackTarget = target.loadedFarmonMapId;
         mainState = new AttackState(this);
         SetState(mainState);
     }
 
     public void EnterDefendState(Farmon target)
     {
-        protectTarget = target;
-        attackTarget = null;
+        protectTarget = target.loadedFarmonMapId;
+        attackTarget = 0;
         mainState = new DefendState(this);
         SetState(mainState);
+    }
+
+    public Farmon Evolve(string newFarmonName)
+    {
+        farmonName = newFarmonName;
+
+        //Save this farmon with the new farmon name then immediately load it and replace this farmon instance with it.
+        SaveController.SaveFarmonPlayer(this);
+        GameObject evolutionGameObject = ConstructFarmon(SaveController.LoadFarmonPlayer(uniqueID), true, this);
+        Farmon evolution = evolutionGameObject.GetComponent<Farmon>();
+        evolution.Initialize();
+
+        // Move the evolution to where we are
+        evolution.transform.position = transform.position;
+        FixPosition();
+
+        // Set the evolution's state to the farmon's state. DANGEROUS?
+        //evolution.farmonStateMachine.ChangeState(farmonStateMachine.CurrentState);
+        evolution.attackTarget = attackTarget;
+        evolution.protectTarget = protectTarget;
+
+        // Copy all stats over to the new prefab instance
+        evolution.uniqueID = uniqueID;
+
+        evolution.farmonName = farmonName;
+        evolution.nickname = nickname;
+
+        evolution.GritBonus = GritBonus;
+        evolution.PowerBonus = PowerBonus;
+        evolution.AgilityBonus = AgilityBonus;
+        evolution.FocusBonus = FocusBonus;
+        evolution.LuckBonus = LuckBonus;
+
+        evolution.level = level;
+        evolution.experience = experience;
+        evolution.perkPoints = perkPoints;
+        evolution.attributePoints = attributePoints;
+
+        foreach (var tuple in perkList)
+        {
+            evolution.perkList[tuple.Key] = tuple.Value;
+        }
+
+        if (evolution.nickname == "")
+        {
+            evolutionGameObject.name = evolution.farmonName;
+        }
+        else
+        {
+            evolutionGameObject.name = evolution.nickname;
+        }
+
+        Destroy(gameObject);
+
+        //Return the newly evolved farmon.
+        return evolution;
     }
 
     protected virtual void AttackComplete()
@@ -457,10 +599,24 @@ public abstract class Farmon : Vehicle
         SetState(mainState);
     }
 
+    public Farmon GetAttackTargetFarmon()
+    {
+        Farmon.loadedFarmonMap.TryGetValue(attackTarget, out Farmon retValue);
+        return retValue;
+    }
+
+    public Farmon GetProtectTargetFarmon()
+    {
+        Farmon.loadedFarmonMap.TryGetValue(protectTarget, out Farmon retValue);
+        return retValue;
+    }
+
     public virtual bool IsInAttackPosition()
     {
+        Farmon attackFarmon = GetAttackTargetFarmon();
+
         //Can we see the enemy?
-        Vector3 targetFeet = attackTarget.transform.position + (attackTarget.sphereCollider.radius - .01f) * Vector3.down;
+        Vector3 targetFeet = attackFarmon.transform.position + (attackFarmon.sphereCollider.radius - .01f) * Vector3.down;
         Vector3 myFeet = transform.position + (sphereCollider.radius - .01f) * Vector3.down;
 
         Vector3 toEnemy = targetFeet - myFeet;
@@ -469,7 +625,6 @@ public abstract class Farmon : Vehicle
 
         bool wallIsBlockingTarget = Physics.Raycast(r, toEnemy.magnitude, LayerMask.GetMask("Default"));
 
-
         bool isWithinAttackRange = toEnemy.magnitude < targetRange;
 
         return !wallIsBlockingTarget && isWithinAttackRange;
@@ -477,8 +632,10 @@ public abstract class Farmon : Vehicle
 
     public virtual bool IsInProtectPosition()
     {
+        Farmon protectFarmon = GetProtectTargetFarmon();
+
         //Can we see the freindly?
-        Vector3 targetFeet = protectTarget.transform.position + (protectTarget.sphereCollider.radius - .01f) * Vector3.down;
+        Vector3 targetFeet = protectFarmon.transform.position + (protectFarmon.sphereCollider.radius - .01f) * Vector3.down;
         Vector3 myFeet = transform.position + (sphereCollider.radius - .01f) * Vector3.down;
 
         Vector3 toFriendly = targetFeet - myFeet;
@@ -1054,10 +1211,12 @@ public class AttackState : StateMachineState
     {
         base.Tick();
 
+        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+
         // If we have a target, 
-        if (farmon.attackTarget)
+        if (attackFarmon)
         {
-            farmon.targetTransform = farmon.attackTarget.transform;
+            farmon.targetTransform = attackFarmon.transform;
 
             bool isAbleToAttack = farmon.IsInAttackPosition();
 
@@ -1114,10 +1273,12 @@ public class DefendState : StateMachineState
     {
         base.Tick();
 
+        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
+
         // If we have a target, 
-        if (farmon.protectTarget)
+        if (protectFarmon)
         {
-            farmon.targetTransform = farmon.protectTarget.transform;
+            farmon.targetTransform = protectFarmon.transform;
 
             bool isInProtectingDistance = farmon.IsInProtectPosition();
 
@@ -1174,8 +1335,10 @@ public class BattleState : StateMachineState
 
         if (farmon.attackReady)
         {
+            Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+
             // Call this farmon's implementation of attack.
-            farmon.Attack(farmon.attackTarget);
+            farmon.Attack(attackFarmon);
             farmon.attackReady = false;
         }
     }
@@ -1207,8 +1370,10 @@ public class ProtectState : StateMachineState
 
     Farmon GetNextAttackTarget()
     {
+        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
+
         //First see if the last farmon to damage our protected farmon is a valid target.
-        Farmon potentialTarget = farmon.protectTarget.LastFarmonToDamageMe;
+        Farmon potentialTarget = protectFarmon.LastFarmonToDamageMe;
 
         if(potentialTarget && IsValidTarget(potentialTarget))
         {
@@ -1236,13 +1401,15 @@ public class ProtectState : StateMachineState
 
     bool IsValidTarget(Farmon targetFarmon)
     {
-        Vector3 protectTargetToEnemy = targetFarmon.transform.position - farmon.protectTarget.transform.position;
+        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
+
+        Vector3 protectTargetToEnemy = targetFarmon.transform.position - protectFarmon.transform.position;
 
         float potentialTargetDistance = H.Flatten(protectTargetToEnemy).magnitude;
 
-        bool hitWall = Physics.Raycast(farmon.protectTarget.transform.position, protectTargetToEnemy.normalized, protectTargetToEnemy.magnitude, LayerMask.GetMask("Default"));
+        bool hitWall = Physics.Raycast(protectFarmon.transform.position, protectTargetToEnemy.normalized, protectTargetToEnemy.magnitude, LayerMask.GetMask("Default"));
 
-        if (!hitWall && potentialTargetDistance < farmon.protectTarget.targetRange + 4)
+        if (!hitWall && potentialTargetDistance < protectFarmon.targetRange + 4)
         {
             // The last target to damage our protectTarget is valid and can be attacked.
             return true;
@@ -1255,16 +1422,18 @@ public class ProtectState : StateMachineState
     {
         farmon.maxSpeed = farmon.GetMovementSpeed();
 
+        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+
         // if our attack target is no longer valid, find a new one.
-        if(!farmon.attackTarget || !IsValidTarget(farmon.attackTarget))
+        if (!attackFarmon || !IsValidTarget(attackFarmon))
         {
-            farmon.attackTarget = GetNextAttackTarget();
+            farmon.attackTarget = GetNextAttackTarget().loadedFarmonMapId;
         }
 
         // If we are ready to attack and there is a valid target near our protect target attack the valid target.
-        if (farmon.attackTarget && farmon.attackReady)
+        if (attackFarmon && farmon.attackReady)
         {
-            farmon.targetTransform = farmon.attackTarget.transform;
+            farmon.targetTransform = attackFarmon.transform;
             bool isInAttackingPosition = farmon.IsInAttackPosition();
 
             //if not, path towards the enemy
@@ -1279,7 +1448,7 @@ public class ProtectState : StateMachineState
 
 
                 //// Call this farmon's implementation of attack.
-                farmon.Attack(farmon.attackTarget);
+                farmon.Attack(attackFarmon);
                 farmon.attackReady = false;
             }
             else

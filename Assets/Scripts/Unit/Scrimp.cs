@@ -17,7 +17,7 @@ public class Scrimp : Farmon
 
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
         fireBall.damage = 5 + Power / 5;
-        fireBall.transform.localScale *= (1f + (float)Focus / 5f);
+        fireBall.transform.localScale *= (1f + (float)Focus / (StatMax*2));
         fireBall.pierce += Focus / 3;
         fireBall.knockBack = 4;
         fireBall.hitStunTime = .15f;
@@ -67,7 +67,7 @@ public class Scrimp : Farmon
                 PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFrenzy(), new PerkSecretStash() });
                 break;
             case 14:
-                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkForked() });
+                Evolve("Screevil");
                 break;
         }
     }

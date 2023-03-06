@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 2607576633809180404}
   - component: {fileID: 5550220200465468843}
   m_Layer: 8
-  m_Name: ScrimpFireBall
+  m_Name: ScreevilFireBall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ Transform:
   m_GameObject: {fileID: 3556518770851303680}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7134118007684526792}
@@ -313,19 +313,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.34464538
+      value: 0.90984374
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.060770277
+      value: 0.16043
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9225323
+      value: 0.3768696
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.16266735
+      value: -0.06645228
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

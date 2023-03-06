@@ -9,8 +9,7 @@ public class RoundController : MonoBehaviour
     [SerializeField]
     Animator RoundUIAnimator;
 
-    public List<Farmon> FarmonTeam1;
-    public List<Farmon> FarmonTeam2;
+    public List<uint> EnemyTeam1Ids;
 
     bool startingRound = false;
     public bool RoundPlaying = false;
@@ -31,12 +30,21 @@ public class RoundController : MonoBehaviour
         SpawnPlayerTeam();
         SpawnEnemyTeam();
 
-        for (int i = 0; i < (int)Mathf.Min(FarmonTeam1.Count, FarmonTeam2.Count); i++)
+        List<Farmon> playerTeam = Player.instance.GetFarmon();
+        List<Farmon> enemyTeam = GetEnemyTeam();
+
+        for (int i = 0; i < (int)Mathf.Min(playerTeam.Count, EnemyTeam1Ids.Count); i++)
         {
-            if (FarmonTeam1[i] && FarmonTeam2[i])
+            if (playerTeam[i] && enemyTeam[i])
             {
-                FarmonTeam1[i].attackTarget = FarmonTeam2[i];
-                FarmonTeam2[i].attackTarget = FarmonTeam1[i];
+                playerTeam[i].attackTarget = enemyTeam[i].loadedFarmonMapId;
+                enemyTeam[i].attackTarget = playerTeam[i].loadedFarmonMapId;
+
+                playerTeam[i].mainState = new AttackState(playerTeam[i]);
+                enemyTeam[i].mainState = new AttackState(enemyTeam[i]);
+
+                playerTeam[i].SetState(playerTeam[i].mainState);
+                enemyTeam[i].SetState(enemyTeam[i].mainState);
             }
         }
 
@@ -44,6 +52,16 @@ public class RoundController : MonoBehaviour
         RoundUIAnimator.Play("RoundUIRoundStart", 0);
     }
 
+    public List<Farmon> GetEnemyTeam()
+    {
+        List<Farmon> newList = new List<Farmon>();
+        foreach (uint id in EnemyTeam1Ids)
+        {
+            newList.Add(Farmon.loadedFarmonMap[id]);
+        }
+
+        return newList;
+    }
 
     private void Awake()
     {
@@ -57,37 +75,38 @@ public class RoundController : MonoBehaviour
 
     private void SpawnPlayerTeam()
     {
-        FarmonTeam1.Clear();
-
-        foreach (uint i in Player.instance.FarmonSquadIds)
+        foreach (uint i in Player.instance.FarmonSquadSaveIds)
         {
             if(i != 0)
             {
-                FarmonTeam1.Add(SaveController.LoadFarmonPlayer(i).GetComponent<Farmon>());
+                Farmon newFarmon = Farmon.ConstructFarmon(SaveController.LoadFarmonPlayer(i), true).GetComponent<Farmon>();
+                newFarmon.team = Player.instance.playerTeam;
+                newFarmon.Initialize();
             }
         }
 
-        foreach (Farmon farmon in FarmonTeam1)
-        {
-            farmon.team = Farmon.TeamEnum.team1;
-        }
-
+        List<Farmon> playerTeam = Player.instance.GetFarmon();
         float gridSize = LevelController.Instance.gridSize;
 
-        if (FarmonTeam1[0])
+        if (playerTeam[0])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 0), gridSize);
-            FarmonTeam1[0].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[0].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[0].team = Farmon.TeamEnum.team1;
         }
-        if (FarmonTeam1[1])
+
+        if (playerTeam[1])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(0, 1, 1), gridSize);
-            FarmonTeam1[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[1].team = Farmon.TeamEnum.team1;
         }
-        if (FarmonTeam1[2])
+
+        if (playerTeam[2])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 1), gridSize);
-            FarmonTeam1[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            playerTeam[2].team = Farmon.TeamEnum.team1;
         }
         //if (FarmonTeam1[3])
         //{
@@ -103,36 +122,39 @@ public class RoundController : MonoBehaviour
 
     private void SpawnEnemyTeam()
     {
-        FarmonTeam2.Clear();
+        EnemyTeam1Ids.Clear();
 
-        FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy1").GetComponent<Farmon>());
-        FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy2").GetComponent<Farmon>());
-        FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy3").GetComponent<Farmon>());
+        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy3")).GetComponent<Farmon>().loadedFarmonMapId);
         //FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy4").GetComponent<Farmon>());
         //FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy5").GetComponent<Farmon>());
 
         float gridSize = LevelController.Instance.gridSize;
         Vector3Int levelExtents = LevelController.Instance.levelSize - Vector3Int.one;
 
-        foreach(Farmon farmon in FarmonTeam2)
+        List<Farmon> enemyTeam = GetEnemyTeam();
+
+        foreach (Farmon farmon in enemyTeam)
         {
             farmon.team = Farmon.TeamEnum.team2;
+            farmon.Initialize();
         }
 
-        if (FarmonTeam2.Count > 0 && FarmonTeam2[0])
+        if (enemyTeam.Count > 0 && enemyTeam[0])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(levelExtents.x - 1, 1, levelExtents.z - 0), gridSize);
-            FarmonTeam2[0].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            enemyTeam[0].transform.position = gridPosition + gridSize * Vector3.one / 2;
         }
-        if (FarmonTeam2.Count > 1 && FarmonTeam2[1])
+        if (enemyTeam.Count > 1 && enemyTeam[1])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(levelExtents.x - 0, 1, levelExtents.z - 1), gridSize);
-            FarmonTeam2[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            enemyTeam[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
         }
-        if (FarmonTeam2.Count > 2 && FarmonTeam2[2])
+        if (enemyTeam.Count > 2 && enemyTeam[2])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(levelExtents.x - 1, 1, levelExtents.z - 1), gridSize);
-            FarmonTeam2[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
+            enemyTeam[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
         }
         //if (FarmonTeam2.Count > 3 && FarmonTeam2[3])
         //{
@@ -156,11 +178,15 @@ public class RoundController : MonoBehaviour
 
         if (RoundPlaying)
         {
+            List<uint> playerTeam = Player.instance.LoadedFarmon;
+            List<Farmon> enemyTeam = GetEnemyTeam();
+
             // See if team 1 has lost
             bool allFarmonDead = true;
-            foreach (Farmon f in FarmonTeam1)
+            foreach (uint id in playerTeam)
             {
-                if (f && !f.dead)
+                Farmon farmon = Farmon.loadedFarmonMap[id];
+                if (farmon && !farmon.dead)
                 {
                     allFarmonDead = false;
                 }
@@ -176,7 +202,7 @@ public class RoundController : MonoBehaviour
 
             // See if team 2 has lost
             allFarmonDead = true;
-            foreach (Farmon f in FarmonTeam2)
+            foreach (Farmon f in enemyTeam)
             {
                 if (f && !f.dead)
                 {

@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
 
     public string SaveName = "";
     public int StoryProgress = 0;
-    public uint[] FarmonSquadIds = new uint[farmonPerTeam];
+    public uint[] FarmonSquadSaveIds = new uint[farmonPerTeam];
 
     List<Farmon> selectionList = new List<Farmon>();
 
@@ -22,6 +22,9 @@ public class Player : MonoBehaviour
     private Vector2 selectionCorner1, selectionCorner2;
 
     public Farmon.TeamEnum playerTeam = Farmon.TeamEnum.team1;
+
+    // List of loadedFarmonMap keys
+    public List<uint> LoadedFarmon = new List<uint>();
 
     [SerializeField]
     Transform cameraRig;
@@ -70,6 +73,18 @@ public class Player : MonoBehaviour
 
     protected void OnDrawGizmos()
     {
+    }
+
+
+    public List<Farmon> GetFarmon()
+    {
+        List<Farmon> newList = new List<Farmon>();
+        foreach(uint id in LoadedFarmon)
+        {
+            newList.Add(Farmon.loadedFarmonMap[id]);
+        }
+
+        return newList;
     }
 
     private void Update()
@@ -156,8 +171,6 @@ public class Player : MonoBehaviour
 
             transform.Translate(moveDirection * finalSpeed * Time.deltaTime);
         }
-
-        
     }
 
     private void SelectionUpdate()

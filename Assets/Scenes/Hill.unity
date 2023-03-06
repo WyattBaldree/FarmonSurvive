@@ -150,8 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RoundUIAnimator: {fileID: 1197230641}
-  FarmonTeam1: []
-  FarmonTeam2: []
+  EnemyTeam1: []
   RoundPlaying: 0
 --- !u!4 &46913872
 Transform:

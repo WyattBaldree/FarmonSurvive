@@ -95,7 +95,9 @@ public class ScruffTackleState : StateMachineState
     {
         base.Tick();
 
-        if(!farmon.targetTransform || !farmon.attackTarget)
+        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+
+        if (!farmon.targetTransform || !attackFarmon)
         {
             _stateMachine.ChangeState(farmon.mainState);
             return;

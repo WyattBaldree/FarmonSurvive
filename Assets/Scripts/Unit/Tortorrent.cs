@@ -95,7 +95,9 @@ public class TorrentSpinChargeState : StateMachineState
     {
         base.Enter();
 
-        tortorrent.targetTransform = tortorrent.attackTarget.transform;
+        Farmon attackFarmon = tortorrent.GetAttackTargetFarmon();
+
+        tortorrent.targetTransform = attackFarmon.transform;
 
         chargeTimer.SetTime(2f - tortorrent.Agility/Farmon.StatMax);
         flipTimer.SetTime(.001f);
@@ -106,7 +108,7 @@ public class TorrentSpinChargeState : StateMachineState
         animator.speed = 0;
         animator.Play(animator.GetCurrentAnimatorStateInfo(0).shortNameHash,0, .6f);
 
-        Projectile spin = tortorrent.MakeSpin(tortorrent.attackTarget);
+        Projectile spin = tortorrent.MakeSpin(attackFarmon);
         spinCollider = spin.GetComponent<Collider>();
         spinCollider.enabled = false;
         spinSpriteRenderer = spin.GetComponentInChildren<SpriteRenderer>();
@@ -126,6 +128,7 @@ public class TorrentSpinChargeState : StateMachineState
     {
         base.Tick();
 
+
         if (flipTimer.Tick(Time.deltaTime))
         {
             tortorrent.mySpriteRenderer.flipX = !tortorrent.mySpriteRenderer.flipX;
@@ -140,7 +143,8 @@ public class TorrentSpinChargeState : StateMachineState
             }
         }
 
-        if (!tortorrent.targetTransform || !tortorrent.attackTarget)
+        Farmon attackFarmon = tortorrent.GetAttackTargetFarmon();
+        if (!tortorrent.targetTransform || !attackFarmon)
         {
             tortorrent.SetState(tortorrent.mainState);
             return;
@@ -177,8 +181,9 @@ public class TorrentSpinAttackState : StateMachineState
     public override void Enter()
     {
         base.Enter();
+        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
 
-        farmon.targetTransform = farmon.attackTarget.transform;
+        farmon.targetTransform = attackFarmon.transform;
         flipTimer.SetTime(.05f);
         flipTimer.autoReset = true;
 
@@ -218,7 +223,8 @@ public class TorrentSpinAttackState : StateMachineState
             farmon.mySpriteRenderer.flipX = !farmon.mySpriteRenderer.flipX;
         }
 
-        if (!farmon.targetTransform || !farmon.attackTarget)
+        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+        if (!farmon.targetTransform || !attackFarmon)
         {
             farmon.SetState(farmon.mainState);
             return;

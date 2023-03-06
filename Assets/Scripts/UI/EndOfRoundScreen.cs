@@ -9,7 +9,7 @@ public class EndOfRoundScreen : MonoBehaviour
 {
     public static EndOfRoundScreen instance;
 
-    List<Farmon> farmonList = new List<Farmon>();
+    List<uint> farmonList = new List<uint>();
     List<Image> farmonImageList = new List<Image>();
     List<Bar> farmonBarList = new List<Bar>();
 
@@ -89,13 +89,12 @@ public class EndOfRoundScreen : MonoBehaviour
 
     public void Popup(RoundController caller)
     {
-        farmonList.Clear();
+        List<Farmon> playerFarmon = Player.instance.GetFarmon();
 
         for (int i = 0; i < 5; i++)
         {
-            if(i < caller.FarmonTeam1.Count)
+            if(i < playerFarmon.Count)
             {
-                farmonList.Add(caller.FarmonTeam1[i]);
                 farmonImageList[i].gameObject.SetActive(true);
                 farmonBarList[i].gameObject.SetActive(true);
             }
@@ -133,12 +132,14 @@ public class EndOfRoundScreen : MonoBehaviour
             return;
         }
 
-        if (currentXPIndex >= farmonList.Count)
+        List<Farmon> playerFarmon = Player.instance.GetFarmon();
+
+        if (currentXPIndex >= playerFarmon.Count)
         {
             doneGivingXp = true;
             ContinueButton.interactable = true;
 
-            foreach(Farmon f in farmonList)
+            foreach (Farmon f in playerFarmon)
             {
                 SaveController.SaveFarmonPlayer(f);
                 SaveController.SavePlayer();
@@ -161,7 +162,7 @@ public class EndOfRoundScreen : MonoBehaviour
         {
             int xpToGive = Mathf.Max(1, Mathf.Min(currentXP, totalXP/40));
 
-            farmonList[currentXPIndex].GiveXp(xpToGive);
+            playerFarmon[currentXPIndex].GiveXp(xpToGive);
             currentXP -= xpToGive;
 
             if (currentXP <= 0)
@@ -181,10 +182,11 @@ public class EndOfRoundScreen : MonoBehaviour
 
     private int GetTotalXP(RoundController caller)
     {
+        List<Farmon> enemyTeam = caller.GetEnemyTeam();
         int totalXP = 0;
-        for (int i = 0; i < caller.FarmonTeam2.Count; i++)
+        for (int i = 0; i < enemyTeam.Count; i++)
         {
-            totalXP += caller.FarmonTeam2[i].level * 40;
+            totalXP += enemyTeam[i].level * 40;
         }
 
         return totalXP;
@@ -198,9 +200,11 @@ public class EndOfRoundScreen : MonoBehaviour
     // Update is called once per frame
     void LateUpdate()
     {
-        for (int i = 0; i < farmonList.Count; i++)
+        List<Farmon> playerFarmon = Player.instance.GetFarmon();
+
+        for (int i = 0; i < playerFarmon.Count; i++)
         {
-            Farmon farmon = farmonList[i];
+            Farmon farmon = playerFarmon[i];
             farmonImageList[i].sprite = farmon.mySpriteRenderer.sprite;
 
             farmonBarList[i].SetPercent((float) farmon.experience / (float) farmon.GetXpRequiredForNextLevel());

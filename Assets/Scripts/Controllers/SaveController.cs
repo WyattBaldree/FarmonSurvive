@@ -97,7 +97,7 @@ public class SaveController : MonoBehaviour
         Player player = Player.instance;
 
         PlayerSaveData data = new PlayerSaveData();
-        data.Init(player.SaveName, player.FarmonSquadIds, player.StoryProgress);
+        data.Init(player.SaveName, player.FarmonSquadSaveIds, player.StoryProgress);
 
         XmlSerializer serializer = new XmlSerializer(typeof(PlayerSaveData));
         StreamWriter writer = new StreamWriter(Application.persistentDataPath + "/playerSave1.xml");
@@ -118,7 +118,7 @@ public class SaveController : MonoBehaviour
 
         player.SaveName = data.SaveName;
         player.StoryProgress = data.StoryProgress;
-        player.FarmonSquadIds = data.FarmonSquadIds;
+        player.FarmonSquadSaveIds = data.FarmonSquadIds;
     }
 
     public static void SaveFarmon(Farmon farmon, string fileName)
@@ -149,7 +149,7 @@ public class SaveController : MonoBehaviour
             //Get the next available farmonID
             //ToDo: update to find "holes" in the farmon IDs instead of always incrementing the ID.
             uint maxId = 0;
-            foreach (uint id in player.FarmonSquadIds)
+            foreach (uint id in player.FarmonSquadSaveIds)
             {
                 if (id > maxId)
                 {
@@ -173,7 +173,7 @@ public class SaveController : MonoBehaviour
     }
 
 
-    public static GameObject LoadFarmon( string fileName)
+    public static FarmonSaveData LoadFarmon( string fileName)
     {
         // Attempt to load the farmon from the resources fold via it's .meta file. 
         TextAsset _xml = Resources.Load<TextAsset>(fileName);
@@ -194,10 +194,10 @@ public class SaveController : MonoBehaviour
             reader.Close();
         }
 
-        return ConstructFarmon(data);
+        return data;
     }
 
-    public static GameObject LoadFarmonPlayer(uint uniqueID)
+    public static FarmonSaveData LoadFarmonPlayer(uint uniqueID)
     {
         FarmonSaveData data;
         XmlSerializer serializer = new XmlSerializer(typeof(FarmonSaveData));
@@ -207,65 +207,7 @@ public class SaveController : MonoBehaviour
         data = serializer.Deserialize(reader) as FarmonSaveData;
         reader.Close();
 
-        return ConstructFarmon(data);
-    }
-
-    public static GameObject ConstructFarmon(FarmonSaveData data)
-    {
-        if (Debug.isDebugBuild)
-        {
-            Debug.Log("Loading data:" +
-                      "\nNickname: " + data.Nickname +
-                      "\nFarmon Name: " + data.FarmonName +
-                      "\n\nLevel: " + data.Level +
-                      "\nExperience: " + data.experience +
-                      "\nPerk Points: " + data.perkPoints +
-                      "\nAttribute Points: " + data.attributePoints +
-                      "\n\nGrit Bonus: " + data.GritBonus +
-                      "\nPower Bonus: " + data.PowerBonus +
-                      "\nAgility Bonus: " + data.AgilityBonus +
-                      "\nFocus Bonus: " + data.FocusBonus +
-                      "\nLuck Bonus: " + data.LuckBonus);
-        }
-
-        GameObject farmonPrefab = Resources.Load("Farmon/" + data.FarmonName) as GameObject;
-        GameObject farmonGameObject = GameObject.Instantiate(farmonPrefab);
-
-        Farmon farmon = farmonGameObject.GetComponent<Farmon>();
-
-        farmon.uniqueID = data.uniqueID;
-
-        farmon.farmonName = data.FarmonName;
-        farmon.nickname = data.Nickname;
-
-        farmon.GritBonus = data.GritBonus;
-        farmon.PowerBonus = data.PowerBonus;
-        farmon.AgilityBonus = data.AgilityBonus;
-        farmon.FocusBonus = data.FocusBonus;
-        farmon.LuckBonus = data.LuckBonus;
-
-        farmon.level = data.Level;
-        farmon.experience = data.experience;
-        farmon.perkPoints = data.perkPoints;
-        farmon.attributePoints = data.attributePoints;
-
-        foreach(string perkString in data.perks)
-        {
-            string[] perkStringSplit = perkString.Split(":");
-
-            farmon.perkList[perkStringSplit[0]] = int.Parse(perkStringSplit[1]);
-        }
-
-        if (farmon.nickname == "")
-        {
-            farmonGameObject.name = farmon.farmonName;
-        }
-        else
-        {
-            farmonGameObject.name = farmon.nickname;
-        }
-
-        return farmonGameObject;
+        return data;
     }
 }
 

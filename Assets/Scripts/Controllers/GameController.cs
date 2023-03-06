@@ -8,10 +8,7 @@ public class GameController : MonoBehaviour
 {
     public void OpenMainMenu()
     {
-        foreach(Farmon f in Farmon.farmonList)
-        {
-            Destroy(f.gameObject);
-        }
+        Farmon.UnloadFarmon();
 
         //mainMenu.gameObject.SetActive(true);
         SceneManager.LoadScene("MainMenu");
