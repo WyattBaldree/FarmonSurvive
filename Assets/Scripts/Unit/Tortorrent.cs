@@ -71,7 +71,7 @@ public class Tortorrent : Farmon
         }
     }
 
-    public override void DistributeLevelUpPerks()
+    public override void OnLevelUp()
     {
 
     }

@@ -105,7 +105,7 @@ public class Galeon : Farmon
         }
     }
 
-    public override void DistributeLevelUpPerks()
+    public override void OnLevelUp()
     {
         
     }

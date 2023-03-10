@@ -32,7 +32,7 @@ public class PerkList : MonoBehaviour
 
             perkPlate.HoverForInfo.infoBox = infoBox;
             perkPlate.HoverForInfo.plateText = perkInfo.PerkName;
-            perkPlate.HoverForInfo.descriptionText = perkInfo.PerkDescription;
+            perkPlate.HoverForInfo.descriptionText = perkInfo.PerkDescription[perk.Value - 1];
 
             if (perkInfo.MaxLevel > 1)
             {

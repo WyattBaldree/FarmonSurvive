@@ -127,7 +127,8 @@ public class EndOfRoundScreen : MonoBehaviour
             return;
         }
 
-        if (LevelUpScreen.instance.gameObject.activeSelf || PerkSelectionScreen.instance.gameObject.activeSelf)
+        //Stop rewarding xp while menus are open.
+        if (LevelUpScreen.instance.gameObject.activeSelf || PerkSelectionScreen.instance.gameObject.activeSelf || EvolutionScreen.instance.gameObject.activeSelf)
         {
             return;
         }

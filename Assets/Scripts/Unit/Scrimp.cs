@@ -53,21 +53,33 @@ public class Scrimp : Farmon
         return 6f - GetModifiedFocus() / 30f - GetModifiedAgility() / 30f;
     }
 
-    public override void DistributeLevelUpPerks()
+    public override void OnLevelUp()
     {
         switch (level)
         {
             case 2:
-                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire() });
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire(), new PerkForked() });
                 break;
             case 6:
                 PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFlameAspect() });
                 break;
             case 10:
-                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFrenzy(), new PerkSecretStash() });
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire(), new PerkForked() });
                 break;
             case 14:
-                Evolve("Screevil");
+                EvolutionScreen.instance.Popup(this,"Screevil");
+                break;
+            case 18:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire(), new PerkForked() });
+                break;
+            case 22:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkSecretStash() });
+                break;
+            case 26:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFrenzy(), new PerkThickHide() });
+                break;
+            case 30:
+                PerkSelectionScreen.instance.Popup(this, new Perk[] { new PerkFiendFire(), new PerkForked() });
                 break;
         }
     }

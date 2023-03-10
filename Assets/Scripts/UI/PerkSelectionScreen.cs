@@ -55,9 +55,9 @@ public class PerkSelectionScreen : MonoBehaviour
 
         gameObject.SetActive(true);
 
-        //audioSource.clip = FarmonController.instance.LevelUpSound;
-        //audioSource.volume = .7f;
-        //audioSource.Play();
+        audioSource.clip = FarmonController.instance.LevelUpSound;
+        audioSource.volume = .7f;
+        audioSource.Play();
 
         SetDefaultText();
 
@@ -88,7 +88,7 @@ public class PerkSelectionScreen : MonoBehaviour
 
             perkButton.HoverForInfo.infoBox = infoBox;
             perkButton.HoverForInfo.plateText = perk.PerkName;
-            perkButton.HoverForInfo.descriptionText = perk.PerkDescription;
+            perkButton.HoverForInfo.descriptionText = perk.PerkDescription[perkLevel];
 
             if (perk.MaxLevel > 1)
             {
@@ -116,18 +116,6 @@ public class PerkSelectionScreen : MonoBehaviour
             titleText.text = "New Perk!";
 
             infoBox.SetText("", targetFarmon.nickname + " has developed a greater understanding of its power!");
-        }
-    }
-
-    private string StatChangeString(int statOld, int statNew)
-    {
-        if (statOld != statNew)
-        {
-            return statOld + ">" + statNew;
-        }
-        else
-        {
-            return "" + statNew;
         }
     }
 

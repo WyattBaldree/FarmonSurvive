@@ -58,9 +58,10 @@ MonoBehaviour:
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 0}
+  loadedFarmonMapId: 0
   farmonName: Scrimp
   nickname: 
-  Description: Widely known for thier mischeivous behavior, Scrimps tend to lead
+  Description: Widely known for their mischeivous behavior, Scrimps tend to lead
     lonely lives.
   level: 1
   experience: 0
@@ -72,8 +73,8 @@ MonoBehaviour:
   dead: 0
   attackReady: 0
   targetRange: 6
-  attackTarget: {fileID: 0}
-  protectTarget: {fileID: 0}
+  attackTarget: 0
+  protectTarget: 0
   team: 1
   LastFarmonToDamageMe: {fileID: 0}
   GridSpaceChangedEvent:

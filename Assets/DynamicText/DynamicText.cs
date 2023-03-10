@@ -386,11 +386,11 @@ public class DynamicText : MonoBehaviour
             {
                 if(prevChar == '.' || prevChar == '?' || prevChar == '!')
                 {
-                    finalReadDelay *= 30;
+                    finalReadDelay *= 20;
                 }
                 else if(prevChar == ',')
                 {
-                    finalReadDelay *= 13;
+                    finalReadDelay *= 9;
                 }
             }
 

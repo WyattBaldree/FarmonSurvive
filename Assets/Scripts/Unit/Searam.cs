@@ -32,7 +32,7 @@ public class Searam : Farmon
         }
     }
 
-    public override void DistributeLevelUpPerks()
+    public override void OnLevelUp()
     {
 
     }

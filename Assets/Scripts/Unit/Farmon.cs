@@ -537,62 +537,6 @@ public abstract class Farmon : Vehicle
         SetState(mainState);
     }
 
-    public Farmon Evolve(string newFarmonName)
-    {
-        farmonName = newFarmonName;
-
-        //Save this farmon with the new farmon name then immediately load it and replace this farmon instance with it.
-        SaveController.SaveFarmonPlayer(this);
-        GameObject evolutionGameObject = ConstructFarmon(SaveController.LoadFarmonPlayer(uniqueID), true, this);
-        Farmon evolution = evolutionGameObject.GetComponent<Farmon>();
-        evolution.Initialize();
-
-        // Move the evolution to where we are
-        evolution.transform.position = transform.position;
-        FixPosition();
-
-        // Set the evolution's state to the farmon's state. DANGEROUS?
-        //evolution.farmonStateMachine.ChangeState(farmonStateMachine.CurrentState);
-        evolution.attackTarget = attackTarget;
-        evolution.protectTarget = protectTarget;
-
-        // Copy all stats over to the new prefab instance
-        evolution.uniqueID = uniqueID;
-
-        evolution.farmonName = farmonName;
-        evolution.nickname = nickname;
-
-        evolution.GritBonus = GritBonus;
-        evolution.PowerBonus = PowerBonus;
-        evolution.AgilityBonus = AgilityBonus;
-        evolution.FocusBonus = FocusBonus;
-        evolution.LuckBonus = LuckBonus;
-
-        evolution.level = level;
-        evolution.experience = experience;
-        evolution.perkPoints = perkPoints;
-        evolution.attributePoints = attributePoints;
-
-        foreach (var tuple in perkList)
-        {
-            evolution.perkList[tuple.Key] = tuple.Value;
-        }
-
-        if (evolution.nickname == "")
-        {
-            evolutionGameObject.name = evolution.farmonName;
-        }
-        else
-        {
-            evolutionGameObject.name = evolution.nickname;
-        }
-
-        Destroy(gameObject);
-
-        //Return the newly evolved farmon.
-        return evolution;
-    }
-
     protected virtual void AttackComplete()
     {
         attackTimer.SetTime(AttackTime());
@@ -826,7 +770,68 @@ public abstract class Farmon : Vehicle
         floatingText.Setup("LEVEL UP!", Color.yellow);
     }
 
-    public abstract void DistributeLevelUpPerks();
+    public abstract void OnLevelUp();
+
+    public Farmon Evolve(string newFarmonName)
+    {
+        farmonName = newFarmonName;
+
+        //Save this farmon with the new farmon name then immediately load it and replace this farmon instance with it.
+        SaveController.SaveFarmonPlayer(this);
+        GameObject evolutionGameObject = ConstructFarmon(SaveController.LoadFarmonPlayer(uniqueID), true, this);
+        Farmon evolution = evolutionGameObject.GetComponent<Farmon>();
+        evolution.Initialize();
+
+        // Move the evolution to where we are
+        evolution.transform.position = transform.position;
+        FixPosition();
+
+        // Set the evolution's state to the farmon's state. DANGEROUS?
+        //evolution.farmonStateMachine.ChangeState(farmonStateMachine.CurrentState);
+        evolution.attackTarget = attackTarget;
+        evolution.protectTarget = protectTarget;
+
+        // Copy all stats over to the new prefab instance
+        evolution.uniqueID = uniqueID;
+
+        evolution.farmonName = farmonName;
+        evolution.nickname = nickname;
+
+        evolution.GritBonus = GritBonus;
+        evolution.PowerBonus = PowerBonus;
+        evolution.AgilityBonus = AgilityBonus;
+        evolution.FocusBonus = FocusBonus;
+        evolution.LuckBonus = LuckBonus;
+
+        evolution.level = level;
+        evolution.experience = experience;
+        evolution.perkPoints = perkPoints;
+        evolution.attributePoints = attributePoints;
+
+        foreach (var tuple in perkList)
+        {
+            evolution.perkList[tuple.Key] = tuple.Value;
+        }
+
+        if (evolution.nickname == "")
+        {
+            evolutionGameObject.name = evolution.farmonName;
+        }
+        else
+        {
+            evolutionGameObject.name = evolution.nickname;
+        }
+
+        Destroy(gameObject);
+
+        //Return the newly evolved farmon.
+        return evolution;
+    }
+
+    public virtual void DistributeEvolvePerks()
+    {
+
+    }
 
     protected virtual void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
     {

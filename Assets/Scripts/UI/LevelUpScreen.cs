@@ -77,24 +77,12 @@ public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
     public void Close()
     {
         gameObject.SetActive(false);
-        targetFarmon.DistributeLevelUpPerks();
+        targetFarmon.OnLevelUp();
     }
 
     private void Update()
     {
         farmonPortrait.sprite = targetFarmon.mySpriteRenderer.sprite;
-    }
-
-    private string IntToPluses(int num)
-    {
-        string s = "";
-
-        for(int i = 0; i < num; i++)
-        {
-            s += "+";
-        }
-
-        return s;
     }
 
     public void OnPointerDown(PointerEventData eventData)

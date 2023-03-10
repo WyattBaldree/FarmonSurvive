@@ -18,9 +18,9 @@ public class FarmonController : MonoBehaviour
                 shouldPause = shouldPause || !RoundController.Instance.RoundPlaying;
             }
 
-            if (StatsScreen.instance)
+            if (MenuController.instance.MenuOpen)
             {
-                shouldPause = shouldPause || StatsScreen.instance.TargetUnit != null;
+                shouldPause = true;
             }
 
             return shouldPause;

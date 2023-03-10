@@ -150,7 +150,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   RoundUIAnimator: {fileID: 1197230641}
-  EnemyTeam1: []
+  EnemyTeam1Ids: 
   RoundPlaying: 0
 --- !u!4 &46913872
 Transform:
