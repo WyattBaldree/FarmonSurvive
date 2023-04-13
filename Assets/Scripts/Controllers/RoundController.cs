@@ -14,10 +14,6 @@ public class RoundController : MonoBehaviour
     bool startingRound = false;
     public bool RoundPlaying = false;
 
-    // Load all farmon
-    // wait for input
-    // start round
-
     private void Start()
     {
         StartMatch();
@@ -38,10 +34,10 @@ public class RoundController : MonoBehaviour
             if (playerTeam[i] && enemyTeam[i])
             {
                 playerTeam[i].attackTarget = enemyTeam[i].loadedFarmonMapId;
-                enemyTeam[i].attackTarget = playerTeam[i].loadedFarmonMapId;
+                //enemyTeam[i].attackTarget = playerTeam[i].loadedFarmonMapId;
 
                 playerTeam[i].mainState = new AttackState(playerTeam[i]);
-                enemyTeam[i].mainState = new AttackState(enemyTeam[i]);
+                //enemyTeam[i].mainState = new AttackState(enemyTeam[i]);
 
                 playerTeam[i].SetState(playerTeam[i].mainState);
                 enemyTeam[i].SetState(enemyTeam[i].mainState);
@@ -95,28 +91,28 @@ public class RoundController : MonoBehaviour
             playerTeam[0].team = Farmon.TeamEnum.team1;
         }
 
-        if (playerTeam[1])
-        {
-            Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(0, 1, 1), gridSize);
-            playerTeam[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
-            playerTeam[1].team = Farmon.TeamEnum.team1;
-        }
+        //if (playerTeam[1])
+        //{
+        //    Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(0, 1, 1), gridSize);
+        //    playerTeam[1].transform.position = gridPosition + gridSize * Vector3.one / 2;
+        //    playerTeam[1].team = Farmon.TeamEnum.team1;
+        //}
 
-        if (playerTeam[2])
-        {
-            Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 1), gridSize);
-            playerTeam[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
-            playerTeam[2].team = Farmon.TeamEnum.team1;
-        }
-        //if (FarmonTeam1[3])
+        //if (playerTeam[2])
+        //{
+        //    Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 1), gridSize);
+        //    playerTeam[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
+        //    playerTeam[2].team = Farmon.TeamEnum.team1;
+        //}
+        //if (playerTeam[3])
         //{
         //    Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(2, 1, 1), gridSize);
-        //    FarmonTeam1[3].transform.position = gridPosition + gridSize * Vector3.one / 2;
+        //    playerTeam[3].transform.position = gridPosition + gridSize * Vector3.one / 2;
         //}
-        //if (FarmonTeam1[4])
+        //if (playerTeam[4])
         //{
         //    Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 2), gridSize);
-        //    FarmonTeam1[4].transform.position = gridPosition + gridSize * Vector3.one / 2;
+        //    playerTeam[4].transform.position = gridPosition + gridSize * Vector3.one / 2;
         //}
     }
 
@@ -124,9 +120,9 @@ public class RoundController : MonoBehaviour
     {
         EnemyTeam1Ids.Clear();
 
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy3")).GetComponent<Farmon>().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
         //FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy4").GetComponent<Farmon>());
         //FarmonTeam2.Add(SaveController.LoadFarmon("wave1enemy5").GetComponent<Farmon>());
 
@@ -223,7 +219,7 @@ public class RoundController : MonoBehaviour
 
     IEnumerator EndOfRoundCoroutine()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(2.5f);
 
         EndOfRoundScreen.instance.Popup(this);
     }

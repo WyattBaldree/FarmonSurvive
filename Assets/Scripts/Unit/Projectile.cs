@@ -6,29 +6,19 @@ using UnityEngine.Events;
 
 public class Projectile : MonoBehaviour
 {
-    public Farmon.TeamEnum team = Farmon.TeamEnum.team1;
+    public Farmon.TeamEnum Team = Farmon.TeamEnum.team1;
 
-    public Farmon owner = null;
+    public Farmon Owner = null;
 
-    public int damage = 1;
+    public AttackData AttackData = null;
 
-    public int pierce = 1;
+    public int Pierce = 1;
 
-    public float hitStunTime = .3f;
+    public float LifeTime = 5f;
 
-    public float knockBack = 7.0f;
-
-    public float lifeTime = 5f;
-
-    public bool undodgeable = false;
-
-    public AudioClip CreateSound;
-    public AudioClip HitSound;
     public AudioClip DestroySound;
 
-    private AudioSource audioSource;
-
-    public Farmon specificTarget = null;
+    public Farmon SpecificTarget = null;
 
     public UnityEvent EventDestroy = new UnityEvent();
 
@@ -37,18 +27,26 @@ public class Projectile : MonoBehaviour
     Timer hitStopTimer = new Timer();
 
     Rigidbody rb;
+    Collider col;
+    AudioSource audioSource;
 
     bool destroyed = false;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody>();
+        col = GetComponent<Collider>();
 
         audioSource = GetComponent<AudioSource>();
+    }
 
-        if (audioSource && CreateSound)
+    public void Initialize(AttackData attackData, Farmon owner, Farmon.TeamEnum team)
+    {
+        AttackData = attackData;
+
+        if (audioSource && AttackData.InitialSound)
         {
-            audioSource.clip = CreateSound;
+            audioSource.clip = AttackData.InitialSound;
             audioSource.volume = .3f;
             audioSource.Play();
         }
@@ -60,42 +58,40 @@ public class Projectile : MonoBehaviour
 
         Farmon farmon = collision.GetComponent<Farmon>();
 
-        if (farmon && !farmon.dead && farmon.team != team && !hitFarmonList.Contains(farmon))
+        if (farmon && !farmon.dead && farmon.team != Team && !hitFarmonList.Contains(farmon))
         {
-            if(specificTarget != null && specificTarget != farmon)
+            if(SpecificTarget != null && SpecificTarget != farmon)
             {
                 return;
             }
 
+            Vector3 center = col.bounds.center;
+
             bool hit = false;
             if (rb)
             {
-                hit = farmon.TakeDamage(damage, H.Flatten(rb.velocity).normalized, owner, hitStunTime, knockBack, undodgeable);
+                hit = farmon.TakeDamage(AttackData, center, H.Flatten(rb.velocity).normalized, Owner);
             }
             else
             {
                 Vector3 awayFromProjectile = H.Flatten(farmon.transform.position - transform.position).normalized;
-                hit = farmon.TakeDamage(damage, awayFromProjectile, owner, hitStunTime, knockBack, undodgeable);
+                hit = farmon.TakeDamage(AttackData, center, awayFromProjectile, Owner);
             }
 
             if (hit)
             {
-                //Spawn a hit effect.
-                Vector3 farmonToMe = transform.position + GetComponent<Collider>().bounds.center - farmon.transform.position;
-                GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, farmon.transform);
-                hitEffect.transform.position = farmon.transform.position + farmonToMe.normalized * farmon.sphereCollider.radius;
-                hitEffect.transform.localScale = (.2f + 2.5f * hitStunTime) * Vector3.one;
+                
 
 
                 OnHitDelegate(farmon);
 
-                if (hitStunTime > 0)
+                if (AttackData.HitStopTime > 0)
                 {
                     HitStop();
                 }
 
-                pierce--;
-                if (pierce <= 0)
+                Pierce--;
+                if (Pierce <= 0)
                 {
                     BeginDestroy();
                 }
@@ -104,13 +100,13 @@ public class Projectile : MonoBehaviour
                 {
                     if (destroyed && DestroySound)
                     {
-                        audioSource.clip = HitSound;
+                        audioSource.clip = DestroySound;
                         audioSource.volume = .3f;
                         audioSource.Play();
                     }
-                    else if (HitSound)
+                    else if (AttackData.HitSound)
                     {
-                        audioSource.clip = HitSound;
+                        audioSource.clip = AttackData.HitSound;
                         audioSource.volume = .3f;
                         audioSource.Play();
                     }
@@ -158,9 +154,9 @@ public class Projectile : MonoBehaviour
             return;
         };
 
-        lifeTime -= Time.deltaTime;
+        LifeTime -= Time.deltaTime;
 
-        if (lifeTime <= 0 || Vector3.Distance(transform.position, Player.instance.transform.position) > 50)
+        if (LifeTime <= 0 || Vector3.Distance(transform.position, Player.instance.transform.position) > 50)
         {
             BeginDestroy();
             return;
@@ -176,9 +172,9 @@ public class Projectile : MonoBehaviour
     {
         if(rb) rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        lifeTime += hitStunTime - hitStopTimer.GetTime();
+        LifeTime += AttackData.HitStopTime - hitStopTimer.GetTime();
 
-        hitStopTimer.SetTime(hitStunTime);
+        hitStopTimer.SetTime(AttackData.HitStopTime);
     }
 
     public delegate void OnHit(Farmon hitFarmon);

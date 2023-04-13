@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
+using DG.Tweening;
 
 public abstract class Farmon : Vehicle
 {
-    public static List<Vehicle> farmonList = new List<Vehicle>();
+    public static List<Farmon> farmonList = new List<Farmon>();
     public static Dictionary<uint, Farmon> loadedFarmonMap = new Dictionary<uint, Farmon>();
     private static uint loadedFarmonMapCurrentIndex = 1;
     private static float followRange = 3;
@@ -21,6 +22,27 @@ public abstract class Farmon : Vehicle
         team2
     }
 
+    //Enum used to filter for specific lists of farmon.
+    public enum FarmonFilterEnum
+    {
+        any,
+        myTeam,
+        enemyTeam,
+        team1,
+        team2
+    }
+
+    //Enum used to sort a list of farmon.
+    public enum FarmonSortEnum
+    {
+        none,
+        nearest,
+        furthest,
+        lowestHealth,
+        mostHealth
+    }
+
+    public string DebugString;
     public uint uniqueID = 0;
 
     [HideInInspector]
@@ -62,7 +84,6 @@ public abstract class Farmon : Vehicle
     [HideInInspector]
     public bool attackReady = false;
     Timer attackTimer = new Timer();
-
 
     public float targetRange = 5f;
 
@@ -461,6 +482,12 @@ public abstract class Farmon : Vehicle
     {
         base.Update();
 
+        DebugString = "";
+        if (Debug.isDebugBuild)
+        {
+            DebugString += "\n" + farmonStateMachine.CurrentState.ToString();
+        }
+
         if (!FarmonController.Paused)
         {
             if (attackReady == false && attackTimer.Tick(Time.deltaTime))
@@ -470,11 +497,13 @@ public abstract class Farmon : Vehicle
 
             if (EffectList.Burn > 0 && burnTimer.Tick(Time.deltaTime))
             {
-                TakeDamage((int)EffectList.Burn, Vector3.zero, null, 0, 0, true);
+                AttackData burnDamageData = new AttackData((int)EffectList.Burn, 0, 0, true);
+                TakeDamage(burnDamageData, transform.position, Vector3.zero, null);
             }
 
             if (hitStopTimer.Tick(Time.deltaTime))
             {
+                //DOTween.Play(Hud.SpriteQuad.transform);
                 rb.constraints = RigidbodyConstraints.FreezeRotation;
 
                 Hud.Animator.speed = 1;
@@ -484,7 +513,7 @@ public abstract class Farmon : Vehicle
         }
 
         // only tick if the game isn't paused or we are in the die state.
-        if(!FarmonController.Paused || farmonStateMachine.CurrentState.GetType() == typeof(DieState))
+        if(!FarmonController.Paused && !hitStopTimer.running || farmonStateMachine.CurrentState.GetType() == typeof(DieState))
         {
             farmonStateMachine.Tick();
         }
@@ -505,6 +534,11 @@ public abstract class Farmon : Vehicle
         {
             shadow.transform.position = transform.position + ((hitInfo.distance + (sphereCollider.radius / 2) - 0.01f) * Vector3.down);
         }
+    }
+
+    private void LateUpdate()
+    {
+        Hud.debugText.text = DebugString;
     }
 
     public void Select()
@@ -537,7 +571,7 @@ public abstract class Farmon : Vehicle
         SetState(mainState);
     }
 
-    protected virtual void AttackComplete()
+    public virtual void AttackComplete()
     {
         attackTimer.SetTime(AttackTime());
         SetState(mainState);
@@ -554,6 +588,75 @@ public abstract class Farmon : Vehicle
         Farmon.loadedFarmonMap.TryGetValue(protectTarget, out Farmon retValue);
         return retValue;
     }
+
+
+    public static List<Farmon> SearchFarmon(Farmon originFarmon, FarmonFilterEnum farmonFilter = FarmonFilterEnum.any, FarmonSortEnum farmonSort = FarmonSortEnum.nearest, float maxRange = 10000, List<Farmon> exclusions = default, bool excludeDead = true)
+    {
+        List<Farmon> searchList = new List<Farmon>(farmonList);
+
+        //filter the farmon based on teams.
+        searchList = FarmonFilter(searchList, farmonFilter, originFarmon);
+
+        //sort the farmon based on different criteria.
+        searchList = FarmonSort(searchList, farmonSort, originFarmon);
+
+        // Remove farmon that are too far away.
+        searchList = searchList.FindAll((farmon) => { return Vector3.Distance(farmon.transform.position, originFarmon.transform.position) < maxRange; });
+
+        // Remove excluded farmon.
+        searchList = searchList.FindAll((farmon) => { return !exclusions.Contains(farmon); });
+
+        if (excludeDead)
+        {
+            // Remove dead farmon.
+            searchList = searchList.FindAll((farmon) => { return !farmon.dead; });
+        }
+
+        return searchList;
+    }
+
+    public static List<Farmon> FarmonFilter(List<Farmon> listToFilter, FarmonFilterEnum farmonFilter, Farmon originFarmon = null)
+    {
+        switch(farmonFilter)
+        {
+            case FarmonFilterEnum.any:
+                return listToFilter;
+            case FarmonFilterEnum.enemyTeam:
+                return listToFilter.FindAll((farmon) => { return farmon.team != originFarmon.team; });
+            case FarmonFilterEnum.myTeam:
+                return listToFilter.FindAll((farmon) => { return farmon.team == originFarmon.team; });
+            case FarmonFilterEnum.team1:
+                return listToFilter.FindAll((farmon) => { return farmon.team == TeamEnum.team1; });
+            case FarmonFilterEnum.team2:
+                return listToFilter.FindAll((farmon) => { return farmon.team == TeamEnum.team2; });
+        }
+
+        return listToFilter;
+    }
+
+    public static List<Farmon> FarmonSort(List<Farmon> listToSort, FarmonSortEnum farmonSort, Farmon originFarmon = null)
+    {
+        switch (farmonSort)
+        {
+            case FarmonSortEnum.none:
+                break;
+            case FarmonSortEnum.furthest:
+                listToSort.Sort((f1, f2) => { return Vector3.Distance(f2.transform.position, originFarmon.transform.position).CompareTo(Vector3.Distance(f1.transform.position, originFarmon.transform.position)); });
+                break;
+            case FarmonSortEnum.nearest:
+                listToSort.Sort((f1, f2) => { return Vector3.Distance(f1.transform.position, originFarmon.transform.position).CompareTo(Vector3.Distance(f2.transform.position, originFarmon.transform.position)); });
+                break;
+            case FarmonSortEnum.mostHealth:
+                listToSort.Sort((f1, f2) => { return f2.health.CompareTo(f1.health); });
+                break;
+            case FarmonSortEnum.lowestHealth:
+                listToSort.Sort((f1, f2) => { return f1.health.CompareTo(f2.health); });
+                break;
+        }
+
+        return listToSort;
+    }
+
 
     public virtual bool IsInAttackPosition()
     {
@@ -619,9 +722,9 @@ public abstract class Farmon : Vehicle
         SetHealth(health + amount);
     }
 
-    public bool TakeDamage(int damage, Vector3 knockBackDirection, Farmon owner, float hitStopTime = 0.3f, float knockBack = 5f, bool undodgeable = false)
+    public bool TakeDamage(AttackData attackData, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
     {        
-        if(!undodgeable && UnityEngine.Random.value < Agility / 100f)
+        if(!attackData.Undodgeable && UnityEngine.Random.value < Agility / 100f)
         {
             //Get the dodge direction
             Vector3 dodgeDirection;
@@ -647,32 +750,43 @@ public abstract class Farmon : Vehicle
         else
         {
             if(owner) LastFarmonToDamageMe = owner;
-            if (!ImmuneToHitStop && hitStopTime > 0)
+            if (!ImmuneToHitStop && attackData.HitStopTime > 0)
             {
-                SetState(new HitStopState(this, hitStopTime, knockBackDirection * knockBack, damage));
+                SetState(new HitStopState(this, attackData, damageOrigin, knockBackDirection));
             }
             else
             {
-                ChangeHeath(-damage);
+                ChangeHeath(-attackData.Damage);
 
-                MakeDamageNumber(damage);
+                MakeDamageNumber(attackData);
+
+                MakeHitEffect(attackData, damageOrigin);
             }
 
             return true;
         }
     }
 
-    public void MakeDamageNumber(int damage)
+    public void MakeDamageNumber(AttackData attackData)
     {
         FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
-        float severityPercent = Mathf.Min(damage / StatMax, 1f);
+        float severityPercent = Mathf.Min(attackData.Damage / (StatMax / 2), 1f);
         floatingText.transform.localScale = (0.7f + 0.4f * severityPercent) * Vector3.one;
 
         Color color1 = new Color(1.0f, 0.549f, 0.004f);
         Color color2 = new Color(0.929f, 0.161f, 0.220f);
         Color damageColor = Color.Lerp(color1, color2, severityPercent);
 
-        floatingText.Setup(damage.ToString(), damageColor);
+        floatingText.Setup(attackData.Damage.ToString(), damageColor);
+    }
+
+    public void MakeHitEffect(AttackData attackData, Vector3 damageOrigin)
+    {
+        //Spawn a hit effect.
+        Vector3 meToDamageOrigin = damageOrigin - (sphereCollider.transform.position + sphereCollider.center);
+        GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, transform);
+        hitEffect.transform.position = transform.position + meToDamageOrigin.normalized * sphereCollider.radius;
+        hitEffect.transform.localScale = (.2f + 2.5f * attackData.HitStopTime) * Vector3.one;
     }
 
     public void Die()
@@ -682,6 +796,7 @@ public abstract class Farmon : Vehicle
 
     public void HitStopSelf(float stopTime)
     {
+        //DOTween.Pause(Hud.SpriteQuad.transform);
         rb.constraints = RigidbodyConstraints.FreezeAll;
 
         hitStopTimer.SetTime(stopTime);
@@ -891,8 +1006,8 @@ public abstract class Farmon : Vehicle
 
     public void MovementIdle()
     {
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
         
 
         softSeperate *= 3f;
@@ -901,15 +1016,15 @@ public abstract class Farmon : Vehicle
         rb.AddForce(softSeperate);
         rb.AddForce(separate);
 
-        Vector3 friction = Friction(softSeperate + separate);
+        Vector3 friction = 0.25f * Friction(softSeperate + separate);
         rb.AddForce(friction);
     }
 
     public void MovementWander()
     {
         Vector3 wander = Wander();
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
 
         wander *= 1f;
         softSeperate *= 3f;
@@ -926,8 +1041,8 @@ public abstract class Farmon : Vehicle
     public void StayInRange(Vector3 position, float min, float max)
     {
         Vector3 wander = Wander();
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
         Vector3 minDistance = MinDistance(position, min);
         Vector3 maxDistance = MaxDistance(position, max);
 
@@ -950,8 +1065,8 @@ public abstract class Farmon : Vehicle
     public void SeekPosition(bool localAvoidance = true)
     {
         Vector3 seek = Seek(localAvoidance);
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
 
         seek *= 1f;
         softSeperate *= 3f;
@@ -967,7 +1082,7 @@ public abstract class Farmon : Vehicle
 
     public void SeekUnit(bool localAvoidance = true)
     {
-        Vehicle targetVehicle = targetTransform.GetComponentInParent<Vehicle>();
+        Vehicle targetVehicle = targetTransform.GetComponentInChildren<Vehicle>();
 
         if (!targetVehicle)
         {
@@ -985,8 +1100,8 @@ public abstract class Farmon : Vehicle
         {
             seek = Vector3.zero;
         }
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
 
         seek *= 1f;
         softSeperate *= 3f;
@@ -1003,8 +1118,8 @@ public abstract class Farmon : Vehicle
     public void FollowPath(Path path, bool localAvoidance = true)
     {
         Vector3 seekPath = SeekPath(path, localAvoidance);
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
 
         seekPath *= 1f;
         softSeperate *= 3f;
@@ -1021,8 +1136,8 @@ public abstract class Farmon : Vehicle
     public void Arrive(bool localAvoidance = true)
     {
         Vector3 arrive = Arrive(localAvoidance, Mathf.Sqrt(maxSpeed) / 2);
-        Vector3 softSeperate = SoftSeperate(farmonList, sphereCollider.radius);
-        Vector3 separate = Seperate(farmonList, sphereCollider.radius - AllowedOverlap);
+        Vector3 softSeperate = SoftSeperate(vehicleList, sphereCollider.radius);
+        Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
 
         arrive *= 1f;
         softSeperate *= 3f;
@@ -1053,7 +1168,7 @@ public class IdleState : StateMachineState
     {
         base.Enter();
 
-        farmon.maxSpeed = 0;
+        farmon.maxSpeed = farmon.GetMovementSpeed();
     }
 
     public override void Tick()
@@ -1225,7 +1340,7 @@ public class AttackState : StateMachineState
 
             bool isAbleToAttack = farmon.IsInAttackPosition();
 
-            //if not, path towards the enemy
+            //if not able to attack, path towards the enemy
             if (subStateMachine.CurrentState != followPathState && !isAbleToAttack)
             {
                 subStateMachine.ChangeState(followPathState);
@@ -1470,6 +1585,129 @@ public class ProtectState : StateMachineState
     }
 }
 
+public class AttackData{            
+    public int Damage;
+    public float Knockback;
+    public float HitStopTime;
+    public bool Undodgeable;
+    public AudioClip InitialSound;
+    public AudioClip HitSound;
+    public AttackData(int damage = 10, float knockback = 5f, float hitStopTime = 0.3f, bool undodgeable = false, AudioClip initialSound = null, AudioClip hitSound = null)
+    {
+        Damage = damage;
+        Knockback = knockback;
+        HitStopTime = hitStopTime;
+        Undodgeable = undodgeable;
+        InitialSound = initialSound;
+        HitSound = hitSound;
+    }
+}
+
+// In the melee attack state, farmon moves towards the attackTarget farmon and, after getting within attack range, lunges at the attackTarget farmon.
+public class MeleeAttackState : StateMachineState
+{
+    protected AttackData _attackData;
+
+    protected Farmon _farmon;
+    protected float _lungeRange;
+    protected bool _selfHitStun;
+
+    protected uint _targetFarmonInstanceID;
+
+    private bool jumping = false;
+
+    public MeleeAttackState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData, bool selfHitstun = true)
+    {
+        _farmon = farmon;
+        _selfHitStun = selfHitstun;
+        _attackData = attackData;
+
+        _lungeRange = LevelController.Instance.gridSize * .1f;
+
+        _targetFarmonInstanceID = targetFarmonInstanceID;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        _farmon.ImmuneToHitStop = true;
+
+        _farmon.maxSpeed = (_farmon.GetMovementSpeed() + 2) * 3;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        _farmon.ImmuneToHitStop = false;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+
+        Farmon attackFarmon = Farmon.loadedFarmonMap[_targetFarmonInstanceID];
+        _farmon.targetTransform = attackFarmon.transform;
+
+        if (!_farmon.targetTransform || !attackFarmon)
+        {
+            _stateMachine.ChangeState(_farmon.mainState);
+            return;
+        }
+
+        if (jumping && _farmon.rb.velocity.y < 0.001f && _farmon.Grounded)
+        {
+            jumping = false;
+        }
+
+        if(!jumping) _farmon.SeekUnit(false);
+
+        Vector3 toTargetEnemy = attackFarmon.Hud.SpriteQuad.transform.position - _farmon.Hud.SpriteQuad.transform.position;
+        float distanceToEnemy = Vector3.Distance(_farmon.transform.position, attackFarmon.transform.position);
+
+        //If we have the jump perk and a flying enemy is less than 1.5 blocks away, jump at them.
+        _farmon.perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
+        if (jumpAbility > 0 && distanceToEnemy < 1.5f * LevelController.Instance.gridSize && attackFarmon.Flying && _farmon.Grounded)
+        {
+            _farmon.rb.velocity = Vector3.zero;
+            _farmon.rb.AddForce((toTargetEnemy/LevelController.Instance.gridSize) * 1.4f, ForceMode.Impulse);
+            jumping = true;
+        }
+
+        float radiusCombined = _farmon.sphereCollider.radius + attackFarmon.sphereCollider.radius;
+
+        if (distanceToEnemy - radiusCombined < _lungeRange)
+        {
+            _farmon.Hud.SpriteQuad.transform.DOPunchPosition(toTargetEnemy, 0.5f, 1, 0);
+            _farmon.Hud.SpriteQuad.transform.DORestart();
+            //DOTween.Play(_farmon.Hud.SpriteQuad.transform);
+            OnAttack();
+        }
+    }
+
+    public virtual void OnAttack()
+    {
+        Farmon attackFarmon = Farmon.loadedFarmonMap[_targetFarmonInstanceID];
+
+        SphereCollider sc = _farmon.sphereCollider;
+
+        bool hit = attackFarmon.TakeDamage(_attackData, sc.transform.position + sc.center, (attackFarmon.transform.position - _farmon.transform.position).normalized, _farmon);
+
+        if (hit)
+        {
+            //Spawn a hit effect.
+            Vector3 farmonToMe = (_farmon.transform.position - attackFarmon.transform.position).normalized;
+            GameObject hitEffect = GameObject.Instantiate(FarmonController.instance.HitEffectPrefab, attackFarmon.transform);
+            hitEffect.transform.position = attackFarmon.transform.position + farmonToMe * attackFarmon.sphereCollider.radius;
+            hitEffect.transform.localScale = (.2f + 2.5f * _attackData.HitStopTime) * Vector3.one;
+
+            _farmon.Hud.AudioSource.clip = _attackData.HitSound;
+            _farmon.Hud.AudioSource.volume = .2f;
+            _farmon.Hud.AudioSource.Play();
+        }
+    }
+}
+
 public class HitStopState : StateMachineState
 {
     readonly Farmon farmon;
@@ -1484,16 +1722,21 @@ public class HitStopState : StateMachineState
 
     bool flashFlag;
 
-    public HitStopState(Farmon thisUnit, float _hitStopTime, Vector3 _bounceVector, int _damage)
+    public HitStopState(Farmon thisUnit, AttackData attackData, Vector3 damageOrigin, Vector3 knockbackDirection)
     {
         farmon = thisUnit;
 
-        hitStopTimer.SetTime(_hitStopTime);
+        hitStopTimer.SetTime(attackData.HitStopTime);
 
         flashTimer.SetTime(.1f);
         flashTimer.autoReset = true;
 
-        hitStopState2 = new HitStopState2(farmon, _bounceVector, _damage);
+        Vector3 bounceVector = knockbackDirection * attackData.Knockback;
+
+        if(bounceVector.magnitude > .01f)
+        {
+            hitStopState2 = new HitStopState2(farmon, attackData, damageOrigin, bounceVector);
+        }
 
         spriteRenderer = farmon.Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
     }
@@ -1564,7 +1807,14 @@ public class HitStopState : StateMachineState
 
         if (hitStopTimer.Tick(Time.deltaTime))
         {
-            farmon.SetState(hitStopState2);
+            if (hitStopState2 != null)
+            {
+                farmon.SetState(hitStopState2);
+            }
+            else
+            {
+                farmon.SetState(farmon.mainState);
+            }
         }
 
     }
@@ -1573,34 +1823,39 @@ public class HitStopState : StateMachineState
 public class HitStopState2 : StateMachineState
 {
     readonly Farmon farmon;
-    Vector3 bounceVector;
-    readonly Timer hitStopTimer = new Timer();
-    readonly int damage;
+    readonly Vector3 _damageOrigin;
+    readonly Vector3 _bounceVector;
+    readonly AttackData _attackData;
 
-    public HitStopState2(Farmon thisUnit, Vector3 _bounceVector, int _damage)
+    readonly Timer hitStopTimer = new Timer();
+
+
+    public HitStopState2(Farmon thisUnit, AttackData attackData, Vector3 damageOrigin, Vector3 bounceVector)
     {
         farmon = thisUnit;
-        bounceVector = _bounceVector;
+        _bounceVector = bounceVector;
 
         hitStopTimer.SetTime(0.15f);
 
-        damage = _damage;
+        _attackData = attackData;
     }
 
     public override void Enter()
     {
         base.Enter();
-        farmon.rb.AddForce(bounceVector, ForceMode.Impulse);
 
-        if (damage > farmon.MaxHealth / 10)
+        if (_attackData.Damage > farmon.MaxHealth / 10)
         {
             farmon.Hud.AudioSource.clip = FarmonController.instance.HitSound2;
             farmon.Hud.AudioSource.volume = .3f;
             farmon.Hud.AudioSource.Play();
         }
 
-        farmon.ChangeHeath(-damage);
-        farmon.MakeDamageNumber(damage);
+        farmon.ChangeHeath(-_attackData.Damage);
+        farmon.MakeDamageNumber(_attackData);
+        farmon.MakeHitEffect(_attackData, _damageOrigin);
+
+        farmon.rb.AddForce(farmon.dead ? _bounceVector * 3 : _bounceVector, ForceMode.Impulse);
     }
 
     public override void Tick()
@@ -1654,7 +1909,7 @@ public class DieState : StateMachineState
         farmon.Hud.AudioSource.volume = .3f;
         farmon.Hud.AudioSource.Play();
 
-        farmon.rb.AddForce(Vector3.up * 3, ForceMode.Impulse);
+        farmon.rb.AddForce(Vector3.up * 2, ForceMode.Impulse);
     }
 
     public override void Tick()
@@ -1716,12 +1971,12 @@ public class WanderState : StateMachineState
 
 public class SpawnState : StateMachineState
 {
-    Farmon unit;
+    Farmon farmon;
     Timer spawnTimer;
 
     public SpawnState(Farmon thisUnit)
     {
-        unit = thisUnit;
+        farmon = thisUnit;
         spawnTimer = new Timer();
         spawnTimer.SetTime(1f);
     }
@@ -1730,18 +1985,75 @@ public class SpawnState : StateMachineState
     {
         base.Enter();
 
-        unit.maxSpeed = 0;
+        farmon.maxSpeed = farmon.GetMovementSpeed();
     }
 
     public override void Tick()
     {
         base.Tick();
 
-        unit.MovementIdle();
+        farmon.MovementIdle();
 
         if (spawnTimer.Tick(Time.deltaTime))
         {
-            unit.SetState(unit.mainState);
+            farmon.SetState(farmon.mainState);
         }
+    }
+}
+
+public class JumpState : StateMachineState
+{
+    Farmon unit;
+
+    Vector3 startingPosition, endingPosition;
+
+    float jumpTime = 1;
+
+    float h;
+
+    Timer jumpTimer = new Timer();
+
+    public JumpState(Farmon thisUnit, Vector3 startingPos, Vector3 endingPos, float height, float duration = 1f)
+    {
+        unit = thisUnit;
+        startingPosition = startingPos;
+
+        Vector2 randomFlatVector = UnityEngine.Random.insideUnitCircle;
+        Vector3 slightOffset = new Vector3(randomFlatVector.x, 0, randomFlatVector.y) * .01f;
+        endingPosition = endingPos + slightOffset;
+
+        jumpTime = duration;
+        h = height;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        jumpTimer.SetTime(jumpTime);
+
+        unit.maxSpeed = 0;
+        unit.rb.isKinematic = true;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if (jumpTimer.Tick(Time.deltaTime))
+        {
+            unit.SetState(unit.mainState);
+            unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, .9f));
+            return;
+        }
+
+        float jumpPercent = Mathf.Max(0, 0.9f - jumpTimer.Percent);
+
+        unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, jumpPercent));
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        unit.rb.isKinematic = false;
     }
 }

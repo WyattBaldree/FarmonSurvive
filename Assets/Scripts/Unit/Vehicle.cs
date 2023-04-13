@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class Vehicle : MonoBehaviour
 {
-    static List<Vehicle> vehicleList = new List<Vehicle>();
+    public static List<Vehicle> vehicleList = new List<Vehicle>();
     protected static float AllowedOverlap = 0.3f;
     public static float frictionScale = 1f;
 
@@ -15,11 +15,15 @@ public class Vehicle : MonoBehaviour
     
     public SphereCollider sphereCollider;
 
+
     float startingRadius;
 
     [HideInInspector]
     public float maxSpeed;
 
+    [HideInInspector]
+    public bool Grounded = false;
+    
     protected float maxForce = 50;
 
     float wanderDistance = 3;
@@ -97,7 +101,14 @@ public class Vehicle : MonoBehaviour
 
         float sphereCastDistance = 0.2f;
 
-        if(Physics.SphereCast(sphereCollider.transform.position + sphereCollider.center + sphereCastDistance * Vector3.up, sphereCollider.radius * 2/3, Vector3.down, out RaycastHit hit, 2 * sphereCastDistance + sphereCollider.radius * 1/3, LayerMask.GetMask("Default")))
+        Grounded = Physics.SphereCast(  sphereCollider.transform.position + sphereCollider.center + sphereCastDistance * Vector3.up,
+                                        sphereCollider.radius * 2 / 3, 
+                                        Vector3.down, 
+                                        out RaycastHit hit, 
+                                        2 * sphereCastDistance + sphereCollider.radius * 1 / 3, 
+                                        LayerMask.GetMask("Default"));
+
+        if (Grounded)
         {
             rb.useGravity = false;
         }

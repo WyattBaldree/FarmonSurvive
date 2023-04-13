@@ -9,4 +9,6 @@ public class FarmonHud : MonoBehaviour
     public Animator Animator;
     public PositionQuad PositionQuad;
     public AudioSource AudioSource;
+    public Transform ScalingObjectsParent;
+    public TMPro.TextMeshPro debugText;
 }

@@ -16,33 +16,13 @@ public class Scruff : Farmon
     protected override void Start()
     {
         base.Start();
-
-        tackleState = new ScruffTackleState(this);
     }
 
     public override void Attack(Farmon targetEnemy)
     {
-        Projectile tackle = Instantiate(scruffTacklePrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
-        tackle.damage = 10 + Power / 3;
-        tackle.transform.localScale *= sphereCollider.radius * 1.2f / .35f;
-        tackle.knockBack = 6;
-        tackle.hitStunTime = hitStunTime;
-        tackle.pierce = 0;
-        tackle.specificTarget = targetEnemy;
-        tackle.owner = this;
-        tackle.team = team;
-        tackle.CreateSound = tackleSound;
-        tackle.HitSound = hitSound;
+        AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, hitStunTime, false, tackleSound, hitSound);
 
-        tackle.EventDestroy.AddListener(AttackComplete);
-
-        SetState(tackleState);
-    }
-
-    protected override void AttackComplete()
-    {
-        base.AttackComplete();
-        HitStopSelf(hitStunTime);
+        SetState(new ScruffTackleState(this, attackTarget, tackleAttackData));
     }
 
     public override float AttackTime()
@@ -70,41 +50,25 @@ public class Scruff : Farmon
     }
 }
 
-public class ScruffTackleState : StateMachineState
+public class ScruffTackleState : MeleeAttackState
 {
-    Farmon farmon;
-
-    public ScruffTackleState(Farmon farmon)
+    public ScruffTackleState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData) : base(farmon, targetFarmonInstanceID,  attackData)
     {
-        this.farmon = farmon;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-        farmon.ImmuneToHitStop = true;
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
-        farmon.ImmuneToHitStop = false;
     }
 
     public override void Tick()
     {
+        _farmon.maxSpeed = (_farmon.GetMovementSpeed() + 2) * 3;
         base.Tick();
+    }
 
-        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
+    public override void OnAttack()
+    {
+        base.OnAttack();
 
-        if (!farmon.targetTransform || !attackFarmon)
-        {
-            _stateMachine.ChangeState(farmon.mainState);
-            return;
-        }
+        _farmon.rb.velocity = Vector3.zero;
 
-        farmon.maxSpeed = (farmon.GetMovementSpeed() + 2) * 3;
-
-        farmon.SeekUnit(false);
+        _stateMachine.ChangeState(_farmon.mainState);
+        _farmon.AttackComplete();
     }
 }

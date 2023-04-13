@@ -32,10 +32,10 @@ Shader "Custom/3DSpriteWithOutline"
         Blend One OneMinusSrcAlpha
 
         CGPROGRAM
-        #pragma surface surf Lambert vertex:vert keepalpha noinstancing
+        #pragma surface surf Lambert vertex:vert noinstancing alpha:fade
         #pragma multi_compile_local _ PIXELSNAP_ON
         #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
-        #include "UnitySprites.cginc"
+        #include "UnitySprites.cginc" 
 
         struct Input
         {
@@ -95,5 +95,5 @@ Shader "Custom/3DSpriteWithOutline"
         ENDCG
     }
 
-Fallback "Transparent/VertexLit"
+//Fallback "Transparent/VertexLit"
 }

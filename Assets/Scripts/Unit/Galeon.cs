@@ -24,20 +24,14 @@ public class Galeon : Farmon
     public override void Attack(Farmon targetEnemyFarmon)
     {
         Projectile fireBall = Instantiate(fireballPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-        fireBall.damage = 5 + Power/2;
-        fireBall.transform.localScale *= (1f + (float)Focus / 5f);
-        fireBall.pierce = 2;
-        fireBall.knockBack = 4;
-        fireBall.hitStunTime = .15f;
-        fireBall.owner = this;
-        fireBall.team = team;
-        fireBall.CreateSound = fireBallSound;
-        fireBall.HitSound = fireBallHitSound;
+        AttackData fireBallAttackData = new AttackData( 5 + Power/2, 4, .15f, fireBallSound, fireBallHitSound);
 
+        fireBall.transform.localScale *= (1f + (float)Focus / 5f);
+        fireBall.Pierce = 2;
         fireBall.OnHitDelegate = (unit) => {
             FireballHit();
         };
-        //Every 3 Hits triggers a tornado burst!
+        fireBall.Initialize(fireBallAttackData, this, team);
 
         Vector3 unitToEnemy = targetEnemyFarmon.GetUnitVectorToMe(transform.position) * 3f;
         unitToEnemy = Vector3.ProjectOnPlane(unitToEnemy, Vector3.up).normalized;
@@ -56,6 +50,7 @@ public class Galeon : Farmon
 
     private void FireballHit()
     {
+        //Every 3 Hits triggers a tornado burst!
         hitCount++;
 
         if(hitCount >= 3)
@@ -72,14 +67,12 @@ public class Galeon : Farmon
         for(int angle = 0; angle < 360; angle += angleBetweenTornados)
         {
             Projectile tornado = Instantiate(tornadoPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-            tornado.damage = 2;
-            tornado.pierce = 1;
-            tornado.hitStunTime = .1f;
-            tornado.knockBack = 2;
-            tornado.lifeTime = 10;
-            tornado.owner = this;
-            tornado.team = team;
-            if (angle == 0) tornado.CreateSound = tornadoSound;
+
+            AttackData tornadoAttackData = new AttackData(2, 2, .1f, angle == 0 ? tornadoSound : null, null);
+
+            tornado.Pierce = 1;
+            tornado.LifeTime = 10;
+            tornado.Initialize(tornadoAttackData, this, team);
 
             SpiralOut spiralOut = tornado.GetComponent<SpiralOut>();
             spiralOut.RotationOffset = angle;

@@ -11,7 +11,7 @@ namespace Assets.Scripts.Timer
 
         private float maxTime = 0;
 
-        private bool running = false;
+        public bool running = false;
 
         public bool autoReset = false;
 

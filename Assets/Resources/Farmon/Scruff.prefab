@@ -57,9 +57,11 @@ MonoBehaviour:
   uniqueID: 0
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
-  healthBar: {fileID: 3749070670789246562}
+  healthBar: {fileID: 0}
+  loadedFarmonMapId: 0
   farmonName: Scruff
   nickname: 
+  Description: Default description.
   level: 1
   experience: 0
   canJump: 1
@@ -69,9 +71,9 @@ MonoBehaviour:
   Selected: 0
   dead: 0
   attackReady: 0
-  targetRange: 3
-  attackTarget: {fileID: 0}
-  protectTarget: {fileID: 0}
+  targetRange: 5
+  attackTarget: 0
+  protectTarget: 0
   team: 1
   LastFarmonToDamageMe: {fileID: 0}
   GridSpaceChangedEvent:
@@ -82,12 +84,12 @@ MonoBehaviour:
   gritBonus: 0
   PowerBase: 6
   powerBonus: 0
-  ReflexBase: 2
-  reflexBonus: 0
+  AgilityBase: 10
+  agilityBonus: 0
   FocusBase: 2
   focusBonus: 0
-  SpeedBase: 6
-  speedBonus: 0
+  LuckBase: 10
+  luckBonus: 0
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   scruffTacklePrefab: {fileID: 3556518770851303680, guid: 80c4bdb17fa28834f8c7309c19276abb, type: 3}
   hitStunTime: 0.23
@@ -235,14 +237,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
   m_PrefabInstance: {fileID: 4814722021979009721}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3749070670789246562 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8563044669451488475, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
-  m_PrefabInstance: {fileID: 4814722021979009721}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4706a5585806b7d479f57915243ea200, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

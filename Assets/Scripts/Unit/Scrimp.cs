@@ -16,11 +16,9 @@ public class Scrimp : Farmon
         Vector3 unitToEnemy = targetEnemy.GetUnitVectorToMe(transform.position);
 
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-        fireBall.damage = 5 + Power / 5;
+        AttackData fireballAttackData = new AttackData(5 + Power / 5, 4, .15f, false, shootSound, hitSound);
         fireBall.transform.localScale *= (1f + (float)Focus / (StatMax*2));
-        fireBall.pierce += Focus / 3;
-        fireBall.knockBack = 4;
-        fireBall.hitStunTime = .15f;
+        fireBall.Pierce += Focus / 3;
         fireBall.OnHitDelegate = (unit) => {
             perkList.TryGetValue(new PerkFiendFire().PerkName, out int fiendFireAbility);
 
@@ -30,10 +28,7 @@ public class Scrimp : Farmon
                 unit.EffectList.AddEffect(new Effect("burn;" + fireDamage + ";4"));
             }
         };
-        fireBall.owner = this;
-        fireBall.team = team;
-        fireBall.CreateSound = shootSound;
-        fireBall.HitSound = hitSound;
+        fireBall.Initialize(fireballAttackData, this, team);
 
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         cv.velocity = unitToEnemy.normalized * (10f + Agility/2f);

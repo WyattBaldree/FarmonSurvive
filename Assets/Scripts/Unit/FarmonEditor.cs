@@ -53,6 +53,8 @@ public class FarmonEditor : Editor
 
         if (Application.isPlaying)
         {
+            ((Farmon)target).Flying = GUILayout.Toggle(((Farmon)target).Flying, "Flying");
+
             if (GUILayout.Button("Give Jump Perk"))
             {
                 ((Farmon)target).AddPerk(new PerkJump());

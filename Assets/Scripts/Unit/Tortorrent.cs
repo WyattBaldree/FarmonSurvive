@@ -8,17 +8,18 @@ public class Tortorrent : Farmon
 {
     public GameObject torrentSpinPrefab;
 
-    public TorrentSpinChargeState SpinChargeState;
-    public TorrentSpinAttackState SpinAttackState;
-
     public AudioClip ChargeUpSound;
     public AudioClip ThunkSound;
 
     public float hitStunTime = .2f;
+    [HideInInspector]
+    public int shellHitCount = 0;
+
+    public GameObject spinEffect;
 
     public override void Attack(Farmon targetEnemy)
     {
-        SetState(SpinChargeState);
+        SetState(new TorrentSpinChargeState(this));
     }
 
     public override float AttackTime()
@@ -30,28 +31,11 @@ public class Tortorrent : Farmon
     {
         base.Start();
 
-        SpinChargeState = new TorrentSpinChargeState(this);
-        SpinAttackState = new TorrentSpinAttackState(this);
+        //SpinChargeState = new TorrentSpinChargeState(this);
+        //SpinAttackState = new TorrentSpinAttackState(this);
     }
 
-    public Projectile MakeSpin(Farmon targetFarmon)
-    {
-        Projectile spin = Instantiate(torrentSpinPrefab, transform.position, transform.rotation, transform).GetComponent<Projectile>();
-        spin.damage = 15 + Power / 2;
-        spin.knockBack = 6;
-        spin.hitStunTime = hitStunTime;
-        spin.specificTarget = targetFarmon;
-        spin.owner = this;
-        spin.team = team;
-        spin.CreateSound = ChargeUpSound;
-        spin.HitSound = ThunkSound;
-
-        spin.EventDestroy.AddListener(AttackComplete);
-
-        return spin;
-    }
-
-    protected override void AttackComplete()
+    public override void AttackComplete()
     {
         base.AttackComplete();
         HitStopSelf(hitStunTime);
@@ -82,8 +66,6 @@ public class TorrentSpinChargeState : StateMachineState
     Tortorrent tortorrent;
     Timer chargeTimer = new Timer();
     Timer flipTimer = new Timer();
-
-    Collider spinCollider;
     SpriteRenderer spinSpriteRenderer;
 
     public TorrentSpinChargeState(Tortorrent tortorrent)
@@ -96,22 +78,27 @@ public class TorrentSpinChargeState : StateMachineState
         base.Enter();
 
         Farmon attackFarmon = tortorrent.GetAttackTargetFarmon();
-
         tortorrent.targetTransform = attackFarmon.transform;
 
         chargeTimer.SetTime(2f - tortorrent.Agility/Farmon.StatMax);
         flipTimer.SetTime(.001f);
 
+        //Tortorrent cannot be knocked out of its charge
         tortorrent.ImmuneToHitStop = true;
 
+        //Set the animation to the second frame so it looks like tortorrent is in its shell.
         Animator animator = tortorrent.Hud.Animator;
         animator.speed = 0;
         animator.Play(animator.GetCurrentAnimatorStateInfo(0).shortNameHash,0, .6f);
 
-        Projectile spin = tortorrent.MakeSpin(attackFarmon);
-        spinCollider = spin.GetComponent<Collider>();
-        spinCollider.enabled = false;
-        spinSpriteRenderer = spin.GetComponentInChildren<SpriteRenderer>();
+        //Create the spin sprite
+        tortorrent.spinEffect = GameObject.Instantiate(tortorrent.torrentSpinPrefab, tortorrent.transform.position, tortorrent.transform.rotation, tortorrent.transform);
+        spinSpriteRenderer = tortorrent.spinEffect.GetComponentInChildren<SpriteRenderer>();
+
+        //Play the charge up sound.
+        tortorrent.Hud.AudioSource.clip = tortorrent.ChargeUpSound;
+        tortorrent.Hud.AudioSource.volume = .2f;
+        tortorrent.Hud.AudioSource.Play();
     }
 
     public override void Exit()
@@ -120,8 +107,6 @@ public class TorrentSpinChargeState : StateMachineState
         tortorrent.ImmuneToHitStop = false;
 
         tortorrent.Hud.Animator.speed = 1;
-
-        spinCollider.enabled = true;
     }
 
     public override void Tick()
@@ -157,81 +142,77 @@ public class TorrentSpinChargeState : StateMachineState
 
         if (chargeTimer.Tick(Time.deltaTime))
         {
-            tortorrent.SetState(tortorrent.SpinAttackState);
+            tortorrent.Hud.AudioSource.clip = FarmonController.instance.DashSound;
+            tortorrent.Hud.AudioSource.volume = .2f;
+            tortorrent.Hud.AudioSource.Play();
+            
+            tortorrent.shellHitCount = 3;
+            
+            AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, tortorrent.hitStunTime, false, null, tortorrent.ThunkSound);
+            tortorrent.SetState(new TorrentSpinAttackState(tortorrent, tortorrent.attackTarget, attackData));
+
             return;
         }
 
-        tortorrent.maxSpeed = 0;
+        tortorrent.maxSpeed = tortorrent.GetMovementSpeed();
 
-        tortorrent.SeekUnit(false);
+        tortorrent.MovementIdle();
     }
 }
 
-public class TorrentSpinAttackState : StateMachineState
+public class TorrentSpinAttackState : MeleeAttackState
 {
-    Farmon farmon;
     Timer flipTimer = new Timer();
     Timer timeoutTimer = new Timer();
+    Tortorrent tortorrent;
 
-    public TorrentSpinAttackState(Farmon farmon)
+    public TorrentSpinAttackState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData) : base(farmon, targetFarmonInstanceID, attackData)
     {
-        this.farmon = farmon;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
-
-        farmon.targetTransform = attackFarmon.transform;
-        flipTimer.SetTime(.05f);
-        flipTimer.autoReset = true;
-
-        timeoutTimer.SetTime(4f);
-
-        farmon.Hud.AudioSource.clip = FarmonController.instance.DashSound;
-        farmon.Hud.AudioSource.volume = .2f;
-        farmon.Hud.AudioSource.Play();
-
-        farmon.ImmuneToHitStop = true;
-
-        farmon.maxSpeed = (farmon.GetMovementSpeed() + 2) * 3;
-
-        Vector3 seek = farmon.Seek(false);
-        farmon.rb.AddForce(seek, ForceMode.Impulse);
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
-
-        farmon.ImmuneToHitStop = false;
+        tortorrent = (Tortorrent)farmon;
     }
 
     public override void Tick()
     {
+        _farmon.maxSpeed = (_farmon.GetMovementSpeed() + 3) * 2;
         base.Tick();
+    }
 
-        if (timeoutTimer.Tick(Time.deltaTime))
+    public override void OnAttack()
+    {
+        base.OnAttack();
+
+        if (_selfHitStun)
         {
-            farmon.SetState(farmon.mainState);
-            return;
+            _farmon.HitStopSelf(_attackData.HitStopTime);
         }
 
-        if (flipTimer.Tick(Time.deltaTime))
+        tortorrent.shellHitCount--;
+
+        //If we are not out of attacks, attack again.
+        if (tortorrent.shellHitCount > 0)
         {
-            farmon.mySpriteRenderer.flipX = !farmon.mySpriteRenderer.flipX;
+            // Search for our next target. Exclude the last farmon hit.
+            List<Farmon> lastFarmonHit = new List<Farmon>() { Farmon.loadedFarmonMap[_targetFarmonInstanceID] };
+            List<Farmon> attackTargetList = Farmon.SearchFarmon(    tortorrent,
+                                                                    Farmon.FarmonFilterEnum.enemyTeam,  
+                                                                    Farmon.FarmonSortEnum.nearest, 
+                                                                    LevelController.Instance.gridSize * 4,
+                                                                    lastFarmonHit);
+            
+            //If a target was found, attack it.
+            if (attackTargetList.Count > 0)
+            {
+                AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, tortorrent.hitStunTime, false, null, tortorrent.ThunkSound);
+                tortorrent.SetState(new TorrentSpinAttackState(tortorrent, attackTargetList[0].loadedFarmonMapId, attackData));
+                return;
+            }
         }
 
-        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
-        if (!farmon.targetTransform || !attackFarmon)
-        {
-            farmon.SetState(farmon.mainState);
-            return;
-        }
 
-        farmon.maxSpeed = (farmon.GetMovementSpeed() + 2) * 3;
+        //If a new attack was not started, just return to the main state.
+        GameObject.Destroy(tortorrent.spinEffect);
+        tortorrent.SetState(_farmon.mainState);
 
-        farmon.SeekUnit(false);
+        _farmon.AttackComplete();
     }
 }
