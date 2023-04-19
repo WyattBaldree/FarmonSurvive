@@ -3,10 +3,11 @@ using UnityEngine.Events;
 
 public class EffectList
 {
-	public float Stun;
-    public float Frost;
-    public float Shock;
-    public float Burn;
+	public int Stun;
+    public int Frost;
+    public int Shock;
+    public int Burn;
+	public int TortorrentShield;
 
 	List<Effect> effectList = new List<Effect>();
 
@@ -25,9 +26,9 @@ public class EffectList
 		}
 	}
 
-	float GetEffectMax(string effectName)
+	int GetEffectMax(string effectName)
 	{
-		float max = 0;
+		int max = 0;
 		for (int i = effectList.Count - 1; i >= 0; i--)
 		{
 			if (effectList[i].effectName == effectName)
@@ -53,7 +54,7 @@ public class EffectList
 		SetStatus(effect.effectName, GetEffectMax(effect.effectName));
 	}
 
-	void SetStatus(string effectName, float magnitude)
+	void SetStatus(string effectName, int magnitude)
 	{
 		switch (effectName)
 		{
@@ -68,6 +69,9 @@ public class EffectList
 				break;
 			case "burn":
 				Burn = magnitude;
+				break;
+			case "tortorrentShield":
+				TortorrentShield = magnitude;
 				break;
 		}
 		EffectUpdatedEvent.Invoke();
@@ -87,13 +91,14 @@ public class EffectList
 		Frost = 0;
 		Shock = 0;
 		Burn = 0;
+		TortorrentShield = 0;
 		EffectUpdatedEvent.Invoke();
 	}
 }
 
 public class Effect
 {
-	public float magnitude;
+	public int magnitude;
 	public string effectName;
 
 	string[] effectArray = new string[3];
@@ -108,7 +113,7 @@ public class Effect
 		effectArray = effectText.Split(";");
 
 		effectName = effectArray[0];
-		magnitude = float.Parse(effectArray[1]);
+		magnitude = int.Parse(effectArray[1]);
 		duration = float.Parse(effectArray[2]);
 
 		if (duration == -1)

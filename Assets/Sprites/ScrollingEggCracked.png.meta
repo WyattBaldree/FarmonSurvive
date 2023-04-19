@@ -1,0 +1,987 @@
+fileFormatVersion: 2
+guid: e9df088eba72b1b45aae6bfc4fb76af1
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6534332826614550654
+    second: TiledBackground_0
+  - first:
+      213: -5512246796116997919
+    second: TiledBackground_1
+  - first:
+      213: -8167392807069859504
+    second: TiledBackground_2
+  - first:
+      213: -719166565417888559
+    second: TiledBackground_3
+  - first:
+      213: 1963806382217379288
+    second: TiledBackground_4
+  - first:
+      213: 7243203191510881625
+    second: TiledBackground_5
+  - first:
+      213: 5582134609601253970
+    second: TiledBackground_6
+  - first:
+      213: 3886932094041014979
+    second: TiledBackground_7
+  - first:
+      213: 2419049615840738152
+    second: TiledBackground_8
+  - first:
+      213: 1227716047543516441
+    second: TiledBackground_9
+  - first:
+      213: 7960409720027849563
+    second: TiledBackground_10
+  - first:
+      213: -2863341194040433852
+    second: TiledBackground_11
+  - first:
+      213: -9045536023711639388
+    second: TiledBackground_12
+  - first:
+      213: 8939758297419029870
+    second: TiledBackground_13
+  - first:
+      213: -5590094985834005810
+    second: TiledBackground_14
+  - first:
+      213: 1244339530807117923
+    second: TiledBackground_15
+  - first:
+      213: -212631998181287420
+    second: TiledBackground_16
+  - first:
+      213: -5281842165696627071
+    second: TiledBackground_17
+  - first:
+      213: 5710860217218997664
+    second: TiledBackground_18
+  - first:
+      213: 1267892652246543511
+    second: TiledBackground_19
+  - first:
+      213: 1820462614991745921
+    second: TiledBackground_20
+  - first:
+      213: 1822246723190542164
+    second: TiledBackground_21
+  - first:
+      213: -3905871627137297646
+    second: TiledBackground_22
+  - first:
+      213: -1111400163742054719
+    second: TiledBackground_23
+  - first:
+      213: -7872571405246592550
+    second: TiledBackground_24
+  - first:
+      213: -6091023600861826515
+    second: TiledBackground_25
+  - first:
+      213: -1427053241963720885
+    second: TiledBackground_26
+  - first:
+      213: -2337678860932341798
+    second: TiledBackground_27
+  - first:
+      213: 3743389568983818290
+    second: TiledBackground_28
+  - first:
+      213: -4766459921452525258
+    second: TiledBackground_29
+  - first:
+      213: -2550696231072985238
+    second: TiledBackground_30
+  - first:
+      213: -3424677869407793654
+    second: TiledBackground_31
+  - first:
+      213: 3538619337830939824
+    second: TiledBackground_32
+  - first:
+      213: -8048384987941810549
+    second: TiledBackground_33
+  - first:
+      213: -6932421855945737735
+    second: TiledBackground_34
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 0
+    aniso: 1
+    mipBias: 0
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: TiledBackground_0
+      rect:
+        serializedVersion: 2
+        x: 23
+        y: 295
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e70d88ed51d9eaa50800000000000000
+      internalID: 6534332826614550654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_1
+      rect:
+        serializedVersion: 2
+        x: 37
+        y: 295
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1e8492b7eb09083b0800000000000000
+      internalID: -5512246796116997919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_2
+      rect:
+        serializedVersion: 2
+        x: 46
+        y: 287
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0514581c38797ae80800000000000000
+      internalID: -8167392807069859504
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_3
+      rect:
+        serializedVersion: 2
+        x: 22
+        y: 272
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1d4ddeda1d10506f0800000000000000
+      internalID: -719166565417888559
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_4
+      rect:
+        serializedVersion: 2
+        x: 45
+        y: 274
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 8dd36bbff77d04b10800000000000000
+      internalID: 1963806382217379288
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_5
+      rect:
+        serializedVersion: 2
+        x: 171
+        y: 246
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9555bf13de6058460800000000000000
+      internalID: 7243203191510881625
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_6
+      rect:
+        serializedVersion: 2
+        x: 185
+        y: 246
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 25252bd1ad9b77d40800000000000000
+      internalID: 5582134609601253970
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_7
+      rect:
+        serializedVersion: 2
+        x: 194
+        y: 238
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3c2416b452821f530800000000000000
+      internalID: 3886932094041014979
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_8
+      rect:
+        serializedVersion: 2
+        x: 170
+        y: 223
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 86b7b361fc0329120800000000000000
+      internalID: 2419049615840738152
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_9
+      rect:
+        serializedVersion: 2
+        x: 193
+        y: 225
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 91db0e29d39b90110800000000000000
+      internalID: 1227716047543516441
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_10
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 209
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b53a3dcd67e097e60800000000000000
+      internalID: 7960409720027849563
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_11
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 209
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4432a7aca5e5348d0800000000000000
+      internalID: -2863341194040433852
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_12
+      rect:
+        serializedVersion: 2
+        x: 304
+        y: 201
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a81ba769ecc77280800000000000000
+      internalID: -9045536023711639388
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_13
+      rect:
+        serializedVersion: 2
+        x: 280
+        y: 186
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e6d138f7ec6601c70800000000000000
+      internalID: 8939758297419029870
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_14
+      rect:
+        serializedVersion: 2
+        x: 303
+        y: 188
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ecafbac5a3efb62b0800000000000000
+      internalID: -5590094985834005810
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_15
+      rect:
+        serializedVersion: 2
+        x: 42
+        y: 149
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 3680cb1e538c44110800000000000000
+      internalID: 1244339530807117923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_16
+      rect:
+        serializedVersion: 2
+        x: 56
+        y: 149
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 40ad58003549c0df0800000000000000
+      internalID: -212631998181287420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_17
+      rect:
+        serializedVersion: 2
+        x: 175
+        y: 160
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18ef8f1e88023b6b0800000000000000
+      internalID: -5281842165696627071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_18
+      rect:
+        serializedVersion: 2
+        x: 189
+        y: 160
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ad9f313c1d014f40800000000000000
+      internalID: 5710860217218997664
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_19
+      rect:
+        serializedVersion: 2
+        x: 198
+        y: 152
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 79cab7e46a5789110800000000000000
+      internalID: 1267892652246543511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_20
+      rect:
+        serializedVersion: 2
+        x: 41
+        y: 126
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 18336756a15934910800000000000000
+      internalID: 1820462614991745921
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_21
+      rect:
+        serializedVersion: 2
+        x: 65
+        y: 141
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 45f44e47dbbe94910800000000000000
+      internalID: 1822246723190542164
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_22
+      rect:
+        serializedVersion: 2
+        x: 174
+        y: 137
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2135436037e8bc9c0800000000000000
+      internalID: -3905871627137297646
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_23
+      rect:
+        serializedVersion: 2
+        x: 197
+        y: 139
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1c608d480738390f0800000000000000
+      internalID: -1111400163742054719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_24
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 128
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ad9016184020fb290800000000000000
+      internalID: -7872571405246592550
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_25
+      rect:
+        serializedVersion: 2
+        x: 115
+        y: 48
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d223c108e46587ba0800000000000000
+      internalID: -6091023600861826515
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_26
+      rect:
+        serializedVersion: 2
+        x: 129
+        y: 48
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4fce2523a6123ce0800000000000000
+      internalID: -1427053241963720885
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_27
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 54
+        width: 10
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: adf10372675ee8fd0800000000000000
+      internalID: -2337678860932341798
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_28
+      rect:
+        serializedVersion: 2
+        x: 246
+        y: 54
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 230ee2bcaf033f330800000000000000
+      internalID: 3743389568983818290
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_29
+      rect:
+        serializedVersion: 2
+        x: 255
+        y: 46
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6399fa984f12addb0800000000000000
+      internalID: -4766459921452525258
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_30
+      rect:
+        serializedVersion: 2
+        x: 114
+        y: 25
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a6f87f0ca4b1a9cd0800000000000000
+      internalID: -2550696231072985238
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_31
+      rect:
+        serializedVersion: 2
+        x: 138
+        y: 40
+        width: 13
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a0e8ecb5f991970d0800000000000000
+      internalID: -3424677869407793654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_32
+      rect:
+        serializedVersion: 2
+        x: 231
+        y: 31
+        width: 21
+        height: 21
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0bcbdb21a83bb1130800000000000000
+      internalID: 3538619337830939824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_33
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 33
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b8e4422ee746e4090800000000000000
+      internalID: -8048384987941810549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: TiledBackground_34
+      rect:
+        serializedVersion: 2
+        x: 137
+        y: 27
+        width: 11
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9f933333d071bcf90800000000000000
+      internalID: -6932421855945737735
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      TiledBackground_0: 6534332826614550654
+      TiledBackground_1: -5512246796116997919
+      TiledBackground_10: 7960409720027849563
+      TiledBackground_11: -2863341194040433852
+      TiledBackground_12: -9045536023711639388
+      TiledBackground_13: 8939758297419029870
+      TiledBackground_14: -5590094985834005810
+      TiledBackground_15: 1244339530807117923
+      TiledBackground_16: -212631998181287420
+      TiledBackground_17: -5281842165696627071
+      TiledBackground_18: 5710860217218997664
+      TiledBackground_19: 1267892652246543511
+      TiledBackground_2: -8167392807069859504
+      TiledBackground_20: 1820462614991745921
+      TiledBackground_21: 1822246723190542164
+      TiledBackground_22: -3905871627137297646
+      TiledBackground_23: -1111400163742054719
+      TiledBackground_24: -7872571405246592550
+      TiledBackground_25: -6091023600861826515
+      TiledBackground_26: -1427053241963720885
+      TiledBackground_27: -2337678860932341798
+      TiledBackground_28: 3743389568983818290
+      TiledBackground_29: -4766459921452525258
+      TiledBackground_3: -719166565417888559
+      TiledBackground_30: -2550696231072985238
+      TiledBackground_31: -3424677869407793654
+      TiledBackground_32: 3538619337830939824
+      TiledBackground_33: -8048384987941810549
+      TiledBackground_34: -6932421855945737735
+      TiledBackground_4: 1963806382217379288
+      TiledBackground_5: 7243203191510881625
+      TiledBackground_6: 5582134609601253970
+      TiledBackground_7: 3886932094041014979
+      TiledBackground_8: 2419049615840738152
+      TiledBackground_9: 1227716047543516441
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

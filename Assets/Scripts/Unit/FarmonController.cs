@@ -30,6 +30,7 @@ public class FarmonController : MonoBehaviour
     public GameObject ShadowPrefab;
     public GameObject FloatingTextPrefab;
     public GameObject HitEffectPrefab;
+    public GameObject EffectTortorrentShieldPrefab;
 
     public AudioClip HitSound;
     public AudioClip HitSound2;

@@ -22,6 +22,8 @@ public class FarmonEditor : Editor
 
     string saveName;
 
+    int adjustmentValue = 10;
+
     void OnEnable()
     {
         gritBonus = serializedObject.FindProperty("gritBonus");
@@ -33,7 +35,8 @@ public class FarmonEditor : Editor
 
     public override void OnInspectorGUI()
     {
-        Farmon unit = (Farmon)target;
+
+        Farmon farmon = (Farmon)target;
 
         base.DrawDefaultInspector();
 
@@ -43,32 +46,60 @@ public class FarmonEditor : Editor
         GUILayout.Space(20f);
         GUILayout.Label("Stats", EditorStyles.boldLabel);
 
-        CreateStatBlock("Grit",unit.GritBase, gritBonus, (u) => u.GritBonus, (u, i) => u.GritBonus = i); 
-        CreateStatBlock("Power", unit.PowerBase, powerBonus, (u) => u.PowerBonus, (u, i) => u.PowerBonus = i);
-        CreateStatBlock("Agility", unit.AgilityBase, agilityBonus, (u) => u.AgilityBonus, (u, i) => u.AgilityBonus = i);
-        CreateStatBlock("Focus", unit.FocusBase, focusBonus, (u) => u.FocusBonus, (u, i) => u.FocusBonus = i);
-        CreateStatBlock("Luck", unit.LuckBase, luckBonus, (u) => u.LuckBonus, (u, i) => u.LuckBonus = i);
+        CreateStatBlock("Grit",farmon.GritBase, gritBonus, (u) => u.GritBonus, (u, i) => u.GritBonus = i); 
+        CreateStatBlock("Power", farmon.PowerBase, powerBonus, (u) => u.PowerBonus, (u, i) => u.PowerBonus = i);
+        CreateStatBlock("Agility", farmon.AgilityBase, agilityBonus, (u) => u.AgilityBonus, (u, i) => u.AgilityBonus = i);
+        CreateStatBlock("Focus", farmon.FocusBase, focusBonus, (u) => u.FocusBonus, (u, i) => u.FocusBonus = i);
+        CreateStatBlock("Luck", farmon.LuckBase, luckBonus, (u) => u.LuckBonus, (u, i) => u.LuckBonus = i);
 
         // Apply changes to the serializedProperty - always do this at the end of OnInspectorGUI.
 
         if (Application.isPlaying)
         {
-            ((Farmon)target).Flying = GUILayout.Toggle(((Farmon)target).Flying, "Flying");
+            //Adjust farmon stats
+            GUILayout.Label("Adjust farmon stats by the provided amount.");
+            adjustmentValue = Mathf.RoundToInt(GUILayout.HorizontalSlider(adjustmentValue, 1, 100));
+
+            GUILayout.Space(40);
+
+            if (GUILayout.Button("Heal"))
+            {
+                farmon.SetHealth(farmon.GetHealth() + adjustmentValue);
+            }
+            if (GUILayout.Button("Shield (for 10 seconds)"))
+            {
+                farmon.EffectList.AddEffect(new Effect("tortorrentShield;" + adjustmentValue + ";10"));
+            }
+            if (GUILayout.Button("Damage"))
+            {
+                AttackData ad = new AttackData(adjustmentValue);
+                farmon.TakeDamage(ad,farmon.transform.position + Vector3.down, Vector3.up, null);
+            }
+
+            GUILayout.Space(20);
+
+            // Misc controls.
+            GUILayout.Label("Other Stuff:");
+            farmon.Flying = GUILayout.Toggle(farmon.Flying, "Flying");
 
             if (GUILayout.Button("Give Jump Perk"))
             {
-                ((Farmon)target).AddPerk(new PerkJump());
+                farmon.AddPerk(new PerkJump());
+            }
+            if (GUILayout.Button("Give Shield Effect"))
+            {
+                farmon.EffectList.AddEffect(new Effect("tortorrentShield;" + 10 + ";4"));
             }
             if (GUILayout.Button("LevelUp"))
             {
-                ((Farmon)target).LevelUp();
+                farmon.LevelUp();
             }
             if (GUILayout.Button("Die"))
             {
-                ((Farmon)target).Die();
+                farmon.Die();
             }
 
-            if (GUILayout.Button("Save Player"))
+            /*if (GUILayout.Button("Save Player"))
             {
                 SaveController.SavePlayer();
             }
@@ -87,12 +118,16 @@ public class FarmonEditor : Editor
                 {
                     SaveController.LoadFarmonPlayer(Player.instance.FarmonSquadSaveIds[0]);
                 }
-            }
+            }*/
         }
+
+        GUILayout.Space(20);
+
+        GUILayout.Label("Use the following to save farmon for loading later.");
         saveName = GUILayout.TextField(saveName);
         if (GUILayout.Button("Save"))
         {
-            SaveController.SaveFarmon(unit, saveName);
+            SaveController.SaveFarmon(farmon, saveName);
         }
         if (GUILayout.Button("Load"))
         {

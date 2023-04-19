@@ -1182,6 +1182,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: OceanLevel
       objectReference: {fileID: 0}
+    - target: {fileID: 3200713999374003888, guid: 0b5177f3bc6745b4d93af2596477b798, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8200683769364237401, guid: 0b5177f3bc6745b4d93af2596477b798, type: 3}
       propertyPath: m_LocalPosition.z
       value: 23
@@ -1257,7 +1261,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2002296189862042024, guid: dd46e8ff7eeb0ed4d82b23f13f59a582, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5116343108144183554, guid: dd46e8ff7eeb0ed4d82b23f13f59a582, type: 3}
       propertyPath: m_RootOrder

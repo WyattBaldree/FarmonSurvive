@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8662775980248743884}
   - component: {fileID: 6674246996099682586}
   m_Layer: 7
-  m_Name: Shield
+  m_Name: TortorrentShield
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

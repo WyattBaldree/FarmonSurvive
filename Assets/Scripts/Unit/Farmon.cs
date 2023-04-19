@@ -396,6 +396,7 @@ public abstract class Farmon : Vehicle
 
         Hud = GetComponentInChildren<FarmonHud>();
         Assert.IsNotNull(Hud);
+        Hud.TargetFarmon = this;
 
         mySpriteRenderer = Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
         Assert.IsNotNull(mySpriteRenderer);
@@ -453,6 +454,12 @@ public abstract class Farmon : Vehicle
     public virtual float GetMovementSpeed()
     {
         return 3 + Agility / 6;
+    }
+
+    public int GetArmor()
+    {
+        //Add up all armor sources and return;
+        return EffectList.TortorrentShield;
     }
 
     protected override void Awake()
@@ -696,6 +703,11 @@ public abstract class Farmon : Vehicle
         return !wallIsBlockingTarget && isWithinAttackRange;
     }
 
+    public int GetHealth()
+    {
+        return health;
+    }
+
     public void SetHealth(int value)
     {
         if (dead)
@@ -703,12 +715,18 @@ public abstract class Farmon : Vehicle
             return;
         }
 
-        health = value;
-
-        if (health <= 0)
+        if(value > MaxHealth)
+        {
+            health = MaxHealth;
+        }
+        else if (value <= 0)
         {
             health = 0;
             Die();
+        }
+        else
+        {
+            health = value;
         }
 
         if (healthBar)
@@ -722,6 +740,16 @@ public abstract class Farmon : Vehicle
         SetHealth(health + amount);
     }
 
+    public UnityEvent HealEvent;
+    public void Heal(int amount)
+    {
+        if (dead) return;
+        ChangeHeath(amount);
+
+        HealEvent.Invoke();
+    }
+
+    public UnityEvent DamageEvent;
     public bool TakeDamage(AttackData attackData, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
     {        
         if(!attackData.Undodgeable && UnityEngine.Random.value < Agility / 100f)
@@ -761,6 +789,8 @@ public abstract class Farmon : Vehicle
                 MakeDamageNumber(attackData);
 
                 MakeHitEffect(attackData, damageOrigin);
+
+                DamageEvent.Invoke();
             }
 
             return true;
@@ -1834,6 +1864,7 @@ public class HitStopState2 : StateMachineState
     {
         farmon = thisUnit;
         _bounceVector = bounceVector;
+        _damageOrigin = damageOrigin;
 
         hitStopTimer.SetTime(0.15f);
 
@@ -1854,6 +1885,7 @@ public class HitStopState2 : StateMachineState
         farmon.ChangeHeath(-_attackData.Damage);
         farmon.MakeDamageNumber(_attackData);
         farmon.MakeHitEffect(_attackData, _damageOrigin);
+        farmon.DamageEvent.Invoke();
 
         farmon.rb.AddForce(farmon.dead ? _bounceVector * 3 : _bounceVector, ForceMode.Impulse);
     }
