@@ -208,6 +208,8 @@ public class RoundController : MonoBehaviour
 
             if (allFarmonDead) // if all team 2 farmon are dead
             {
+                GameController.SlowMo(13f, .175f);
+
                 //Team 1 wins
                 RoundUIAnimator.Play("RoundUIRoundWin", 0);
                 RoundPlaying = false;

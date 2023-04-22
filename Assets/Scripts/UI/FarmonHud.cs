@@ -10,12 +10,11 @@ public class FarmonHud : MonoBehaviour
         set
         {
             _targetFarmon = value;
-            HealthBarNew.SetFarmon(value);
+            HealthBar.SetFarmon(value);
         }
         get => _targetFarmon;
     }
 
-    public GameObject HealthBar;
     public GameObject SpriteQuad;
     public Animator Animator;
     public PositionQuad PositionQuad;
@@ -23,7 +22,7 @@ public class FarmonHud : MonoBehaviour
     public Transform ScalingObjectsParent;
     public TMPro.TextMeshPro debugText;
     public Transform effectsParent;
-    public HealthBar HealthBarNew;
+    public HealthBar HealthBar;
 
     GameObject tortorrentShield;
 

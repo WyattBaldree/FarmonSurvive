@@ -401,9 +401,6 @@ public abstract class Farmon : Vehicle
         mySpriteRenderer = Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
         Assert.IsNotNull(mySpriteRenderer);
 
-        healthBar = Hud.HealthBar.GetComponent<Bar>();
-        Assert.IsNotNull(healthBar);
-
         farmonStateMachine = new StateMachine();
         spawnState = new SpawnState(this);
 
@@ -822,6 +819,11 @@ public abstract class Farmon : Vehicle
     public void Die()
     {
         SetState(new DieState(this));
+
+        if(team == TeamEnum.team1)
+        {
+            GameController.SlowMo(2.5f, .3f);
+        }
     }
 
     public void HitStopSelf(float stopTime)
@@ -1941,7 +1943,7 @@ public class DieState : StateMachineState
         farmon.Hud.AudioSource.volume = .3f;
         farmon.Hud.AudioSource.Play();
 
-        farmon.rb.AddForce(Vector3.up * 2, ForceMode.Impulse);
+        farmon.rb.AddForce(Vector3.up * 3, ForceMode.Impulse);
     }
 
     public override void Tick()

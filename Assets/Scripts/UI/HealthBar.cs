@@ -58,7 +58,7 @@ public class HealthBar : MonoBehaviour
         healDelayTimer.SetTime(0.5f);
     }
 
-    private void Update()
+    private void LateUpdate()
     {
         if (!_targetFarmon) return;
 
@@ -109,18 +109,42 @@ public class HealthBar : MonoBehaviour
         redRect.localPosition = new Vector2(horizontalOffset, 0);
         redRect.localScale = new Vector2(redHealthPercent, 1);
 
-        //healDelayTimer().Tick
+        healDelayTimer.Tick(Time.deltaTime);
+        damageDelayTimer.Tick(Time.deltaTime);
+
+
+        float fillSpeed = .05f;
 
         // Now update everything
-        if(delayedHealth >= health)
+        if (delayedHealth >= health)
         {
             delayedHealth = health;
         }
         else
         {
-            if (delayedHealthTimer.Tick(Time.deltaTime))
+            //Only update after some time has passed since getting healed.
+            if (!healDelayTimer.running && delayedHealthTimer.Tick(Time.deltaTime))
             {
-                delayedHealth += 1;
+                delayedHealth += Math.Clamp(Mathf.FloorToInt(total * fillSpeed), 1, health - delayedHealth);
+            }
+        }
+
+
+        if (redHealth > maxHealthAllSources)
+        {
+            redHealth = Mathf.FloorToInt(maxHealthAllSources);
+        }
+
+        if (redHealth <= total)
+        {
+            redHealth = total;
+        }
+        else
+        {
+            //Only update after some time has passed since getting damaged.
+            if (!damageDelayTimer.running && delayedRedTimer.Tick(Time.deltaTime))
+            {
+                redHealth -= Math.Clamp(Mathf.FloorToInt(total * fillSpeed), 1, redHealth - total);
             }
         }
 
@@ -132,20 +156,10 @@ public class HealthBar : MonoBehaviour
         {
             if (delayedArmorTimer.Tick(Time.deltaTime))
             {
-                delayedArmor += 1;
+                delayedArmor += Math.Clamp(Mathf.FloorToInt(total * fillSpeed), 1, armor - delayedArmor);
             }
         }
 
-        if (redHealth <= total)
-        {
-            redHealth = total;
-        }
-        else
-        {
-            if (delayedRedTimer.Tick(Time.deltaTime))
-            {
-                redHealth -= 1;
-            }
-        }
+        
     }
 }

@@ -5,6 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using UnityEngine.Playables;
 using UnityEngine.UI;
 
 public class EvolutionScreen : MonoBehaviour
@@ -32,6 +33,8 @@ public class EvolutionScreen : MonoBehaviour
     string newFarmonName;
 
     bool evolutionComplete = false;
+
+    PlayableDirector evolutionAnimation;
 
     public void Awake()
     {

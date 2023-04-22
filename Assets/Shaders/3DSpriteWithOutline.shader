@@ -28,11 +28,11 @@ Shader "Custom/3DSpriteWithOutline"
 
         Cull Off
         Lighting On
-        ZWrite Off
+        //ZWrite Off
         Blend One OneMinusSrcAlpha
 
         CGPROGRAM
-        #pragma surface surf Lambert vertex:vert noinstancing alpha:fade
+        #pragma surface surf Lambert vertex:vert noinstancing //alpha:fade
         #pragma multi_compile_local _ PIXELSNAP_ON
         #pragma multi_compile _ ETC1_EXTERNAL_ALPHA
         #include "UnitySprites.cginc" 
@@ -84,13 +84,18 @@ Shader "Custom/3DSpriteWithOutline"
             }
 
             //apply border
-            
             c.rgb = lerp(_OutlineColor.rgb, c.rgb, c.a);
             c.a = max(c.a, maxAlpha);
+            
+            // Don't draw anything below a certain alpha
+            // This allows us to hide the transparent portions of sprites
+            // without enabling z-write off and alpha:fade which prevents
+            // the material from interacting (going behind) other Transparent
+            // materials.
+            clip (c.a - 0.001);
 
             o.Albedo = c.rgb * c.a;
             o.Alpha = c.a;
-
         }
         ENDCG
     }
