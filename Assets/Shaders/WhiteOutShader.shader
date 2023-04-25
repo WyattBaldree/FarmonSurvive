@@ -14,6 +14,9 @@ Shader "Custom/WhiteOutShader"
         _ColorMask ("Color Mask", Float) = 15
 
         [Toggle(UNITY_UI_ALPHACLIP)] _UseUIAlphaClip ("Use Alpha Clip", Float) = 0
+
+        ///Used to gradually make the sprite whiter.
+        _WhiteOut ("White Out", Range(0.0, 1.0)) = 0
     }
 
     SubShader
@@ -79,6 +82,8 @@ Shader "Custom/WhiteOutShader"
             fixed4 _TextureSampleAdd;
             float4 _ClipRect;
             float4 _MainTex_ST;
+            
+            float _WhiteOut;
 
             v2f vert(appdata_t v)
             {
@@ -97,6 +102,8 @@ Shader "Custom/WhiteOutShader"
             fixed4 frag(v2f IN) : SV_Target
             {
                 half4 color = (tex2D(_MainTex, IN.texcoord) + _TextureSampleAdd) * IN.color;
+
+                color.rgb += _WhiteOut;
 
                 #ifdef UNITY_UI_CLIP_RECT
                 color.a *= UnityGet2DClipping(IN.worldPosition.xy, _ClipRect);

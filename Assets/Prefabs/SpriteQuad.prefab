@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 6255656076970425094}
   - component: {fileID: 1627712274483016202}
   - component: {fileID: 6304663264297178235}
+  - component: {fileID: 1702945174138578692}
   m_Layer: 7
   m_Name: SpriteQuadRenderer
   m_TagString: Untagged
@@ -106,6 +107,19 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+--- !u!114 &1702945174138578692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2298576663393684309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 908738c8b9230434aac47648dbb9c744, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _whiteOut: 0
 --- !u!1 &4754786877783328814
 GameObject:
   m_ObjectHideFlags: 0
@@ -117,6 +131,7 @@ GameObject:
   - component: {fileID: 4029520138182618513}
   - component: {fileID: 2440790650571635405}
   - component: {fileID: 3733466790411737766}
+  - component: {fileID: 7879931030626366350}
   m_Layer: 7
   m_Name: SpriteQuad
   m_TagString: Untagged
@@ -138,7 +153,7 @@ Transform:
   m_Children:
   - {fileID: 6255656076970425094}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: -1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2440790650571635405
 MonoBehaviour:
@@ -166,3 +181,63 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slant: 20
+--- !u!114 &7879931030626366350
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4754786877783328814}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e52de21a22b6dd44c9cc19f810c65059, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Events:
+    m_Signals:
+    - {fileID: 11400000, guid: 5b81e646a4733fb459bf17fddf945acf, type: 2}
+    - {fileID: 11400000, guid: 006dffe16429d6b4799205c2dd292ba5, type: 2}
+    - {fileID: 11400000, guid: 9fb15fdcb4c3f254491e12806a47e5cd, type: 2}
+    m_Events:
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1702945174138578692}
+          m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
+          m_MethodName: TurnClear
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1702945174138578692}
+          m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
+          m_MethodName: TurnWhite
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+    - m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1702945174138578692}
+          m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
+          m_MethodName: BumpAnimation
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2

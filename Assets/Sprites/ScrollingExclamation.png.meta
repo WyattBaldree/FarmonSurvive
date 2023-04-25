@@ -1,0 +1,562 @@
+fileFormatVersion: 2
+guid: ddadb888807039d4ab74b84f91cd666b
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6587226836727774723
+    second: ScrollingExclamation_0
+  - first:
+      213: 2762666977253010404
+    second: ScrollingExclamation_1
+  - first:
+      213: 6759911515502065570
+    second: ScrollingExclamation_2
+  - first:
+      213: -5915480107857050569
+    second: ScrollingExclamation_3
+  - first:
+      213: 726035056509704045
+    second: ScrollingExclamation_4
+  - first:
+      213: -88128033374614580
+    second: ScrollingExclamation_5
+  - first:
+      213: -2407858475080016038
+    second: ScrollingExclamation_6
+  - first:
+      213: -6230521536459906719
+    second: ScrollingExclamation_7
+  - first:
+      213: 3936664521652675420
+    second: ScrollingExclamation_8
+  - first:
+      213: 5092432478282471424
+    second: ScrollingExclamation_9
+  - first:
+      213: -4423338611267614950
+    second: ScrollingExclamation_10
+  - first:
+      213: -481257734456211923
+    second: ScrollingExclamation_11
+  - first:
+      213: -1385860502276415853
+    second: ScrollingExclamation_12
+  - first:
+      213: 2856106460033903634
+    second: ScrollingExclamation_13
+  - first:
+      213: 7319836848581374256
+    second: ScrollingExclamation_14
+  - first:
+      213: 6659155541954106283
+    second: ScrollingExclamation_15
+  - first:
+      213: -7005240320838998991
+    second: ScrollingExclamation_16
+  - first:
+      213: -6154837778648042621
+    second: ScrollingExclamation_17
+  externalObjects: {}
+  serializedVersion: 12
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 0
+    wrapV: 0
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 1
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 0
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: ScrollingExclamation_0
+      rect:
+        serializedVersion: 2
+        x: 233
+        y: 561
+        width: 25
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 30e341a48e78a6b50800000000000000
+      internalID: 6587226836727774723
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_1
+      rect:
+        serializedVersion: 2
+        x: 556
+        y: 537
+        width: 25
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4eb2ed38af6f65620800000000000000
+      internalID: 2762666977253010404
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_2
+      rect:
+        serializedVersion: 2
+        x: 243
+        y: 541
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2a7b29235b700dd50800000000000000
+      internalID: 6759911515502065570
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_3
+      rect:
+        serializedVersion: 2
+        x: 554
+        y: 517
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7348a47fe2ef7eda0800000000000000
+      internalID: -5915480107857050569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_4
+      rect:
+        serializedVersion: 2
+        x: 77
+        y: 439
+        width: 27
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d67ddb58905631a00800000000000000
+      internalID: 726035056509704045
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_5
+      rect:
+        serializedVersion: 2
+        x: 89
+        y: 419
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ccbc3f34508e6cef0800000000000000
+      internalID: -88128033374614580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_6
+      rect:
+        serializedVersion: 2
+        x: 433
+        y: 368
+        width: 25
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a5f117b6971959ed0800000000000000
+      internalID: -2407858475080016038
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_7
+      rect:
+        serializedVersion: 2
+        x: 281
+        y: 323
+        width: 26
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 161e2ed5cadb889a0800000000000000
+      internalID: -6230521536459906719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_8
+      rect:
+        serializedVersion: 2
+        x: 442
+        y: 348
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c53adfc6687d1a630800000000000000
+      internalID: 3936664521652675420
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_9
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 303
+        width: 17
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 00850beab54fba640800000000000000
+      internalID: 5092432478282471424
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_10
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 212
+        width: 25
+        height: 59
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a17cf1a08f42d92c0800000000000000
+      internalID: -4423338611267614950
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_11
+      rect:
+        serializedVersion: 2
+        x: 584
+        y: 184
+        width: 32
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d26045ce3aa3259f0800000000000000
+      internalID: -481257734456211923
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_12
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 192
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 39ed19d373f64cce0800000000000000
+      internalID: -1385860502276415853
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_13
+      rect:
+        serializedVersion: 2
+        x: 427
+        y: 106
+        width: 26
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 21ce40f61bde2a720800000000000000
+      internalID: 2856106460033903634
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_14
+      rect:
+        serializedVersion: 2
+        x: 579
+        y: 165
+        width: 17
+        height: 15
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 031f185e4d8459560800000000000000
+      internalID: 7319836848581374256
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_15
+      rect:
+        serializedVersion: 2
+        x: 32
+        y: 49
+        width: 24
+        height: 60
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ba39f360fa21a6c50800000000000000
+      internalID: 6659155541954106283
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_16
+      rect:
+        serializedVersion: 2
+        x: 439
+        y: 86
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 134e5262b0368ce90800000000000000
+      internalID: -7005240320838998991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: ScrollingExclamation_17
+      rect:
+        serializedVersion: 2
+        x: 40
+        y: 29
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 383778966af959aa0800000000000000
+      internalID: -6154837778648042621
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: 5e97eb03825dee720800000000000000
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      ScrollingExclamation_0: 6587226836727774723
+      ScrollingExclamation_1: 2762666977253010404
+      ScrollingExclamation_10: -4423338611267614950
+      ScrollingExclamation_11: -481257734456211923
+      ScrollingExclamation_12: -1385860502276415853
+      ScrollingExclamation_13: 2856106460033903634
+      ScrollingExclamation_14: 7319836848581374256
+      ScrollingExclamation_15: 6659155541954106283
+      ScrollingExclamation_16: -7005240320838998991
+      ScrollingExclamation_17: -6154837778648042621
+      ScrollingExclamation_2: 6759911515502065570
+      ScrollingExclamation_3: -5915480107857050569
+      ScrollingExclamation_4: 726035056509704045
+      ScrollingExclamation_5: -88128033374614580
+      ScrollingExclamation_6: -2407858475080016038
+      ScrollingExclamation_7: -6230521536459906719
+      ScrollingExclamation_8: 3936664521652675420
+      ScrollingExclamation_9: 5092432478282471424
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -13,6 +13,9 @@ Shader "Custom/3DSpriteWithOutline"
         [PerRendererData] _EnableExternalAlpha ("Enable External Alpha", Float) = 0
         _OutlineColor ("Outline Color", Color) = (1, 1, 1, 1)
         _OutlineWidth ("Outline Width", Range(0, 10)) = 1
+
+        ///Used to gradually make the sprite whiter.
+        _WhiteOut ("White Out", Range(0.0, 1.0)) = 0
     }
 
     SubShader
@@ -47,6 +50,8 @@ Shader "Custom/3DSpriteWithOutline"
         
         fixed4 _OutlineColor;
         float _OutlineWidth;
+            
+        float _WhiteOut;
 
         void vert (inout appdata_full v, out Input o)
         {
@@ -63,10 +68,12 @@ Shader "Custom/3DSpriteWithOutline"
         void surf (Input IN, inout SurfaceOutput o)
         {
             fixed4 c = SampleSpriteTexture (IN.uv_MainTex) * IN.color;
+
+            //increase the color by _WhiteOut
+            c.rgb += _WhiteOut * 1.4f;
+
             o.Albedo = c.rgb * c.a;
             o.Alpha = c.a;
-
-
 
             //#define DIV_SQRT_2 0.70710678118
             float2 directions[4] = {float2(1, 0), float2(0, 1), float2(-1, 0), float2(0, -1)};

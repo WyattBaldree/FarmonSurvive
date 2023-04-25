@@ -7,13 +7,21 @@ In \b farm mode \b0 the player manages the farmon they have collected. The mode 
 Different habitats have different mechanics. For example, the player may starts with a basic meadow habitats but can earn a volcanic habitat which would have unique benefits for the farmon inside. Each habitat also gives the player access to different wildernesses.\par
 \b Wildernesses \b0 are the player's main way of initiating battle mode and finding new farmon/loot. To use the wilderness, the farmon will assemble a party of farmon and send them offscreen. At this point, a bar will begin filling at the top of the screen. \cf1 If the wilderness is time based, farm mode needs to be engaging enough to always give the player something to do. Perhaps you earn money or resources over time which would always be building towards the player's next purchase. \cf0 Once the bar is full, a button will enable that allows the player to enter battle mode against wild farmon randomly chosen based on the habitat that player's farmon ventured from. Once the battle is complete, there is a  chance of finding loot, shopkeepers, etc based on the habitat.\par
 \b Furniture \b0 can be earned through gameplay and placed in habitats. Furniture will serve different purposes. For example, an essential early furniture is farm plots. Each crop type will have a unique farm plot furniture. The farm plot will allow players to grow that crop over time by assigning a farmon to the furniture.\par
-In \b battle mode\b0 , the player's squad of farmon square off against an enemy squad of farmon. The player can select thier farmon and assign enemy farmon to attack or freindly farmon to protect. Enemy farmon will have basic AI to determine their attack/protect targets. Once all of the farmon in a squad have been reduced to 0 health, that squad loses. Upon winning a battle, the player's farmon are awarded experience, potentially leveling up or gaining new perks.\par
-Battle mode has 2 subtypes: \b wilderness and tournament\b0 . Wilderness battles are started through habitats as described above. \cf1 The main way of starting tournaments has not been decided. \cf0 Tournaments battles are differentiated from wilderness battles in a few ways:\par
+In \b battle mode\b0 , the player's squad of farmon square off against an enemy squad of farmon. The player can select thier farmon and assign enemy farmon to attack or freindly farmon to protect or the play can select a space on the map to tell thier farmon to defend there. Enemy farmon will have basic AI to determine their attack/protect/defense targets. Once all of the farmon in a squad have been reduced to 0 health, that squad loses. Upon winning a battle, the player's farmon are awarded experience, potentially leveling up or gaining new perks.\par
+The 4 Main states a farmon can have are:\par
+
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sa200\sl276\slmult1 Idle - The farmon does nothing. Reservered for end of battle, no valid targets, etc.\par
+{\pntext\f1\'B7\tab}Attacking - The farmon attack the assigned enemy farmon. When this farmon attacks, it's attacks will prioritize its assigned farmon.\par
+{\pntext\f1\'B7\tab}Protecting - The farmon follows the assigned freindly farmon. When this farmon casts a support ability, it will prioritize its assigned farmon. This farmon still attacks but will prioritize the last farmon to attack its assigned farmon.\par
+{\pntext\f1\'B7\tab}Defending (a location) - The farmon goes to a specific tile and stays there. Allows a player/ai to set up go to the edge of a ledge and shoot down at enemy farmon without following them off the ledge. While defending, farmon cannot dodge.\par
+
+\pard\sa200\sl276\slmult1 Battle mode has 2 subtypes: \b wilderness and tournament\b0 . Wilderness battles are started through habitats as described above. \cf1 The main way of starting tournaments has not been decided. \cf0 Tournaments battles are differentiated from wilderness battles in a few ways:\par
 
 \pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sa200\sl276\slmult1 The player has the opportunity to see the enemy squads that they will encounter in the tournament.\par
 {\pntext\f1\'B7\tab}In tournament mode, enemy squads are hand-picked to make interesting challenges for the player.\par
 {\pntext\f1\'B7\tab}There are gold, silver, and bronze prizes depending on how many enemy squads are in the tournament. The player doesn't know what the prizes are until they are earned. The farmon can earn items, farmon, and furniture.\par
 {\pntext\f1\'B7\tab}Tournaments don't necessarily have to be tournaments in the traditional sense of the word. For example, an npc may say "I'll give you the beastiary for X if you can beat me!" before popping up a tournament screen.\par
+{\pntext\f1\'B7\tab}Tournaments could be randomly generated. Since the player can see what they are going to be up against before starting the tournament, part of the puzzle could be creating a team that is flexible enought to survive the gauntlet.\par
 
 \pard\sa200\sl276\slmult1 Each farmon will have an individual level up and perk track. Upon leveling up, a farmon is given 1 random stat point, 1 stat point based on it's species, and one stat point for the player to assign manually. Upon hitting certain levels or milestones, perks will be awarded to the farmon. Sometimes, the player will be given the option to choose one of several perks. Farmon can also evolve upon leveling up or hitting milestones which always results in the farmon gaining a unique perk.\par
 The player will have access to a \b beastiary\b0 , not unlike a pokedex. Having a beastiary page for a farmon will allow you to see what it does before you fight it in a tournament. There are 3 levels of information: \par
@@ -97,7 +105,7 @@ Farmon whos level up stat depends on conditions (like item in inventory, other f
 {\pntext\f1\'B7\tab}Protective Shell - start the battle with 10 armor\par
 {\pntext\f1\'B7\tab}Momentum - Speed bonus as long as you have armor. Scales with arm or?\par
 {\pntext\f1\'B7\tab}Sanctuary - Gain a powerful decaying shield at the start of the round.\par
-{\pntext\f1\'B7\tab}Malleable - All of this farmon's stats can be picked.\par
+{\pntext\f1\'B7\tab}Malleable - All of this farmon's stats can be picked upon leveling up.\par
 {\pntext\f1\'B7\tab}Big - +20% health and size.\par
 {\pntext\f1\'B7\tab}Tail Wind - \par
 {\pntext\f1\'B7\tab}Engulf - eat a farmon that is smaller than you (incentivises min maxing size)\par
@@ -105,6 +113,8 @@ Farmon whos level up stat depends on conditions (like item in inventory, other f
 {\pntext\f1\'B7\tab}Stout - More defense the smaller you are.\par
 {\pntext\f1\'B7\tab}Dwarf - Grit decreases the size of this farmon.\par
 {\pntext\f1\'B7\tab}Spiky Body - Gain resistance to melee attacks and deal damage to melee attackers. Think pokeys or spike goombas from PM.\par
+{\pntext\f1\'B7\tab}Watchmon - Gain increased attack range while defending.\par
+{\pntext\f1\'B7\tab}Defender - Gain damage reduction while defending.\par
 
 \pard\sa200\sl276\slmult1\cf2\b Solution to evolving farmon losing references:\par
 
