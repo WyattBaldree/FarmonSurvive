@@ -81,7 +81,6 @@ public class FarmonEditor : Editor
             // Misc controls.
             GUILayout.Label("Other Stuff:");
             farmon.Flying = GUILayout.Toggle(farmon.Flying, "Flying");
-
             if (GUILayout.Button("Give Jump Perk"))
             {
                 farmon.AddPerk(new PerkJump());

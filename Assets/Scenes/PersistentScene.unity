@@ -2719,6 +2719,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _whiteOut: 0
+  _white: 0
+  isUi: 0
 --- !u!1001 &1019217111
 PrefabInstance:
   m_ObjectHideFlags: 0
