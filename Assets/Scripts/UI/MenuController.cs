@@ -10,6 +10,8 @@ public class MenuController : MonoBehaviour
 
     public UnityEvent MenuStateChanged = new UnityEvent();
 
+    public GameObject StartingMenu;
+
     bool _menuOpen = false;
     public bool MenuOpen
     {
@@ -42,6 +44,8 @@ public class MenuController : MonoBehaviour
     private void Start()
     {
         MenuStateChanged.Invoke();
+
+        if (StartingMenu) StartingMenu.SetActive(true);
     }
 
     private void Update()

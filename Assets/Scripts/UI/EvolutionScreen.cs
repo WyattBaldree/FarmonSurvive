@@ -19,18 +19,21 @@ public class EvolutionScreen : MonoBehaviour
     InfoBox infoBox;
 
     [SerializeField]
-    Image farmonImage;
-
-    Timer spriteSwitchTimer = new Timer();
+    FarmonDisplay farmonDisplay;
 
     Farmon oldFarmon;
     Farmon newFarmon;
 
+    [SerializeField]
     Sprite oldSprite;
+    [SerializeField]
+    Sprite newSprite;
 
-    string oldName;
+    bool switchingSprite = false;
 
-    string newFarmonName;
+    string oldName = "Farmon";
+
+    string newFarmonName = "NewFarmon";
 
     bool evolutionComplete = false;
 
@@ -52,6 +55,28 @@ public class EvolutionScreen : MonoBehaviour
         gameObject.SetActive(false);
     }
 
+    private void OnEnable()
+    {
+        infoBox.SetText("", "What's this? " + oldName + " is changing!");
+    }
+
+    private void LateUpdate()
+    {
+        if (switchingSprite)
+        {
+            Vector3 cameraForward = farmonDisplay.DisplayCamera.transform.forward;
+            Vector3 spriteForward = farmonDisplay.DisplayFarmonHud.spriteRenderer.transform.forward;
+            if (Vector3.Dot(cameraForward, spriteForward) > 0)
+            {
+                ShowOldFarmon();
+            }
+            else
+            {
+                ShowNewFarmon();
+            }
+        }
+    }
+
     public void Popup(Farmon farmon, string _newFarmonName)
     {
         oldFarmon = farmon;
@@ -61,6 +86,8 @@ public class EvolutionScreen : MonoBehaviour
         gameObject.SetActive(true);
 
         newFarmonName = _newFarmonName;
+        newFarmon = oldFarmon.Evolve(newFarmonName);
+        newSprite = newFarmon.mySpriteRenderer.sprite;
 
         audioSource.clip = FarmonController.instance.LevelUpSound;
         audioSource.volume = .7f;
@@ -68,38 +95,27 @@ public class EvolutionScreen : MonoBehaviour
 
         evolutionComplete = false;
 
-        StopAllCoroutines();
-        StartCoroutine(EvolutionPopupCoroutine());
+        infoBox.SetText("", "What's this? " + oldName + " is changing!");
     }
 
-    private void Update()
+    public void ShowOldFarmon()
     {
-        if(oldSprite && newFarmon) farmonImage.sprite = GetImage();
-
-        if (Input.anyKeyDown)
-        {
-            if (infoBox.descriptionText.reading)
-            {
-                infoBox.descriptionText.SkipReading();
-            }
-            else if(evolutionComplete)
-            {
-                Close();
-            }
-        }
+        farmonDisplay.DisplayFarmonHud.SetSprite(oldSprite);
     }
 
-    bool showOldFarmon = true;
-    Sprite GetImage()
+    public void ShowNewFarmon()
     {
-        if (showOldFarmon)
-        {
-            return oldSprite;
-        }
-        else
-        {
-            return newFarmon.mySpriteRenderer.sprite;
-        }
+        farmonDisplay.DisplayFarmonHud.SetSprite(newSprite);
+    }
+
+    public void BeginSwitchingSprite()
+    {
+        switchingSprite = true;
+    }
+
+    public void StopSwitchingSprite()
+    {
+        switchingSprite = false;
     }
 
     void SetDefaultText()
@@ -111,14 +127,13 @@ public class EvolutionScreen : MonoBehaviour
     {
         gameObject.SetActive(false);
         newFarmon.DistributeEvolvePerks();
-
     }
 
     IEnumerator EvolutionPopupCoroutine()
     {
         SetDefaultText();
 
-        showOldFarmon = true;
+        //showOldFarmon = true;
 
         newFarmon = oldFarmon.Evolve(newFarmonName);
 
@@ -130,7 +145,7 @@ public class EvolutionScreen : MonoBehaviour
         float time = 0;
         float timeScale = 1f;
         float timeScaleMax = 7.5f;
-        while (timeScale < timeScaleMax)
+        /*while (timeScale < timeScaleMax)
         {
             if (showOldFarmon)
             {
@@ -159,9 +174,9 @@ public class EvolutionScreen : MonoBehaviour
             }
 
             yield return new WaitForEndOfFrame();
-        }
+        }*/
 
-        showOldFarmon = false;
+        //showOldFarmon = false;
         infoBox.SetText("", "Your " + oldName + " evolved into a " + newFarmonName + "!");
         evolutionComplete = true;
     }

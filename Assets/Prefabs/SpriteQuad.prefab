@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6255656076970425094}
   - component: {fileID: 1627712274483016202}
   - component: {fileID: 6304663264297178235}
-  - component: {fileID: 1702945174138578692}
   m_Layer: 7
   m_Name: SpriteQuadRenderer
   m_TagString: Untagged
@@ -107,19 +106,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
---- !u!114 &1702945174138578692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2298576663393684309}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 908738c8b9230434aac47648dbb9c744, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _whiteOut: 0
 --- !u!1 &4754786877783328814
 GameObject:
   m_ObjectHideFlags: 0
@@ -153,7 +139,7 @@ Transform:
   m_Children:
   - {fileID: 6255656076970425094}
   m_Father: {fileID: 0}
-  m_RootOrder: -1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2440790650571635405
 MonoBehaviour:
@@ -201,7 +187,7 @@ MonoBehaviour:
     m_Events:
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1702945174138578692}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
           m_MethodName: TurnClear
           m_Mode: 1
@@ -215,7 +201,7 @@ MonoBehaviour:
           m_CallState: 2
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1702945174138578692}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
           m_MethodName: TurnWhite
           m_Mode: 1
@@ -229,7 +215,7 @@ MonoBehaviour:
           m_CallState: 2
     - m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 1702945174138578692}
+        - m_Target: {fileID: 0}
           m_TargetAssemblyTypeName: SpriteEffects, Assembly-CSharp
           m_MethodName: BumpAnimation
           m_Mode: 1

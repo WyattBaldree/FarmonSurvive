@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -24,11 +25,22 @@ public class FarmonHud : MonoBehaviour
     public Transform effectsParent;
     public HealthBar HealthBar;
     public SpriteEffects SpriteEffects;
+    public HighlightList HighlightList;
 
     GameObject tortorrentShield;
 
+    [HideInInspector]
+    public SpriteRenderer spriteRenderer;
+
+    private void Start()
+    {
+        spriteRenderer = SpriteQuad.GetComponentInChildren<SpriteRenderer>();
+    }
+
     private void Update()
     {
+        if (!TargetFarmon) return;
+
         if (tortorrentShield == null && TargetFarmon.EffectList.TortorrentShield > 0)
         {
             tortorrentShield = Instantiate(FarmonController.instance.EffectTortorrentShieldPrefab,transform.position, transform.rotation, effectsParent);
@@ -41,5 +53,8 @@ public class FarmonHud : MonoBehaviour
         }
     }
 
-
+    internal void SetSprite(Sprite sprite)
+    {
+        spriteRenderer.sprite = sprite;
+    }
 }
