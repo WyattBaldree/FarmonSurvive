@@ -41,12 +41,12 @@ public class FarmonHud : MonoBehaviour
     {
         if (!TargetFarmon) return;
 
-        if (tortorrentShield == null && TargetFarmon.EffectList.TortorrentShield > 0)
+        if (tortorrentShield == null && TargetFarmon.EffectList.TortorrentShield.Value > 0)
         {
             tortorrentShield = Instantiate(FarmonController.instance.EffectTortorrentShieldPrefab,transform.position, transform.rotation, effectsParent);
         }
         
-        if(tortorrentShield != null && TargetFarmon.EffectList.TortorrentShield == 0)
+        if(tortorrentShield != null && TargetFarmon.EffectList.TortorrentShield.Value == 0)
         {
             Destroy(tortorrentShield);
             tortorrentShield = null;

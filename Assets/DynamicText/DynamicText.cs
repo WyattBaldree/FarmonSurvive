@@ -103,7 +103,7 @@ public class DynamicText : MonoBehaviour
 
         foreach (Transform child in transform)
         {
-            GameObject.DestroyImmediate(child.gameObject);
+            GameObject.Destroy(child.gameObject);
         }
 
         //Create the containers that will hold our characters.

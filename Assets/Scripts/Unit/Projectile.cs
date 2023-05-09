@@ -70,12 +70,12 @@ public class Projectile : MonoBehaviour
             bool hit = false;
             if (rb)
             {
-                hit = farmon.TakeDamage(AttackData, center, H.Flatten(rb.velocity).normalized, Owner);
+                hit = farmon.AttemptDamage(AttackData, center, H.Flatten(rb.velocity).normalized, Owner);
             }
             else
             {
                 Vector3 awayFromProjectile = H.Flatten(farmon.transform.position - transform.position).normalized;
-                hit = farmon.TakeDamage(AttackData, center, awayFromProjectile, Owner);
+                hit = farmon.AttemptDamage(AttackData, center, awayFromProjectile, Owner);
             }
 
             if (hit)

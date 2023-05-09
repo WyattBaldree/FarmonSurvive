@@ -25,7 +25,7 @@ public class Scrimp : Farmon
             if (fiendFireAbility > 0)
             {
                 int fireDamage = 3 * fiendFireAbility;
-                unit.EffectList.AddEffect(new Effect("burn;" + fireDamage + ";4"));
+                unit.EffectList.Burn.AddEffect(4,fireDamage);
             }
         };
         fireBall.Initialize(fireballAttackData, this, team);

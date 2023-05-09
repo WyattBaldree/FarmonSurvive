@@ -24,6 +24,8 @@ public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
 
     Farmon targetFarmon;
 
+    bool performOnLevelUp;
+
     public void Awake()
     {
         Assert.IsNull(instance, "There should only be one instance of this object.");
@@ -40,7 +42,7 @@ public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
         gameObject.SetActive(false);
     }
 
-    public void Popup(Farmon farmon, int gritPrev, int powerPrev, int agilityPrev, int focusPrev, int luckPrev, int pointsPrev)
+    public void Popup(Farmon farmon, string message, int gritPrev, int powerPrev, int agilityPrev, int focusPrev, int luckPrev, int pointsPrev, bool _performOnLevelUp = false)
     {
         targetFarmon = farmon;
 
@@ -59,7 +61,9 @@ public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
 
         levelText.text = "Level " + targetFarmon.level;
 
-        textBox.SetText(farmon.nickname + " has reached level <color.yellow>" + farmon.level + "<default>!");
+        textBox.SetText(message);
+
+        performOnLevelUp = _performOnLevelUp;
     }
 
     private string StatChangeString(int statOld, int statNew)
@@ -77,7 +81,10 @@ public class LevelUpScreen : MonoBehaviour, IPointerDownHandler
     public void Close()
     {
         gameObject.SetActive(false);
-        targetFarmon.OnLevelUp();
+        if (performOnLevelUp)
+        {
+            targetFarmon.OnLevelUp();
+        }
     }
 
     private void Update()

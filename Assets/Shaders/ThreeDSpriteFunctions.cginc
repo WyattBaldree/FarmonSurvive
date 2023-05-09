@@ -20,21 +20,21 @@ void surfFunc(Input IN, inout SurfaceOutput o)
 
 
     float3 whiteMinusRgb = float3(1, 1, 1) - c.rgb;
-                    //increase the color by _WhiteOut
+    //increase the color by _WhiteOut
     c.rgb = c.rgb + (whiteMinusRgb * _WhiteOut);
 
     o.Albedo = c.rgb * c.a;
     o.Alpha = c.a;
 
-                    //#define DIV_SQRT_2 0.70710678118
+    //#define DIV_SQRT_2 0.70710678118
     float2 directions[4] = { float2(1, 0), float2(0, 1), float2(-1, 0), float2(0, -1) };
-                    //float2(DIV_SQRT_2, DIV_SQRT_2), float2(-DIV_SQRT_2, DIV_SQRT_2),
-                    //float2(-DIV_SQRT_2, -DIV_SQRT_2), float2(DIV_SQRT_2, -DIV_SQRT_2)};
+    //float2(DIV_SQRT_2, DIV_SQRT_2), float2(-DIV_SQRT_2, DIV_SQRT_2),
+    //float2(-DIV_SQRT_2, -DIV_SQRT_2), float2(DIV_SQRT_2, -DIV_SQRT_2)};
 
 
     float2 sampleDistance = _MainTex_TexelSize.xy * _OutlineWidth;
 
-                    //generate border
+    //generate border
     float maxAlpha = 0;
     for (uint index = 0; index < 4; index++)
     {
@@ -42,15 +42,15 @@ void surfFunc(Input IN, inout SurfaceOutput o)
         maxAlpha = max(maxAlpha, tex2D(_MainTex, sampleUV).a);
     }
 
-                    //apply border
+    //apply border
     c.rgb = lerp(_OutlineColor.rgb, c.rgb, c.a);
     c.a = max(c.a, maxAlpha);
             
-                    // Don't draw anything below a certain alpha
-                    // This allows us to hide the transparent portions of sprites
-                    // without enabling z-write off and alpha:fade which prevents
-                    // the material from interacting (going behind) other Transparent
-                    // materials.
+    // Don't draw anything below a certain alpha
+    // This allows us to hide the transparent portions of sprites
+    // without enabling z-write off and alpha:fade which prevents
+    // the material from interacting (going behind) other Transparent
+    // materials.
     clip(c.a - 0.001);
 
     o.Albedo = c.rgb * c.a;

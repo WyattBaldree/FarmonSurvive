@@ -468,7 +468,7 @@ PlayableDirector:
   serializedVersion: 3
   m_PlayableAsset: {fileID: 11400000, guid: c2198cc037ff30947a081cd5147d7dcc, type: 2}
   m_InitialState: 1
-  m_WrapMode: 1
+  m_WrapMode: 0
   m_DirectorUpdateMode: 1
   m_InitialTime: 0
   m_SceneBindings:
@@ -718,15 +718,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1270630823675223055, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Color.b
-      value: 0.33155763
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1270630823675223055, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Color.g
-      value: 0.36856878
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1270630823675223055, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Color.r
-      value: 0.34389466
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5775490546029487135, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Pivot.x
@@ -819,7 +819,7 @@ PrefabInstance:
     - target: {fileID: 8370271545916380327, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 69992b5284abc4343b0e422a71467431, type: 3}
+      objectReference: {fileID: 21300000, guid: 1b13912b8ab6b034293ef1ed8bedae19, type: 3}
     - target: {fileID: 8370271545916380327, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Color.b
       value: 0.468
@@ -838,7 +838,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8428805513293352787, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: speed.y
-      value: 0.043108813
+      value: 2.110531
       objectReference: {fileID: 0}
     - target: {fileID: 9035398060370873510, guid: b3eed83194a52e840829035a4e2c04a9, type: 3}
       propertyPath: m_Name
@@ -964,7 +964,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5204402528613725946, guid: 06a3f73beab97ed4e9238c34d77270b4, type: 3}
       propertyPath: readDelay
-      value: 0.08
+      value: 0.06
       objectReference: {fileID: 0}
     - target: {fileID: 5204402528613725946, guid: 06a3f73beab97ed4e9238c34d77270b4, type: 3}
       propertyPath: lineSpacing

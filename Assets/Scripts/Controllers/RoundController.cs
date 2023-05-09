@@ -14,6 +14,8 @@ public class RoundController : MonoBehaviour
     bool startingRound = false;
     public bool RoundPlaying = false;
 
+    public bool spawnEnemyTeam = true;
+
     private void Start()
     {
         StartMatch();
@@ -120,6 +122,8 @@ public class RoundController : MonoBehaviour
     {
         EnemyTeam1Ids.Clear();
 
+        if (!spawnEnemyTeam) return;
+
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy3")).GetComponent<Farmon>().loadedFarmonMapId);
@@ -206,7 +210,7 @@ public class RoundController : MonoBehaviour
                 }
             }
 
-            if (allFarmonDead) // if all team 2 farmon are dead
+            if (allFarmonDead && spawnEnemyTeam) // if all team 2 farmon are dead
             {
                 GameController.SlowMo(13f, .175f);
 

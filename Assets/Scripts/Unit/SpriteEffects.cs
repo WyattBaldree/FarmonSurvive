@@ -20,9 +20,17 @@ public class SpriteEffects : MonoBehaviour
     SpriteRenderer spriteRenderer;
 
     [SerializeField]
-    StarBurstParticleEffect StarBurstEffect;
+    AudioSource audioSource;
 
     Timer ShakeTimer = new Timer();
+
+    [Header("Starburst")]
+    [SerializeField]
+    StarBurstParticleEffect StarBurstEffect;
+
+    [SerializeField]
+    AudioClip starTwinkleAudio;
+
 
     private void Start()
     {
@@ -174,9 +182,18 @@ public class SpriteEffects : MonoBehaviour
         StarBurstEffect.PS.Play();
     }
 
+    int starburstEnteredCount = 0;
     private void StarBurstParticleEntered()
     {
         BumpAnimationRandom();
+
+        if (starburstEnteredCount % 4 == 0)
+        {
+            audioSource.clip = starTwinkleAudio;
+            audioSource.Play();
+        }
+
+        starburstEnteredCount++;
     }
 }
 

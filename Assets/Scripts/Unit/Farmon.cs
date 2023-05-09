@@ -456,13 +456,15 @@ public abstract class Farmon : Vehicle
     public int GetArmor()
     {
         //Add up all armor sources and return;
-        return EffectList.TortorrentShield;
+        return EffectList.TortorrentShield.Value;
     }
 
     protected override void Awake()
     {
         base.Awake();
         farmonList.Add(this);
+
+        EffectList.Initialize();
     }
 
     protected override void OnDestroy()
@@ -499,10 +501,10 @@ public abstract class Farmon : Vehicle
                 attackReady = true;
             }
 
-            if (EffectList.Burn > 0 && burnTimer.Tick(Time.deltaTime))
+            if (EffectList.Burn.Value > 0 && burnTimer.Tick(Time.deltaTime))
             {
-                AttackData burnDamageData = new AttackData((int)EffectList.Burn, 0, 0, true);
-                TakeDamage(burnDamageData, transform.position, Vector3.zero, null);
+                AttackData burnDamageData = new AttackData((int)EffectList.Burn.Value, 0, 0, true);
+                AttemptDamage(burnDamageData, transform.position, Vector3.zero, null);
             }
 
             if (hitStopTimer.Tick(Time.deltaTime))
@@ -747,7 +749,7 @@ public abstract class Farmon : Vehicle
     }
 
     public UnityEvent DamageEvent;
-    public bool TakeDamage(AttackData attackData, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
+    public bool AttemptDamage(AttackData attackData, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
     {        
         if(!attackData.Undodgeable && UnityEngine.Random.value < Agility / 100f)
         {
@@ -781,17 +783,46 @@ public abstract class Farmon : Vehicle
             }
             else
             {
-                ChangeHeath(-attackData.Damage);
-
-                MakeDamageNumber(attackData);
-
-                MakeHitEffect(attackData, damageOrigin);
-
-                DamageEvent.Invoke();
+                TakeDamage(attackData, damageOrigin);
             }
 
             return true;
         }
+    }
+
+    public void TakeDamage(AttackData attackData, Vector3 damageOrigin)
+    {
+        //First damage armor and overhealth
+
+        int remainingDamage = attackData.Damage;
+
+        remainingDamage = EffectList.TortorrentShield.SubtractFromTotal(remainingDamage);
+
+        MakeHitEffect(attackData, damageOrigin);
+
+        if (remainingDamage == 0)
+        {
+            Hud.AudioSource.clip = FarmonController.instance.DeflectSound;
+            Hud.AudioSource.volume = .3f;
+            Hud.AudioSource.Play();
+
+            MakeDamageNumber(new AttackData(0, 0, 0));
+
+            return;
+        }
+
+        if (attackData.Damage > MaxHealth / 10)
+        {
+            Hud.AudioSource.clip = FarmonController.instance.HitSound2;
+            Hud.AudioSource.volume = .3f;
+            Hud.AudioSource.Play();
+        }
+
+        ChangeHeath(-remainingDamage);
+
+        MakeDamageNumber(attackData);
+
+        DamageEvent.Invoke();
     }
 
     public void MakeDamageNumber(AttackData attackData)
@@ -911,7 +942,9 @@ public abstract class Farmon : Vehicle
         LuckBonus += luckPlus;
         attributePoints += pointsPlus;
 
-        LevelUpScreen.instance.Popup(this, gritPrev, powerPrev, agilityPrev, focusPrev, luckPrev, pointsPrev);
+        string levelUpMessage = nickname + " has reached level <color.yellow>" + level + "<default>!";
+
+        LevelUpScreen.instance.Popup(this, levelUpMessage, gritPrev, powerPrev, agilityPrev, focusPrev, luckPrev, pointsPrev, true);
 
         FloatingText floatingText = Instantiate(FarmonController.instance.FloatingTextPrefab, transform.position, Quaternion.identity).GetComponent<FloatingText>();
         floatingText.Setup("LEVEL UP!", Color.yellow);
@@ -1723,7 +1756,7 @@ public class MeleeAttackState : StateMachineState
 
         SphereCollider sc = _farmon.sphereCollider;
 
-        bool hit = attackFarmon.TakeDamage(_attackData, sc.transform.position + sc.center, (attackFarmon.transform.position - _farmon.transform.position).normalized, _farmon);
+        bool hit = attackFarmon.AttemptDamage(_attackData, sc.transform.position + sc.center, (attackFarmon.transform.position - _farmon.transform.position).normalized, _farmon);
 
         if (hit)
         {
@@ -1877,17 +1910,7 @@ public class HitStopState2 : StateMachineState
     {
         base.Enter();
 
-        if (_attackData.Damage > farmon.MaxHealth / 10)
-        {
-            farmon.Hud.AudioSource.clip = FarmonController.instance.HitSound2;
-            farmon.Hud.AudioSource.volume = .3f;
-            farmon.Hud.AudioSource.Play();
-        }
-
-        farmon.ChangeHeath(-_attackData.Damage);
-        farmon.MakeDamageNumber(_attackData);
-        farmon.MakeHitEffect(_attackData, _damageOrigin);
-        farmon.DamageEvent.Invoke();
+        farmon.TakeDamage(_attackData, _damageOrigin);
 
         farmon.rb.AddForce(farmon.dead ? _bounceVector * 3 : _bounceVector, ForceMode.Impulse);
     }

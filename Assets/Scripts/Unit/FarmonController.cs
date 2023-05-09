@@ -36,6 +36,7 @@ public class FarmonController : MonoBehaviour
     public AudioClip HitSound2;
     public AudioClip DieSound;
     public AudioClip DodgeSound;
+    public AudioClip DeflectSound;
     public AudioClip DashSound;
     public AudioClip LevelUpSound;
 

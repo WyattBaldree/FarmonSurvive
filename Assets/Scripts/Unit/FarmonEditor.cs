@@ -68,12 +68,12 @@ public class FarmonEditor : Editor
             }
             if (GUILayout.Button("Shield (for 10 seconds)"))
             {
-                farmon.EffectList.AddEffect(new Effect("tortorrentShield;" + adjustmentValue + ";10"));
+                farmon.EffectList.TortorrentShield.AddEffect(10, adjustmentValue);
             }
             if (GUILayout.Button("Damage"))
             {
                 AttackData ad = new AttackData(adjustmentValue);
-                farmon.TakeDamage(ad,farmon.transform.position + Vector3.down, Vector3.up, null);
+                farmon.AttemptDamage(ad,farmon.transform.position + Vector3.down, Vector3.up, null);
             }
 
             GUILayout.Space(20);
@@ -85,10 +85,6 @@ public class FarmonEditor : Editor
             {
                 farmon.AddPerk(new PerkJump());
             }
-            if (GUILayout.Button("Give Shield Effect"))
-            {
-                farmon.EffectList.AddEffect(new Effect("tortorrentShield;" + 10 + ";4"));
-            }
             if (GUILayout.Button("LevelUp"))
             {
                 farmon.LevelUp();
@@ -96,6 +92,10 @@ public class FarmonEditor : Editor
             if (GUILayout.Button("Die"))
             {
                 farmon.Die();
+            }
+            if (GUILayout.Button("PrintEffects"))
+            {
+                farmon.EffectList.PrintOutEffects();
             }
 
             /*if (GUILayout.Button("Save Player"))

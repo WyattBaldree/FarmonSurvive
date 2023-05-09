@@ -200,7 +200,9 @@ MonoBehaviour:
   _whiteOut: 0
   White: 0
   ShakeAmount: 0
+  audioSource: {fileID: 8533316439881059201}
   StarBurstEffect: {fileID: 8512976958809691894}
+  starTwinkleAudio: {fileID: 8300000, guid: 4875ab472fd9b0645be7818dabc431ee, type: 3}
 --- !u!95 &1490583797721044028
 Animator:
   serializedVersion: 6
@@ -211,7 +213,7 @@ Animator:
   m_GameObject: {fileID: 1872850952795384807}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 99b92abc01348d742b358e1e92ca7b16, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -31,13 +31,12 @@ public class EvolutionScreen : MonoBehaviour
 
     bool switchingSprite = false;
 
-    string oldName = "Farmon";
+    string oldName = "Scrimp";
 
-    string newFarmonName = "NewFarmon";
-
-    bool evolutionComplete = false;
+    string newFarmonName = "Screevil";
 
     PlayableDirector evolutionAnimation;
+    private bool animationComplete;
 
     public void Awake()
     {
@@ -60,8 +59,31 @@ public class EvolutionScreen : MonoBehaviour
         infoBox.SetText("", "What's this? " + oldName + " is changing!");
     }
 
+    private void Update()
+    {
+        if (animationComplete)
+        {
+            if (Input.anyKeyDown)
+            {
+                if (infoBox.descriptionText.reading)
+                {
+                    infoBox.descriptionText.SkipReading();
+                }
+                else
+                {
+                    gameObject.SetActive(false);
+
+                    string evolveMessage = newFarmon.nickname + " looks even stronger!";
+
+                    LevelUpScreen.instance.Popup(newFarmon, evolveMessage, oldFarmon.Grit, oldFarmon.Power, oldFarmon.Agility, oldFarmon.Focus, oldFarmon.Luck, oldFarmon.attributePoints);
+                }
+            }
+        }
+    }
+
     private void LateUpdate()
     {
+        //While true, one side of the sprite is oldSprite and the other side is newSprite
         if (switchingSprite)
         {
             Vector3 cameraForward = farmonDisplay.DisplayCamera.transform.forward;
@@ -93,9 +115,16 @@ public class EvolutionScreen : MonoBehaviour
         audioSource.volume = .7f;
         audioSource.Play();
 
-        evolutionComplete = false;
-
         infoBox.SetText("", "What's this? " + oldName + " is changing!");
+
+        animationComplete = false;
+    }
+
+    public void EvolutionAnimationComplete()
+    {
+        infoBox.SetText("", "Wow! " + oldName + " has grown into a " + newFarmonName + "!");
+
+        animationComplete = true;
     }
 
     public void ShowOldFarmon()
@@ -118,66 +147,9 @@ public class EvolutionScreen : MonoBehaviour
         switchingSprite = false;
     }
 
-    void SetDefaultText()
-    {
-        infoBox.SetText("", "What's this?" + oldName + " is changing!");
-    }
-
     public void Close()
     {
         gameObject.SetActive(false);
         newFarmon.DistributeEvolvePerks();
-    }
-
-    IEnumerator EvolutionPopupCoroutine()
-    {
-        SetDefaultText();
-
-        //showOldFarmon = true;
-
-        newFarmon = oldFarmon.Evolve(newFarmonName);
-
-        yield return new WaitForSeconds(1.5f);
-
-        //float spriteSwitchTimeCurrent = .75f;
-
-        //spriteSwitchTimer.SetTime(spriteSwitchTimeCurrent);
-        float time = 0;
-        float timeScale = 1f;
-        float timeScaleMax = 7.5f;
-        /*while (timeScale < timeScaleMax)
-        {
-            if (showOldFarmon)
-            {
-                if (Mathf.Sin(time * timeScale) < 0) showOldFarmon = !showOldFarmon;
-            }
-            else
-            {
-                if (Mathf.Sin(time * timeScale) > 0) showOldFarmon = !showOldFarmon;
-            }
-
-            time += Time.deltaTime * timeScale;
-
-            timeScale += Time.deltaTime * .8f;
-
-            //if (spriteSwitchTimer.Tick(Time.deltaTime))
-            //{
-                
-            //    spriteSwitchTimeCurrent -= .015f;
-            //    spriteSwitchTimer.SetTime(spriteSwitchTimeCurrent);
-            //}
-
-            if (Input.anyKeyDown)
-            {
-                //spriteSwitchTimeCurrent = 0;
-                timeScale = timeScaleMax;
-            }
-
-            yield return new WaitForEndOfFrame();
-        }*/
-
-        //showOldFarmon = false;
-        infoBox.SetText("", "Your " + oldName + " evolved into a " + newFarmonName + "!");
-        evolutionComplete = true;
     }
 }
