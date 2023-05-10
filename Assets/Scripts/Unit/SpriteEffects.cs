@@ -150,6 +150,17 @@ public class SpriteEffects : MonoBehaviour
         mySequence.Join(spriteRenderer.transform.DOPunchRotation(Vector3.back * 7f, .3f, 1, 1));
     }
 
+    public void SquashAnimation()
+    {
+        spriteRenderer.transform.DOComplete();
+
+        float h = GetUnitHeight();
+
+        Sequence mySequence = DOTween.Sequence();
+        mySequence.Append(spriteRenderer.transform.DOScaleY(.7f, .4f));
+        mySequence.Append(spriteRenderer.transform.DOScaleY(1, .25f));
+    }
+
     public void SneezeAnimation()
     {
         spriteRenderer.transform.DOComplete();

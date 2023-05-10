@@ -152,6 +152,7 @@ MonoBehaviour:
   RoundUIAnimator: {fileID: 1197230641}
   EnemyTeam1Ids: 
   RoundPlaying: 0
+  spawnEnemyTeam: 0
 --- !u!4 &46913872
 Transform:
   m_ObjectHideFlags: 0
