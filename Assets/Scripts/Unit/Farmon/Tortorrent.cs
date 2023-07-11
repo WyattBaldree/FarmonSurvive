@@ -11,7 +11,6 @@ public class Tortorrent : Farmon
     public AudioClip ChargeUpSound;
     public AudioClip ThunkSound;
 
-    public float hitStunTime = .2f;
     [HideInInspector]
     public int shellHitCount = 0;
 
@@ -38,7 +37,7 @@ public class Tortorrent : Farmon
     public override void AttackComplete()
     {
         base.AttackComplete();
-        HitStopSelf(hitStunTime);
+        HitStopSelf(.2f);
     }
 
     protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
@@ -77,7 +76,7 @@ public class TorrentSpinChargeState : StateMachineState
     {
         base.Enter();
 
-        Farmon attackFarmon = tortorrent.GetAttackTargetFarmon();
+        Farmon attackFarmon = null;//tortorrent.GetAttackTargetFarmon();
         tortorrent.targetTransform = attackFarmon.transform;
 
         chargeTimer.SetTime(2f - tortorrent.Agility/Farmon.StatMax);
@@ -128,10 +127,10 @@ public class TorrentSpinChargeState : StateMachineState
             }
         }
 
-        Farmon attackFarmon = tortorrent.GetAttackTargetFarmon();
+        Farmon attackFarmon = null;// tortorrent.GetAttackTargetFarmon();
         if (!tortorrent.targetTransform || !attackFarmon)
         {
-            tortorrent.SetState(tortorrent.mainState);
+            //tortorrent.SetState(tortorrent.mainState);
             return;
         }
 
@@ -148,8 +147,8 @@ public class TorrentSpinChargeState : StateMachineState
             
             tortorrent.shellHitCount = 3;
             
-            AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, tortorrent.hitStunTime, false, null, tortorrent.ThunkSound);
-            tortorrent.SetState(new TorrentSpinAttackState(tortorrent, tortorrent.attackTarget, attackData));
+            AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, false, null, tortorrent.ThunkSound);
+            //tortorrent.SetState(new TorrentSpinAttackState(tortorrent, tortorrent.attackTarget, attackData));
 
             return;
         }
@@ -166,7 +165,7 @@ public class TorrentSpinAttackState : MeleeAttackState
     Timer timeoutTimer = new Timer();
     Tortorrent tortorrent;
 
-    public TorrentSpinAttackState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData) : base(farmon, targetFarmonInstanceID, attackData)
+    public TorrentSpinAttackState(Farmon farmon, uint farmonIdToAttack, AttackData attackData) : base(farmon, farmonIdToAttack, attackData)
     {
         tortorrent = (Tortorrent)farmon;
     }
@@ -181,18 +180,13 @@ public class TorrentSpinAttackState : MeleeAttackState
     {
         base.OnAttack();
 
-        if (_selfHitStun)
-        {
-            _farmon.HitStopSelf(_attackData.HitStopTime);
-        }
-
         tortorrent.shellHitCount--;
 
         //If we are not out of attacks, attack again.
         if (tortorrent.shellHitCount > 0)
         {
             // Search for our next target. Exclude the last farmon hit.
-            List<Farmon> lastFarmonHit = new List<Farmon>() { Farmon.loadedFarmonMap[_targetFarmonInstanceID] };
+            List<Farmon> lastFarmonHit = new List<Farmon>() { Farmon.loadedFarmonMap[_farmonIdToAttack] };
             List<Farmon> attackTargetList = Farmon.SearchFarmon(    tortorrent,
                                                                     Farmon.FarmonFilterEnum.enemyTeam,  
                                                                     Farmon.FarmonSortEnum.nearest, 
@@ -202,7 +196,7 @@ public class TorrentSpinAttackState : MeleeAttackState
             //If a target was found, attack it.
             if (attackTargetList.Count > 0)
             {
-                AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, tortorrent.hitStunTime, false, null, tortorrent.ThunkSound);
+                AttackData attackData = new AttackData(10 + tortorrent.Power / 3, 6, false, null, tortorrent.ThunkSound);
                 tortorrent.SetState(new TorrentSpinAttackState(tortorrent, attackTargetList[0].loadedFarmonMapId, attackData));
                 return;
             }
@@ -211,7 +205,7 @@ public class TorrentSpinAttackState : MeleeAttackState
 
         //If a new attack was not started, just return to the main state.
         GameObject.Destroy(tortorrent.spinEffect);
-        tortorrent.SetState(_farmon.mainState);
+        tortorrent.SetState(_farmon.mainBattleState);
 
         _farmon.AttackComplete();
     }

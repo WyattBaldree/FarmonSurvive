@@ -116,18 +116,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656b3ff334560c44fb4e74d5e253e547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 1
-  owner: {fileID: 0}
-  damage: 1
-  pierce: 1
-  hitStunTime: 0.3
-  knockBack: 1
-  lifeTime: 5
-  undodgeable: 0
-  CreateSound: {fileID: 0}
-  HitSound: {fileID: 0}
+  Team: 0
+  Owner: {fileID: 0}
+  Pierce: 1
+  LifeTime: 5
   DestroySound: {fileID: 0}
-  specificTarget: {fileID: 0}
+  SpecificTarget: {fileID: 0}
   EventDestroy:
     m_PersistentCalls:
       m_Calls: []
@@ -174,7 +168,7 @@ Rigidbody:
     m_Bits: 0
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
@@ -313,19 +307,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.34464538
+      value: 0.90984374
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.060770277
+      value: 0.16043
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9225323
+      value: 0.3768696
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.16266735
+      value: -0.06645228
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

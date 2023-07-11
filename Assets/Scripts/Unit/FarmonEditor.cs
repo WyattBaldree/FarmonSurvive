@@ -73,7 +73,7 @@ public class FarmonEditor : Editor
             if (GUILayout.Button("Damage"))
             {
                 AttackData ad = new AttackData(adjustmentValue);
-                farmon.AttemptDamage(ad,farmon.transform.position + Vector3.down, Vector3.up, null);
+                farmon.AttemptDamage(ad, 0.4f, farmon.transform.position + Vector3.down, Vector3.up, null);
             }
 
             GUILayout.Space(20);
@@ -84,6 +84,10 @@ public class FarmonEditor : Editor
             if (GUILayout.Button("Give Jump Perk"))
             {
                 farmon.AddPerk(new PerkJump());
+            }
+            if (GUILayout.Button("Give Flying Perk"))
+            {
+                farmon.AddPerk(new PerkFly());
             }
             if (GUILayout.Button("LevelUp"))
             {

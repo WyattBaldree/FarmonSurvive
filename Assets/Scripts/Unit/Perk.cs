@@ -49,6 +49,18 @@ public class PerkJump : Perk
     }
 }
 
+public class PerkFly : Perk
+{
+    public PerkFly()
+    {
+        PerkName = "Fly";
+        PerkDescription = new string[]{
+            "Periodically gain the power of flight.",
+            "Permanently fly!"};
+        MaxLevel = 2;
+    }
+}
+
 public class PerkFrenzy : Perk
 {
     public PerkFrenzy()

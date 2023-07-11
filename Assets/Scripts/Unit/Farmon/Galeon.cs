@@ -24,7 +24,7 @@ public class Galeon : Farmon
     public override void Attack(Farmon targetEnemyFarmon)
     {
         Projectile fireBall = Instantiate(fireballPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-        AttackData fireBallAttackData = new AttackData( 5 + Power/2, 4, .15f, fireBallSound, fireBallHitSound);
+        AttackData fireBallAttackData = new AttackData( 5 + Power/2, 4, fireBallSound, fireBallHitSound);
 
         fireBall.transform.localScale *= (1f + (float)Focus / 5f);
         fireBall.Pierce = 2;
@@ -33,12 +33,17 @@ public class Galeon : Farmon
         };
         fireBall.Initialize(fireBallAttackData, this, team);
 
-        Vector3 unitToEnemy = targetEnemyFarmon.GetUnitVectorToMe(transform.position) * 3f;
+        //This is a basic attack so add the basic attack component.
+        BasicProjectile bp = fireBall.gameObject.AddComponent<BasicProjectile>();
+        bp.Velocity = (5f + Agility / 10f);
+        bp.TargetFarmonId = targetEnemyFarmon.loadedFarmonMapId;
+        
+        /*Vector3 unitToEnemy = targetEnemyFarmon.GetUnitVectorToMe(transform.position) * 3f;
         unitToEnemy = Vector3.ProjectOnPlane(unitToEnemy, Vector3.up).normalized;
 
         ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         cv.velocity = unitToEnemy.normalized * (5f + Agility/10f);
-        cv.ignoreGravity = true;
+        cv.ignoreGravity = true;*/
 
         AttackComplete();
     }
@@ -68,7 +73,7 @@ public class Galeon : Farmon
         {
             Projectile tornado = Instantiate(tornadoPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
 
-            AttackData tornadoAttackData = new AttackData(2, 2, .1f, angle == 0 ? tornadoSound : null, null);
+            AttackData tornadoAttackData = new AttackData(2, 2, angle == 0 ? tornadoSound : null, null);
 
             tornado.Pierce = 1;
             tornado.LifeTime = 10;

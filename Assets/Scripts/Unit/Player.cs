@@ -282,20 +282,22 @@ public class Player : MonoBehaviour
             if (hitFarmon)
             {
                 //Select the hit farmon
-                Farmon f = hitInfo.transform.GetComponentInParent<Farmon>();
+                Farmon targetedFarmon = hitInfo.transform.GetComponentInParent<Farmon>();
 
-                if (f.team == playerTeam)
+                if (targetedFarmon.team == playerTeam)
                 {
                     foreach (Farmon selectedFarmon in selectionList)
                     {
-                        selectedFarmon.EnterDefendState(f);
+                        selectedFarmon.mainBattleState = new NewProtectState(selectedFarmon, targetedFarmon.loadedFarmonMapId);
+                        selectedFarmon.SetState(selectedFarmon.mainBattleState);
                     }
                 }
                 else
                 {
                     foreach (Farmon selectedFarmon in selectionList)
                     {
-                        selectedFarmon.EnterAttackState(f);
+                        selectedFarmon.mainBattleState = new NewAttackState(selectedFarmon, targetedFarmon.loadedFarmonMapId);
+                        selectedFarmon.SetState(selectedFarmon.mainBattleState);
                     }
                 }
             }

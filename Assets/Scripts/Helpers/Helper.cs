@@ -30,6 +30,37 @@ public class H
         return new Vector3(x, y, z);
     }
 
+    //When navigating, farmon use the first navigable terrain below themself/below their target.
+    //This function quickly returns the gridSpace position of the naviagable terrain below the provided position.
+    public static Vector3Int GetNavigationPosition(Vector3 realPosition)
+    {
+        //First get gridSpace this position is in
+        Vector3Int gridPosition = H.Vector3ToGridPosition(realPosition, LevelController.Instance.gridSize);
+
+        //Next, check if our gridspace is valid movement terrain. If not, keep moving
+        //down until we find valid terrain.
+        while (true)
+        {
+            if (gridPosition.y < 0)
+            {
+                throw new Exception("A farmon is trying to navigate from or to a position with no valid navigation terrain beneath it.");
+            }
+
+            GridSpace gridSpace = NavMesh.instance.GetGridSpaceArray(gridPosition);
+
+            // If the current gridSpace exists and has valid terrain, use it!
+            if (gridSpace != null && gridSpace.CenterValid)
+            {
+                break;
+            }
+
+            //otherwise look downward in case this farmon is airborne
+            gridPosition += Vector3Int.down;
+        }
+
+        return gridPosition;
+    }
+
     public static IEnumerable<T> GetEnumerableOfType<T>(params object[] constructorArgs) where T : class, IComparable<T>
     {
         List<T> objects = new List<T>();

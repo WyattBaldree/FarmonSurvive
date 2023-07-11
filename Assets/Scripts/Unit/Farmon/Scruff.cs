@@ -6,9 +6,6 @@ using UnityEngine;
 public class Scruff : Farmon
 {
     public GameObject scruffTacklePrefab;
-    private ScruffTackleState tackleState;
-
-    public float hitStunTime = .2f;
 
     public AudioClip tackleSound;
     public AudioClip hitSound;
@@ -18,11 +15,12 @@ public class Scruff : Farmon
         base.Start();
     }
 
-    public override void Attack(Farmon targetEnemy)
+    public override void Attack(Farmon _farmon)
     {
-        AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, hitStunTime, false, tackleSound, hitSound);
+        base.Attack(_farmon);
+        AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, false, tackleSound, hitSound);
 
-        SetState(new ScruffTackleState(this, attackTarget, tackleAttackData));
+        SetState(new ScruffTackleState(this, _farmon.loadedFarmonMapId, tackleAttackData, .5f));
     }
 
     public override float AttackTime()
@@ -52,23 +50,13 @@ public class Scruff : Farmon
 
 public class ScruffTackleState : MeleeAttackState
 {
-    public ScruffTackleState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData) : base(farmon, targetFarmonInstanceID,  attackData)
+    public ScruffTackleState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData, float hitStun) : base(farmon, targetFarmonInstanceID,  attackData, hitStun)
     {
-    }
-
-    public override void Tick()
-    {
-        _farmon.maxSpeed = (_farmon.GetMovementSpeed() + 2) * 3;
-        base.Tick();
     }
 
     public override void OnAttack()
     {
         base.OnAttack();
-
-        _farmon.rb.velocity = Vector3.zero;
-
-        _stateMachine.ChangeState(_farmon.mainState);
         _farmon.AttackComplete();
     }
 }

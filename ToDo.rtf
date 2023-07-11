@@ -50,6 +50,9 @@ Hire for assets?\par
 Water tiles \par
 New stat for reducing status effect duration?\par
 Farmon whos level up stat depends on conditions (like item in inventory, other farmon in party, or where they are during level up).\par
+To incentivize attacking different targets, you take less damage from the farmon you are targeting.\par
+Objectives/powerups in the map disencentivize attacking a single unit.\par
+Channeling units that would benefit from being protected.\par
 \par
 \fs36 Perk requirement ideas:\fs22\par
 
@@ -115,6 +118,8 @@ Farmon whos level up stat depends on conditions (like item in inventory, other f
 {\pntext\f1\'B7\tab}Spiky Body - Gain resistance to melee attacks and deal damage to melee attackers. Think pokeys or spike goombas from PM.\par
 {\pntext\f1\'B7\tab}Watchmon - Gain increased attack range while defending.\par
 {\pntext\f1\'B7\tab}Defender - Gain damage reduction while defending.\par
+{\pntext\f1\'B7\tab}Some kind of perk that pulls enemies together.\par
+{\pntext\f1\'B7\tab}Cloud9 - Any farmon protecting this farmon can fly.\par
 
 \pard\sa200\sl276\slmult1\cf2\b Solution to evolving farmon losing references:\par
 
@@ -122,6 +127,37 @@ Farmon whos level up stat depends on conditions (like item in inventory, other f
 {\pntext\f1\'B7\tab}When something wants to hold a reference to a farmon, it will do so by saving the key of that farmon.\par
 {\pntext\f1\'B7\tab}When somethings wants to retrieve the reference, it will use the saved key to get the dictionary value (farmon instance)\par
 {\pntext\f1\'B7\tab}When a farmon evolves, it will replace the value of its key with the newly evolved farmon reference to update all existing references to the old farmon.\par
+
+\pard\sa200\sl276\slmult1\par
+Working on splitting statemachine into 3 separate state machines:\par
+ControlStateMachine:\par
+This state machine handles the farmon's high level state.\par
+States:\par
+
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sa200\sl276\slmult1 SpawnState\par
+{\pntext\f1\'B7\tab}DieState\par
+{\pntext\f1\'B7\tab}DeadState\par
+{\pntext\f1\'B7\tab}HitStunState\par
+{\pntext\f1\'B7\tab}DoNothingState - this state is reserved for times when another arbitrary script is controlling this object. For example, if an enemy farmon grabbed this farmon, this farmon would enter the DoNothingState.\par
+{\pntext\f1\'B7\tab}MainState - this state ticks the FarmonStateMachine and the NavigationStateMachine\par
+
+\pard\sa200\sl276\slmult1\par
+FarmonStateMachine:\par
+This state machine contains the farmon's current objective:\par
+States:\par
+
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sa200\sl276\slmult1 IdleState - Wander around with no objective.\par
+{\pntext\f1\'B7\tab}AttackState - The farmon is given a target farmon upon entering the AttackState. Move into attack range of the target farmon. If we are in attack range and the attack is not ready yet, choose random spots around the enemy to move to.\par
+{\pntext\f1\'B7\tab}DefendState - The farmon is given a target location to defend up entering the DefendState. The farmon moves to the defend location and waits. If an enemy farmon enters a certain radius around the target location (taking into consideration this farmon's attack range), the defending farmon will attack the enemy farmon.\par
+{\pntext\f1\'B7\tab}ProtectState - The farmon is given a target freindly farmon upon entering the ProtectState. The farmon closely follows the farmon it is protecting and if an enemy farmon enters a certain radius around the target farmon (taking into consideration this farmon's attack range),  the protecting farmon will attack the enemy farmon. If this farmon has any friendly abilities, they will prioritize the protected farmon.\par
+
+\pard\sa200\sl276\slmult1 NavigationStateMachine:\par
+This state machine contains different high-level navigation states:\par
+States:\par
+
+\pard{\pntext\f1\'B7\tab}{\*\pn\pnlvlblt\pnf1\pnindent0{\pntxtb\'B7}}\fi-360\li720\sa200\sl276\slmult1 WanderState - Move in a random pattern.\par
+{\pntext\f1\'B7\tab}MoveAroundAttackTarget - Move to a random location around the target farmon, then choose a new random location around the target farmon.\par
+{\pntext\f1\'B7\tab}NavigateToFarmon - Pathfind to a farmon.\par
 
 \pard\sa200\sl276\slmult1\par
 }

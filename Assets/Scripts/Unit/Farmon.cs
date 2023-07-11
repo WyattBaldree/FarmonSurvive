@@ -12,14 +12,33 @@ public abstract class Farmon : Vehicle
     public static List<Farmon> farmonList = new List<Farmon>();
     public static Dictionary<uint, Farmon> loadedFarmonMap = new Dictionary<uint, Farmon>();
     private static uint loadedFarmonMapCurrentIndex = 1;
-    private static float followRange = 3;
 
     public static int StatMax = 40;
+
+    /// <summary>
+    /// This value represents this farmon's position in the loadedFarmonMap
+    /// This value is used to constantly track this farmon, even if it evolves or
+    /// otherwise switches gameobjects.
+    /// </summary>
+    public uint loadedFarmonMapId = 0;
+
+    /// <summary>
+    /// This value represents this farmon's location in the player save data.
+    /// When a farmon is first saved, this value is set. This value is then used to
+    /// load and save that farmon in the future.
+    /// </summary>
+    public uint uniqueID = 0;
 
     public enum TeamEnum
     {
         team1,
         team2
+    }
+
+    public enum AttackType
+    {
+        melee,
+        ranged
     }
 
     //Enum used to filter for specific lists of farmon.
@@ -37,13 +56,13 @@ public abstract class Farmon : Vehicle
     {
         none,
         nearest,
+        nearestFlat,
         furthest,
         lowestHealth,
         mostHealth
     }
 
     public string DebugString;
-    public uint uniqueID = 0;
 
     [HideInInspector]
     public FarmonHud Hud;
@@ -55,7 +74,7 @@ public abstract class Farmon : Vehicle
 
     private StateMachine farmonStateMachine;
 
-    public uint loadedFarmonMapId = 0;
+    private StateMachine controlStateMachine;
 
     public string farmonName = "Unit";
     public string nickname = "";
@@ -63,6 +82,8 @@ public abstract class Farmon : Vehicle
     public int level = 1;
     public int experience = 0;
     public bool canJump = false;
+
+    public AttackType attackType = AttackType.melee;
 
     public Dictionary<string, int> perkList = new Dictionary<string, int>();
 
@@ -81,14 +102,22 @@ public abstract class Farmon : Vehicle
     [HideInInspector]
     public bool dead = false;
 
+
     [HideInInspector]
     public bool attackReady = false;
     Timer attackTimer = new Timer();
 
-    public float targetRange = 5f;
+    public float attackRangeBase = 5f;
 
-    public uint attackTarget;
-    public uint protectTarget;
+    public override bool Flying
+    {
+        get => base.Flying;
+        set{
+            base.Flying = value;
+            rb.useGravity = !value;
+        }
+
+    }
 
     //Hover Highlight
     Highlight _hoverHighlight;
@@ -96,7 +125,7 @@ public abstract class Farmon : Vehicle
     private HighlightList _highlightList;
 
     //States
-    public StateMachineState mainState;
+    public NewBattleState mainBattleState;
     public StateMachineState attackState;
     public StateMachineState spawnState;
 
@@ -117,8 +146,6 @@ public abstract class Farmon : Vehicle
     public UnityEvent GridSpaceChangedEvent = new UnityEvent();
     [HideInInspector]
     public Vector3Int GridSpaceIndex;
-
-    Timer hitStopTimer = new Timer();
 
     [HideInInspector]
     private bool immuneToHitStop = false;
@@ -161,8 +188,6 @@ public abstract class Farmon : Vehicle
         farmon.experience = data.experience;
         farmon.perkPoints = data.perkPoints;
         farmon.attributePoints = data.attributePoints;
-
-        farmon.mainState = new IdleState(farmon);
 
         foreach (string perkString in data.perks)
         {
@@ -402,11 +427,15 @@ public abstract class Farmon : Vehicle
         Assert.IsNotNull(mySpriteRenderer);
 
         farmonStateMachine = new StateMachine();
-        spawnState = new SpawnState(this);
+        controlStateMachine = new StateMachine();
 
-        mainState = new IdleState(this);
+        //spawnState = new SpawnState(this);
 
-        farmonStateMachine.InitializeStateMachine(spawnState);
+        //mainState = new IdleState(this);
+
+        controlStateMachine.InitializeStateMachine(new MainState(this));
+
+        farmonStateMachine.InitializeStateMachine(new NewIdleState(this));
 
         shadow = Instantiate(FarmonController.instance.ShadowPrefab, transform.position + sphereCollider.center + ((sphereCollider.radius - 0.01f) * Vector3.down), Quaternion.Euler(90, 0, 0), this.transform);
 
@@ -448,7 +477,7 @@ public abstract class Farmon : Vehicle
         LuckBonus = luckBonus;
     }
 
-    public virtual float GetMovementSpeed()
+    public override float GetMovementSpeed()
     {
         return 3 + Agility / 6;
     }
@@ -465,6 +494,17 @@ public abstract class Farmon : Vehicle
         farmonList.Add(this);
 
         EffectList.Initialize();
+
+        statsChangedEvent += StatsChanged;
+        PathNodeReachedEvent.AddListener(PathNodeReached);
+    }
+
+    private void StatsChanged(object sender, EventArgs e)
+    {
+        Flying = IsFlying();
+
+        //Any time our stats change, force a path update in case something like the ability to jump or fly has effected our ability to navigate.
+        forcePathUpdate = true;
     }
 
     protected override void OnDestroy()
@@ -491,52 +531,63 @@ public abstract class Farmon : Vehicle
         DebugString = "";
         if (Debug.isDebugBuild)
         {
+            DebugString += "\n" + controlStateMachine.CurrentState.ToString();
             DebugString += "\n" + farmonStateMachine.CurrentState.ToString();
         }
 
         if (!FarmonController.Paused)
         {
-            if (attackReady == false && attackTimer.Tick(Time.deltaTime))
-            {
-                attackReady = true;
-            }
-
-            if (EffectList.Burn.Value > 0 && burnTimer.Tick(Time.deltaTime))
-            {
-                AttackData burnDamageData = new AttackData((int)EffectList.Burn.Value, 0, 0, true);
-                AttemptDamage(burnDamageData, transform.position, Vector3.zero, null);
-            }
-
-            if (hitStopTimer.Tick(Time.deltaTime))
-            {
-                //DOTween.Play(Hud.SpriteQuad.transform);
-                rb.constraints = RigidbodyConstraints.FreezeRotation;
-
-                Hud.Animator.speed = 1;
-            }
-
-            EffectList.UpdateEffects(Time.deltaTime);
+            //tick the farmon's control state machine. This state machine is resposible for ticking the farmonStateMachine
+            controlStateMachine.Tick();
         }
 
-        // only tick if the game isn't paused or we are in the die state.
-        if(!FarmonController.Paused && !hitStopTimer.running || farmonStateMachine.CurrentState.GetType() == typeof(DieState))
+        
+
+        UpdateGridSpace();
+
+        PositionShadow();
+    }
+
+    public void UpdateEffects()
+    {
+        if (EffectList.Burn.Value > 0 && burnTimer.Tick(Time.deltaTime))
         {
-            farmonStateMachine.Tick();
-        }
-        else
-        {
-            MovementIdle();
+            AttackData burnDamageData = new AttackData((int)EffectList.Burn.Value, 0, true);
+            AttemptDamage(burnDamageData, 0, transform.position, Vector3.zero, null);
         }
 
+        EffectList.UpdateEffects(Time.deltaTime);
+    }
+
+    public void UpdateTimers()
+    {
+        //If we don't have an attack ready, count down the attack timer and ready an attack.
+        if (attackReady == false && attackTimer.Tick(Time.deltaTime))
+        {
+            attackReady = true;
+        }
+    }
+
+    /// <summary>
+    /// Update the Farmon's grid location and if the location has changed, invoke GridSpaceChangedEvent
+    /// </summary>
+    private void UpdateGridSpace()
+    {
         Vector3Int currentGridSpaceIndex = H.Vector3ToGridPosition(transform.position, LevelController.Instance.gridSize);
 
-        if(GridSpaceIndex != currentGridSpaceIndex)
+        if (GridSpaceIndex != currentGridSpaceIndex)
         {
             GridSpaceIndex = currentGridSpaceIndex;
             GridSpaceChangedEvent.Invoke();
         }
+    }
 
-        if (Physics.BoxCast(transform.position, sphereCollider.radius/2 * Vector3.one, Vector3.down, out RaycastHit hitInfo, Quaternion.identity, 100, LayerMask.GetMask("Default")))
+    /// <summary>
+    /// Position the farmon's shadow directly below it.
+    /// </summary>
+    private void PositionShadow()
+    {
+        if (Physics.BoxCast(transform.position, sphereCollider.radius / 2 * Vector3.one, Vector3.down, out RaycastHit hitInfo, Quaternion.identity, 100, LayerMask.GetMask("Default")))
         {
             shadow.transform.position = transform.position + ((hitInfo.distance + (sphereCollider.radius / 2) - 0.01f) * Vector3.down);
         }
@@ -561,12 +612,12 @@ public abstract class Farmon : Vehicle
         _highlightList.RemoveHighlight(_selectedHighlight);
     }
 
-    public void EnterAttackState(Farmon target)
+    /*public void EnterAttackState(Farmon target)
     {
         protectTarget = 0;
         attackTarget = target.loadedFarmonMapId;
         mainState = new AttackState(this);
-        SetState(mainState);
+        SetState(new NewAtt);
     }
 
     public void EnterDefendState(Farmon target)
@@ -575,26 +626,27 @@ public abstract class Farmon : Vehicle
         attackTarget = 0;
         mainState = new DefendState(this);
         SetState(mainState);
-    }
+    }*/
 
     public virtual void AttackComplete()
     {
         attackTimer.SetTime(AttackTime());
-        SetState(mainState);
+        SetState(mainBattleState);
     }
 
-    public Farmon GetAttackTargetFarmon()
+    /// <summary>
+    /// Provide a 
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="ignoreDead"></param>
+    /// <returns></returns>
+    public static Farmon GetFarmonInstanceFromLoadedID(uint id, bool ignoreDead)
     {
-        Farmon.loadedFarmonMap.TryGetValue(attackTarget, out Farmon retValue);
+        Farmon.loadedFarmonMap.TryGetValue(id, out Farmon retValue);
+
+        if (retValue && ignoreDead && retValue.dead) return null;
         return retValue;
     }
-
-    public Farmon GetProtectTargetFarmon()
-    {
-        Farmon.loadedFarmonMap.TryGetValue(protectTarget, out Farmon retValue);
-        return retValue;
-    }
-
 
     public static List<Farmon> SearchFarmon(Farmon originFarmon, FarmonFilterEnum farmonFilter = FarmonFilterEnum.any, FarmonSortEnum farmonSort = FarmonSortEnum.nearest, float maxRange = 10000, List<Farmon> exclusions = default, bool excludeDead = true)
     {
@@ -610,7 +662,7 @@ public abstract class Farmon : Vehicle
         searchList = searchList.FindAll((farmon) => { return Vector3.Distance(farmon.transform.position, originFarmon.transform.position) < maxRange; });
 
         // Remove excluded farmon.
-        searchList = searchList.FindAll((farmon) => { return !exclusions.Contains(farmon); });
+        if(exclusions != null) searchList = searchList.FindAll((farmon) => { return !exclusions.Contains(farmon); });
 
         if (excludeDead)
         {
@@ -652,6 +704,15 @@ public abstract class Farmon : Vehicle
             case FarmonSortEnum.nearest:
                 listToSort.Sort((f1, f2) => { return Vector3.Distance(f1.transform.position, originFarmon.transform.position).CompareTo(Vector3.Distance(f2.transform.position, originFarmon.transform.position)); });
                 break;
+            case FarmonSortEnum.nearestFlat:
+
+                listToSort.Sort((f1, f2) => {
+                    Vector3 f1Flat = H.Flatten(f1.transform.position);
+                    Vector3 f2Flat = H.Flatten(f2.transform.position);
+                    Vector3 originFlat = H.Flatten(f1.transform.position);
+                    return Vector3.Distance(f1Flat, originFlat).CompareTo(Vector3.Distance(f2Flat, originFlat)); 
+                });
+                break;
             case FarmonSortEnum.mostHealth:
                 listToSort.Sort((f1, f2) => { return f2.health.CompareTo(f1.health); });
                 break;
@@ -664,7 +725,7 @@ public abstract class Farmon : Vehicle
     }
 
 
-    public virtual bool IsInAttackPosition()
+    /*public virtual bool IsInAttackPosition()
     {
         Farmon attackFarmon = GetAttackTargetFarmon();
 
@@ -678,7 +739,7 @@ public abstract class Farmon : Vehicle
 
         bool wallIsBlockingTarget = Physics.Raycast(r, toEnemy.magnitude, LayerMask.GetMask("Default"));
 
-        bool isWithinAttackRange = toEnemy.magnitude < targetRange;
+        bool isWithinAttackRange = toEnemy.magnitude < GetAttackRange();
 
         return !wallIsBlockingTarget && isWithinAttackRange;
     }
@@ -700,7 +761,7 @@ public abstract class Farmon : Vehicle
         bool isWithinAttackRange = toFriendly.magnitude < followRange;
 
         return !wallIsBlockingTarget && isWithinAttackRange;
-    }
+    }*/
 
     public int GetHealth()
     {
@@ -748,8 +809,68 @@ public abstract class Farmon : Vehicle
         HealEvent.Invoke();
     }
 
+    /// <summary>
+    /// Can be called every frame to constantly attempt attacking the closest enemy.
+    /// </summary>
+    /// <returns></returns>
+    public bool AttemptAttackOnNearestEnemyUnit()
+    {
+        List<Farmon> closestEnemies = Farmon.SearchFarmon(this, Farmon.FarmonFilterEnum.enemyTeam, Farmon.FarmonSortEnum.nearestFlat);
+
+        foreach (Farmon potentialTarget in closestEnemies)
+        {
+            if (AttemptAttack(potentialTarget))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Can be called every frame to constantly attempt attacking the supplied target.
+    /// </summary>
+    public bool AttemptAttack(Farmon farmonToAttack)
+    {
+        //if an attack is ready and we are in range of the target farmon, enter this farmon's unique attack state.
+        if (CanSeeFarmon(farmonToAttack) && InAttackRange(farmonToAttack))
+        {
+            if (attackType == Farmon.AttackType.melee)
+            {
+                //For melee farmon, check if we are able to reach the opposing farmon vertically
+                perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
+                float verticalDistance = Mathf.Abs((transform.position - farmonToAttack.transform.position).y);
+
+                //The ability to fly or jump can assist in hitting flying or high up enemies.
+                if (Flying || verticalDistance < LevelController.Instance.gridSize * .75f)
+                {
+                    Attack(farmonToAttack);
+                    return true;
+                }
+                else if (jumpAbility > 0 && verticalDistance < LevelController.Instance.gridSize * 1.5f)
+                {
+                    Attack(farmonToAttack);
+                    return true;
+                }
+                else if (jumpAbility > 1 && verticalDistance < LevelController.Instance.gridSize * 3f)
+                {
+                    Attack(farmonToAttack);
+                    return true;
+                }
+            }
+            else
+            {
+                Attack(farmonToAttack);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public UnityEvent DamageEvent;
-    public bool AttemptDamage(AttackData attackData, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
+    public bool AttemptDamage(AttackData attackData, float hitStopTime, Vector3 damageOrigin, Vector3 knockBackDirection, Farmon owner)
     {        
         if(!attackData.Undodgeable && UnityEngine.Random.value < Agility / 100f)
         {
@@ -777,9 +898,9 @@ public abstract class Farmon : Vehicle
         else
         {
             if(owner) LastFarmonToDamageMe = owner;
-            if (!ImmuneToHitStop && attackData.HitStopTime > 0)
+            if (!ImmuneToHitStop && hitStopTime > 0)
             {
-                SetState(new HitStopState(this, attackData, damageOrigin, knockBackDirection));
+                SetControlState(new HitStopState(this, hitStopTime, attackData, damageOrigin, knockBackDirection));
             }
             else
             {
@@ -806,7 +927,7 @@ public abstract class Farmon : Vehicle
             Hud.AudioSource.volume = .3f;
             Hud.AudioSource.Play();
 
-            MakeDamageNumber(new AttackData(0, 0, 0));
+            MakeDamageNumber(new AttackData(0, 0));
 
             return;
         }
@@ -844,12 +965,20 @@ public abstract class Farmon : Vehicle
         Vector3 meToDamageOrigin = damageOrigin - (sphereCollider.transform.position + sphereCollider.center);
         GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, transform);
         hitEffect.transform.position = transform.position + meToDamageOrigin.normalized * sphereCollider.radius;
-        hitEffect.transform.localScale = (.2f + 2.5f * attackData.HitStopTime) * Vector3.one;
+        hitEffect.transform.localScale = (.2f + 2.5f * attackData.Knockback/5f) * Vector3.one;
+    }
+
+    private bool IsFlying()
+    {
+        if (dead) return false;
+
+        perkList.TryGetValue(new PerkFly().PerkName, out int flyAbility);
+        return flyAbility > 0;
     }
 
     public void Die()
     {
-        SetState(new DieState(this));
+        SetControlState(new DieState(this));
 
         if(team == TeamEnum.team1)
         {
@@ -859,12 +988,7 @@ public abstract class Farmon : Vehicle
 
     public void HitStopSelf(float stopTime)
     {
-        //DOTween.Pause(Hud.SpriteQuad.transform);
-        rb.constraints = RigidbodyConstraints.FreezeAll;
-
-        hitStopTimer.SetTime(stopTime);
-
-        Hud.Animator.speed = 0;
+        SetControlState(new HitStopState(this, stopTime, null, Vector3.zero, Vector3.zero));
     }
 
     public void AddPerk(Perk perk)
@@ -889,16 +1013,19 @@ public abstract class Farmon : Vehicle
 
     public void SetState(StateMachineState state)
     {
-        if (dead) return;
-
         farmonStateMachine.ChangeState(state);
+    }
+
+    public void SetControlState(StateMachineState state)
+    {
+        controlStateMachine.ChangeState(state);
     }
 
     public Color debugColor = Color.white;
 
     protected virtual void OnDrawGizmosSelected()
     {
-        DebugExtension.DrawCircle(transform.position, Vector3.up, Color.yellow, targetRange);
+        DebugExtension.DrawCircle(transform.position, Vector3.up, Color.yellow, GetAttackRange());
         Gizmos.color = Color.green;
         if(sphereCollider) Gizmos.DrawWireSphere(transform.position + sphereCollider.center, sphereCollider.radius);
     }
@@ -967,9 +1094,6 @@ public abstract class Farmon : Vehicle
         FixPosition();
 
         // Set the evolution's state to the farmon's state. DANGEROUS?
-        //evolution.farmonStateMachine.ChangeState(farmonStateMachine.CurrentState);
-        evolution.attackTarget = attackTarget;
-        evolution.protectTarget = protectTarget;
 
         // Copy all stats over to the new prefab instance
         evolution.uniqueID = uniqueID;
@@ -1110,18 +1234,22 @@ public abstract class Farmon : Vehicle
         Vector3 separate = Seperate(vehicleList, sphereCollider.radius - AllowedOverlap);
         Vector3 minDistance = MinDistance(position, min);
         Vector3 maxDistance = MaxDistance(position, max);
+        Vector3 avoidEdges = AvoidEdges();
 
         wander *= 1f;
         minDistance *= 2f;
         maxDistance *= 2f;
         softSeperate *= 3f;
         separate *= .5f;
+        avoidEdges *= 1;
 
         rb.AddForce(wander);
         rb.AddForce(softSeperate);
         rb.AddForce(separate);
         rb.AddForce(minDistance);
         rb.AddForce(maxDistance);
+
+        rb.AddForce(avoidEdges);
 
         Vector3 friction = Friction(wander + softSeperate + separate + minDistance + maxDistance);
         rb.AddForce(friction);
@@ -1145,7 +1273,7 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public void SeekUnit(bool localAvoidance = true)
+    public void SeekUnit(bool localAvoidance = true, bool ignoreFlightHeight = false)
     {
         Vehicle targetVehicle = targetTransform.GetComponentInChildren<Vehicle>();
 
@@ -1159,7 +1287,7 @@ public abstract class Farmon : Vehicle
         float d = Vector3.Distance(transform.position, targetVehicle.transform.position);
         if (d > sphereCollider.radius + targetVehicle.sphereCollider.radius + 0.15f)
         {
-            seek = Seek(localAvoidance);
+            seek = Seek(localAvoidance, ignoreFlightHeight);
         }
         else
         {
@@ -1216,901 +1344,146 @@ public abstract class Farmon : Vehicle
         rb.AddForce(friction);
     }
 
-    public abstract void Attack(Farmon targetUnit);
-}
-
-public class IdleState : StateMachineState
-{
-    Farmon farmon;
-    
-
-    public IdleState(Farmon thisUnit)
+    internal void FlyTowardsPosition(Vector3 position, float speed = 10f)
     {
-        farmon = thisUnit;
+        rb.velocity = (position - transform.position).normalized * speed;
     }
 
-    public override void Enter()
+    public virtual void Attack(Farmon targetUnit)
     {
-        base.Enter();
-
-        farmon.maxSpeed = farmon.GetMovementSpeed();
+        attackReady = false;
     }
 
-    public override void Tick()
+    internal void UpdateFarmonStateMachine()
     {
-        base.Tick();
-        farmon.MovementIdle();
-    }
-}
-
-
-public class FollowPathState : StateMachineState
-{
-    Farmon farmon;
-    Path path;
-
-    Timer randomPathUpdateTimer = new Timer();
-
-    bool jump = false;
-
-    public FollowPathState(Farmon thisUnit)
-    {
-        farmon = thisUnit;
+        farmonStateMachine.Tick();
     }
 
-    public override void Enter()
+    //Return true if this farmon can see farmonToSee
+    public bool CanSeeFarmon(Farmon farmonToSee)
     {
-        base.Enter();
+        Vector3 toEnemy = farmonToSee.transform.position - transform.position;
 
-        farmon.PathNodeReachedEvent.AddListener(NodeReached);
-        farmon.GridSpaceChangedEvent.AddListener(UpdatePath);
-
-        farmon.maxSpeed = farmon.GetMovementSpeed();
-
-        randomPathUpdateTimer.SetTime(UnityEngine.Random.Range(.5f, 1f));
-
-        UpdatePath();
+        return !Physics.Raycast(transform.position, toEnemy.normalized, toEnemy.magnitude, LayerMask.GetMask("Default")); ;
     }
 
-    public override void Exit()
+    public float GetAttackRange()
     {
-        base.Exit();
-
-        farmon.PathNodeReachedEvent.RemoveListener(NodeReached);
-        farmon.GridSpaceChangedEvent.RemoveListener(UpdatePath);
+        return attackRangeBase;
     }
 
-    private void UpdatePath()
+    internal bool InAttackRange(Farmon farmonToAttack)
     {
-        if (farmon.targetTransform)
+        return H.Flatten(farmonToAttack.transform.position - transform.position).magnitude < GetAttackRange();
+    }
+
+    public float GetAttackWanderDistance()
+    {
+        return GetAttackRange()*.9f;
+    }
+    public float GetPotectWanderDistance()
+    {
+        return GetAttackRange()/2f * .9f;
+    }
+
+    //PATHFINDING
+    #region Pathfinding
+
+    //Navigate to the farmonToNavigateTo via pathfinding and seeking
+    public void NavigateToFarmon(Farmon farmonToNavigateTo)
+    {
+        NavigateToPosition(farmonToNavigateTo.transform.position);
+    }
+
+    public void NavigateToPosition(Vector3 targetPosition)
+    {
+        //First update the path if it needs to be updated
+        UpdatePathAsNecessary(targetPosition);
+
+        if(myPath == null)
         {
-            Vector3 myPos = farmon.transform.position;
-            Vector3 targetPos = farmon.targetTransform.position;
-            float gridSize = LevelController.Instance.gridSize;
-
-            Vector3 myRaycastPosition = myPos - new Vector3(myPos.x % gridSize, 0, myPos.z % gridSize) + new Vector3(gridSize / 2, 0, gridSize / 2);
-            Vector3 targetRaycastPosition = targetPos - new Vector3(targetPos.x % gridSize, 0, targetPos.z % gridSize) + new Vector3(gridSize / 2, 0, gridSize / 2);
-
-            Physics.Raycast(new Ray(myRaycastPosition, Vector3.down), out RaycastHit myHitInfo, 100f, LayerMask.GetMask("Default"));
-            Physics.Raycast(new Ray(targetRaycastPosition, Vector3.down), out RaycastHit targetHitInfo, 100f, LayerMask.GetMask("Default"));
-
-            Vector3 myPoint = myHitInfo.point + .1f * Vector3.up;
-            Vector3 targetPoint = targetHitInfo.point + .1f * Vector3.up;
-
-            GridSpace myGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(myPoint, gridSize));
-            GridSpace targetGridSpace = NavMesh.instance.GetGridSpaceArray(H.Vector3ToGridPosition(targetPoint, gridSize));
-
-            farmon.perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
-            path = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, jumpAbility, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
-
-            jump = ShouldJumpForNextLink();
-        }
-        else
-        {
-            path = new Path();
-        }
-    }
-
-    private void NodeReached(PathNode previousNode)
-    {
-        if(jump == true)
-        {
-            BlockLink nextLink = previousNode.OutputBlockLink;
-
-            float jumpHeight = nextLink.HeightDifference / 2 + 1f;
-
-            Vector3 centerOfBlock = nextLink.ToGridSpace.HitCenter.point;
-
-            JumpState jumpState = new JumpState(farmon, farmon.transform.position, centerOfBlock + farmon.sphereCollider.radius * Vector3.up, jumpHeight);
-            farmon.SetState(jumpState);
-
-            //return since we have exited this state.
+            Debug.LogError("No valid path was found.", this);
             return;
         }
 
-        jump = ShouldJumpForNextLink();
+        //Then follow the path every frame.
+        FollowPath(myPath);
     }
 
-    private bool ShouldJumpForNextLink()
+    //Called each time this farmon reaches a node in the path
+    private void PathNodeReached(PathNode consumedNode)
     {
-        if (path != null && path.nodeList.Count > 0)
+        PathNode pathNode = myPath.PeekNode();
+        if (pathNode != null)
         {
-            BlockLink nextLink = path.PeekNode().OutputBlockLink;
+            BlockLink nextLink = pathNode.OutputBlockLink;
 
+            //if the next node in the path is a jump link, enter the jump state and consume the jump link.
             if (nextLink != null && !nextLink.walkable && nextLink.jumpable)
             {
-                return true;
+                float jumpHeight = nextLink.HeightDifference / 2 + 1f;
+
+                Vector3 centerOfBlock = nextLink.ToGridSpace.HitCenter.point;
+
+                JumpState jumpState = new JumpState(this, transform.position, centerOfBlock + sphereCollider.radius * Vector3.up, jumpHeight);
+                SetControlState(jumpState);
             }
         }
-
-        return false;
     }
 
-    public override void Tick()
-    {
-        base.Tick();
-
-        if (!farmon.targetTransform){
-            farmon.mainState = new IdleState(farmon);
-            farmon.SetState(farmon.mainState);
-            return;
-        }
-
-        farmon.maxSpeed = farmon.GetMovementSpeed();
-
-        if (randomPathUpdateTimer.Tick(Time.deltaTime))
-        {
-            randomPathUpdateTimer.SetTime(UnityEngine.Random.Range(2f, 3f));
-            UpdatePath();
-        }
-
-        farmon.FollowPath(path);
-    }
-}
-
-public class AttackState : StateMachineState
-{
-    Farmon farmon;
-    StateMachine subStateMachine;
-    FollowPathState followPathState;
-    BattleState battleState;
-
-    public AttackState(Farmon thisFarmon)
-    {
-        farmon = thisFarmon;
-
-        subStateMachine = new StateMachine();
-
-        followPathState = new FollowPathState(farmon);
-        battleState = new BattleState(farmon);
-
-        subStateMachine.InitializeStateMachine(battleState);
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
-
-        // If we have a target, 
-        if (attackFarmon)
-        {
-            farmon.targetTransform = attackFarmon.transform;
-
-            bool isAbleToAttack = farmon.IsInAttackPosition();
-
-            //if not able to attack, path towards the enemy
-            if (subStateMachine.CurrentState != followPathState && !isAbleToAttack)
-            {
-                subStateMachine.ChangeState(followPathState);
-            }
-            else if (subStateMachine.CurrentState != battleState && isAbleToAttack)
-            {
-                subStateMachine.ChangeState(battleState);
-            }
-
-            subStateMachine.Tick();
-        }
-        else
-        {
-            // our attack target has died
-            // get a new target!
-
-            //farmon.MovementWander();
-
-            farmon.mainState = new IdleState(farmon);
-            farmon.SetState(farmon.mainState);
-        }
-    }
-}
-
-public class DefendState : StateMachineState
-{
-    Farmon farmon;
-    StateMachine subStateMachine;
-    FollowPathState followPathState;
-    ProtectState protectState;
-
-    public DefendState(Farmon thisFarmon)
-    {
-        farmon = thisFarmon;
-
-        subStateMachine = new StateMachine();
-
-        followPathState = new FollowPathState(farmon);
-        protectState = new ProtectState(farmon);
-
-        subStateMachine.InitializeStateMachine(protectState);
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
-
-        // If we have a target, 
-        if (protectFarmon)
-        {
-            farmon.targetTransform = protectFarmon.transform;
-
-            bool isInProtectingDistance = farmon.IsInProtectPosition();
-
-            //Attack the last enemy to attack the protected farmon!
-
-            //if not, path towards the enemy
-            if (subStateMachine.CurrentState != followPathState && !isInProtectingDistance)
-            {
-                subStateMachine.ChangeState(followPathState);
-            }
-            else if (subStateMachine.CurrentState != protectState && isInProtectingDistance)
-            {
-                subStateMachine.ChangeState(protectState);
-            }
-
-            subStateMachine.Tick();
-        }
-        else
-        {
-            // our attack target has died
-            // get a new target!
-
-            //farmon.MovementWander();
-
-            farmon.mainState = new IdleState(farmon);
-            farmon.SetState(farmon.mainState);
-        }
-    }
-}
-
-public class BattleState : StateMachineState
-{
-    Farmon farmon;
-
-    public BattleState(Farmon thisFarmon)
-    {
-        farmon = thisFarmon;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-    }
-
-    public override void Tick()
-    {
-        farmon.maxSpeed = farmon.GetMovementSpeed();
-
-        //Move to stay in range of the attackTarget
-        farmon.debugColor = Color.red;
-        farmon.StayInRange(farmon.targetTransform.position, farmon.targetRange - 2, farmon.targetRange);
-
-        farmon.rb.AddForce(farmon.AvoidEdges());
-
-        if (farmon.attackReady)
-        {
-            Farmon attackFarmon = farmon.GetAttackTargetFarmon();
-
-            // Call this farmon's implementation of attack.
-            farmon.Attack(attackFarmon);
-            farmon.attackReady = false;
-        }
-    }
-}
-
-public class ProtectState : StateMachineState
-{
-    Farmon farmon;
-    StateMachine subStateMachine;
-    FollowPathState followPathState;
-    BattleState battleState;
-
-    public ProtectState(Farmon thisFarmon)
-    {
-        farmon = thisFarmon;
-
-        subStateMachine = new StateMachine();
-
-        followPathState = new FollowPathState(farmon);
-        battleState = new BattleState(farmon);
-
-        subStateMachine.InitializeStateMachine(battleState);
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-    }
-
-    Farmon GetNextAttackTarget()
-    {
-        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
-
-        //First see if the last farmon to damage our protected farmon is a valid target.
-        Farmon potentialTarget = protectFarmon.LastFarmonToDamageMe;
-
-        if(potentialTarget && IsValidTarget(potentialTarget))
-        {
-            // The last target to damage our protectTarget is valid and can be attacked.
-            return potentialTarget;
-        }
-        else
-        {
-            //Loop through all farmon and find a valid target
-            foreach(Farmon currentTarget in Farmon.farmonList)
-            {
-                if (farmon == currentTarget) continue;
-                if (farmon.team == currentTarget.team) continue;
-
-                if (IsValidTarget(currentTarget))
-                {
-                    // Found a valid farmon!
-                    return currentTarget;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    bool IsValidTarget(Farmon targetFarmon)
-    {
-        Farmon protectFarmon = farmon.GetProtectTargetFarmon();
-
-        Vector3 protectTargetToEnemy = targetFarmon.transform.position - protectFarmon.transform.position;
-
-        float potentialTargetDistance = H.Flatten(protectTargetToEnemy).magnitude;
-
-        bool hitWall = Physics.Raycast(protectFarmon.transform.position, protectTargetToEnemy.normalized, protectTargetToEnemy.magnitude, LayerMask.GetMask("Default"));
-
-        if (!hitWall && potentialTargetDistance < protectFarmon.targetRange + 4)
-        {
-            // The last target to damage our protectTarget is valid and can be attacked.
-            return true;
-        }
-
-        return false;
-    }
-
-    public override void Tick()
-    {
-        farmon.maxSpeed = farmon.GetMovementSpeed();
-
-        Farmon attackFarmon = farmon.GetAttackTargetFarmon();
-
-        // if our attack target is no longer valid, find a new one.
-        if (!attackFarmon || !IsValidTarget(attackFarmon))
-        {
-            farmon.attackTarget = GetNextAttackTarget().loadedFarmonMapId;
-        }
-
-        // If we are ready to attack and there is a valid target near our protect target attack the valid target.
-        if (attackFarmon && farmon.attackReady)
-        {
-            farmon.targetTransform = attackFarmon.transform;
-            bool isInAttackingPosition = farmon.IsInAttackPosition();
-
-            //if not, path towards the enemy
-            if (subStateMachine.CurrentState != followPathState)
-            {
-                subStateMachine.ChangeState(followPathState);
-            }
-            
-            if (isInAttackingPosition)
-            {
-                //subStateMachine.ChangeState(battleState);
-
-
-                //// Call this farmon's implementation of attack.
-                farmon.Attack(attackFarmon);
-                farmon.attackReady = false;
-            }
-            else
-            {
-                subStateMachine.Tick();
-            }
-        }
-        else
-        {
-            farmon.StayInRange(farmon.targetTransform.position, .5f, 3f);
-
-            farmon.rb.AddForce(farmon.AvoidEdges());
-        }
-    }
-}
-
-public class AttackData{            
-    public int Damage;
-    public float Knockback;
-    public float HitStopTime;
-    public bool Undodgeable;
-    public AudioClip InitialSound;
-    public AudioClip HitSound;
-    public AttackData(int damage = 10, float knockback = 5f, float hitStopTime = 0.3f, bool undodgeable = false, AudioClip initialSound = null, AudioClip hitSound = null)
-    {
-        Damage = damage;
-        Knockback = knockback;
-        HitStopTime = hitStopTime;
-        Undodgeable = undodgeable;
-        InitialSound = initialSound;
-        HitSound = hitSound;
-    }
-}
-
-// In the melee attack state, farmon moves towards the attackTarget farmon and, after getting within attack range, lunges at the attackTarget farmon.
-public class MeleeAttackState : StateMachineState
-{
-    protected AttackData _attackData;
-
-    protected Farmon _farmon;
-    protected float _lungeRange;
-    protected bool _selfHitStun;
-
-    protected uint _targetFarmonInstanceID;
-
-    private bool jumping = false;
-
-    public MeleeAttackState(Farmon farmon, uint targetFarmonInstanceID, AttackData attackData, bool selfHitstun = true)
-    {
-        _farmon = farmon;
-        _selfHitStun = selfHitstun;
-        _attackData = attackData;
-
-        _lungeRange = LevelController.Instance.gridSize * .1f;
-
-        _targetFarmonInstanceID = targetFarmonInstanceID;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-        _farmon.ImmuneToHitStop = true;
-
-        _farmon.maxSpeed = (_farmon.GetMovementSpeed() + 2) * 3;
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
-        _farmon.ImmuneToHitStop = false;
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-
-        Farmon attackFarmon = Farmon.loadedFarmonMap[_targetFarmonInstanceID];
-        _farmon.targetTransform = attackFarmon.transform;
-
-        if (!_farmon.targetTransform || !attackFarmon)
-        {
-            _stateMachine.ChangeState(_farmon.mainState);
-            return;
-        }
-
-        if (jumping && _farmon.rb.velocity.y < 0.001f && _farmon.Grounded)
-        {
-            jumping = false;
-        }
-
-        if(!jumping) _farmon.SeekUnit(false);
-
-        Vector3 toTargetEnemy = attackFarmon.Hud.SpriteQuad.transform.position - _farmon.Hud.SpriteQuad.transform.position;
-        float distanceToEnemy = Vector3.Distance(_farmon.transform.position, attackFarmon.transform.position);
-
-        //If we have the jump perk and a flying enemy is less than 1.5 blocks away, jump at them.
-        _farmon.perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
-        if (jumpAbility > 0 && distanceToEnemy < 1.5f * LevelController.Instance.gridSize && attackFarmon.Flying && _farmon.Grounded)
-        {
-            _farmon.rb.velocity = Vector3.zero;
-            _farmon.rb.AddForce((toTargetEnemy/LevelController.Instance.gridSize) * 1.4f, ForceMode.Impulse);
-            jumping = true;
-        }
-
-        float radiusCombined = _farmon.sphereCollider.radius + attackFarmon.sphereCollider.radius;
-
-        if (distanceToEnemy - radiusCombined < _lungeRange)
-        {
-            _farmon.Hud.SpriteQuad.transform.DOPunchPosition(toTargetEnemy, 0.5f, 1, 0);
-            _farmon.Hud.SpriteQuad.transform.DORestart();
-            //DOTween.Play(_farmon.Hud.SpriteQuad.transform);
-            OnAttack();
-        }
-    }
-
-    public virtual void OnAttack()
-    {
-        Farmon attackFarmon = Farmon.loadedFarmonMap[_targetFarmonInstanceID];
-
-        SphereCollider sc = _farmon.sphereCollider;
-
-        bool hit = attackFarmon.AttemptDamage(_attackData, sc.transform.position + sc.center, (attackFarmon.transform.position - _farmon.transform.position).normalized, _farmon);
-
-        if (hit)
-        {
-            //Spawn a hit effect.
-            Vector3 farmonToMe = (_farmon.transform.position - attackFarmon.transform.position).normalized;
-            GameObject hitEffect = GameObject.Instantiate(FarmonController.instance.HitEffectPrefab, attackFarmon.transform);
-            hitEffect.transform.position = attackFarmon.transform.position + farmonToMe * attackFarmon.sphereCollider.radius;
-            hitEffect.transform.localScale = (.2f + 2.5f * _attackData.HitStopTime) * Vector3.one;
-
-            _farmon.Hud.AudioSource.clip = _attackData.HitSound;
-            _farmon.Hud.AudioSource.volume = .2f;
-            _farmon.Hud.AudioSource.Play();
-        }
-    }
-}
-
-public class HitStopState : StateMachineState
-{
-    readonly Farmon farmon;
-    readonly Timer hitStopTimer = new Timer();
-    readonly Timer flashTimer = new Timer();
-
-    private Vector3 spriteQuadOrigin;
-    private Vector3 spriteHealthBarOrigin;
-
-    HitStopState2 hitStopState2;
-    SpriteRenderer spriteRenderer;
-
-    bool flashFlag;
-
-    public HitStopState(Farmon thisUnit, AttackData attackData, Vector3 damageOrigin, Vector3 knockbackDirection)
-    {
-        farmon = thisUnit;
-
-        hitStopTimer.SetTime(attackData.HitStopTime);
-
-        flashTimer.SetTime(.1f);
-        flashTimer.autoReset = true;
-
-        Vector3 bounceVector = knockbackDirection * attackData.Knockback;
-
-        if(bounceVector.magnitude > .01f)
-        {
-            hitStopState2 = new HitStopState2(farmon, attackData, damageOrigin, bounceVector);
-        }
-
-        spriteRenderer = farmon.Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-
-        farmon.rb.isKinematic = true;
-
-        farmon.Hud.Animator.speed = 0;
-        farmon.Hud.PositionQuad.enabled = false;
-
-        spriteQuadOrigin = farmon.Hud.SpriteQuad.transform.position;
-        spriteHealthBarOrigin = farmon.Hud.HealthBar.transform.position;
-
-        spriteRenderer.color = new Color(.6f, .6f, .6f, 1);
-
-        farmon.Hud.AudioSource.clip = FarmonController.instance.HitSound;
-        farmon.Hud.AudioSource.volume = .3f;
-        farmon.Hud.AudioSource.Play();
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
-
-        farmon.rb.isKinematic = false;
-
-        farmon.Hud.Animator.speed = 1;
-        farmon.Hud.PositionQuad.enabled = true;
-
-        spriteRenderer.color = new Color(1, 1, 1, 1);
-
-        farmon.Hud.SpriteQuad.transform.position = spriteQuadOrigin;
-        farmon.Hud.HealthBar.transform.position = spriteHealthBarOrigin;
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        Vector3 cameraRight = Camera.main.transform.right;
-        Vector3 cameraUp = Camera.main.transform.up;
-
-        float noise1X = Mathf.PerlinNoise(Time.time * 20, 0) * 2 - 1;
-        float noise1Y = Mathf.PerlinNoise(0, Time.time * 20) * 2 - 1;
-        float noise2X = Mathf.PerlinNoise(100 + Time.time * 20, 0) * 2 - 1;
-        float noise2Y = Mathf.PerlinNoise(0, 100 + Time.time * 20) * 2 - 1;
-
-        float diminish = .75f * (1 - hitStopTimer.Percent);
-
-        farmon.Hud.SpriteQuad.transform.position = spriteQuadOrigin + (0.3f - diminish) * noise1X * cameraRight + (0.2f - diminish) * noise1Y * cameraUp;
-        farmon.Hud.HealthBar.transform.position = spriteHealthBarOrigin + (0.3f - diminish) * noise2X * cameraRight + (0.2f - diminish) * noise2Y * cameraUp;
-
-        if (flashTimer.Tick(Time.deltaTime))
-        {
-            if (flashFlag)
-            {
-                spriteRenderer.color = new Color(.6f, .6f, .6f, 1);
-            }
-            else
-            {
-                spriteRenderer.color = new Color(1, 1, 1, 1);
-            }
-            flashFlag = !flashFlag;
-        }
-
-        if (hitStopTimer.Tick(Time.deltaTime))
-        {
-            if (hitStopState2 != null)
-            {
-                farmon.SetState(hitStopState2);
-            }
-            else
-            {
-                farmon.SetState(farmon.mainState);
-            }
-        }
-
-    }
-}
-
-public class HitStopState2 : StateMachineState
-{
-    readonly Farmon farmon;
-    readonly Vector3 _damageOrigin;
-    readonly Vector3 _bounceVector;
-    readonly AttackData _attackData;
-
-    readonly Timer hitStopTimer = new Timer();
-
-
-    public HitStopState2(Farmon thisUnit, AttackData attackData, Vector3 damageOrigin, Vector3 bounceVector)
-    {
-        farmon = thisUnit;
-        _bounceVector = bounceVector;
-        _damageOrigin = damageOrigin;
-
-        hitStopTimer.SetTime(0.15f);
-
-        _attackData = attackData;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-
-        farmon.TakeDamage(_attackData, _damageOrigin);
-
-        farmon.rb.AddForce(farmon.dead ? _bounceVector * 3 : _bounceVector, ForceMode.Impulse);
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        if (hitStopTimer.Tick(Time.deltaTime))
-        {
-            farmon.SetState(farmon.mainState);
-        }
-
-    }
-}
-
-public class DieState : StateMachineState
-{
-    Farmon farmon;
-
-    SpriteRenderer spriteRenderer;
-
-    readonly Timer dieTimer = new Timer();
+    // Where we are currently.
+    Vector3Int PathStartPosition = Vector3Int.zero;
     
-    readonly Timer flashTimer = new Timer();
-    bool flashFlag;
+    // Where we want to be.
+    Vector3Int PathEndPosition = Vector3Int.zero;
 
-    public DieState(Farmon _farmon)
+    // The path this farmon is currently following.
+    Path myPath = null;
+
+    // This value can be set to true to force a new path to generate in the event that we know something has changed that will
+    // necessitate updating the path (like the farmon losing the ability to fly or jump).
+    bool forcePathUpdate = false;
+
+    //Check if anything has changed that would effect our path and update values and the path if necessary.
+    public void UpdatePathAsNecessary(Vector3 targetPosition)
     {
-        farmon = _farmon;
+        bool necessaryToGeneratePath = false;
 
-        dieTimer.SetTime(1f);
+        //First get the gridSpace that this farmon will be navigating from (first valid terrain beneath this farmon)
+        Vector3Int myNavigationSpace = H.GetNavigationPosition(transform.position);
 
-        flashTimer.SetTime(0.1f);
-        flashTimer.autoReset = true;
-
-        spriteRenderer = farmon.Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
-    }
-
-    public override void Enter()
-    {
-        farmon.dead = true;
-
-        spriteRenderer.color = new Color(.6f, .6f, .6f, 1);
-
-        foreach(LookAtCamera lac in farmon.GetComponentsInChildren<LookAtCamera>())
+        //Now check if this position is different from our current path start position
+        //If so, we need to generate a new path.
+        if(myNavigationSpace != PathStartPosition)
         {
-            lac.enabled = false;
-            lac.transform.localEulerAngles = new Vector3(5, lac.transform.localEulerAngles.y, 0);
+            PathStartPosition = myNavigationSpace;
+            necessaryToGeneratePath = true;
         }
 
-        farmon.Hud.AudioSource.clip = FarmonController.instance.DieSound;
-        farmon.Hud.AudioSource.volume = .3f;
-        farmon.Hud.AudioSource.Play();
+        //Next do the same thing for the targetPosition
+        //First get the gridSpace that this farmon will be navigating from (first valid terrain beneath this farmon)
+        Vector3Int targetNavigationSpace = H.GetNavigationPosition(targetPosition);
 
-        farmon.rb.AddForce(Vector3.up * 3, ForceMode.Impulse);
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        farmon.Hud.SpriteQuad.transform.Rotate(new Vector3(0, 1, 0), 400f * Time.deltaTime);
-
-        farmon.maxSpeed = 0;
-        farmon.MovementIdle();
-         
-        farmon.transform.localScale -= .35f * Time.deltaTime * Vector3.one;
-
-
-        if (dieTimer.Tick(Time.deltaTime))
+        //Now check if this position is different from our current path start position
+        //If so, we need to generate a new path.
+        if (targetNavigationSpace != PathEndPosition)
         {
-            farmon.gameObject.SetActive(false);
-            return;
+            PathEndPosition = targetNavigationSpace;
+            necessaryToGeneratePath = true;
         }
 
-        if (flashTimer.Tick(Time.deltaTime))
+        //If updating the path is necessary, do it.
+        if (necessaryToGeneratePath || forcePathUpdate)
         {
-            if (flashFlag)
-            {
-                spriteRenderer.color = new Color(.6f, .6f, .6f, 1);
-            }
-            else
-            {
-                spriteRenderer.color = new Color(1, 1, 1, 1);
-            }
-            flashFlag = !flashFlag;
+            perkList.TryGetValue(new PerkJump().PerkName, out int jumpAbility);
+
+            GridSpace myGridSpace = NavMesh.instance.GetGridSpaceArray(myNavigationSpace);
+            GridSpace targetGridSpace = NavMesh.instance.GetGridSpaceArray(targetNavigationSpace);
+            myPath = NavMesh.instance.GetPath(myGridSpace, targetGridSpace, jumpAbility, Flying, (x) => { return Vector3.Distance(x.Center, targetGridSpace.Center); });
+
+            //if we were forced to update the path, set the value to false.
+            forcePathUpdate = false;
         }
     }
-}
-
-public class WanderState : StateMachineState
-{
-    Farmon unit;
-
-    public WanderState(Farmon thisUnit)
-    {
-        unit = thisUnit;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-
-        unit.maxSpeed = unit.GetMovementSpeed();
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        unit.MovementWander();
-    }
-}
-
-public class SpawnState : StateMachineState
-{
-    Farmon farmon;
-    Timer spawnTimer;
-
-    public SpawnState(Farmon thisUnit)
-    {
-        farmon = thisUnit;
-        spawnTimer = new Timer();
-        spawnTimer.SetTime(1f);
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-
-        farmon.maxSpeed = farmon.GetMovementSpeed();
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        farmon.MovementIdle();
-
-        if (spawnTimer.Tick(Time.deltaTime))
-        {
-            farmon.SetState(farmon.mainState);
-        }
-    }
-}
-
-public class JumpState : StateMachineState
-{
-    Farmon unit;
-
-    Vector3 startingPosition, endingPosition;
-
-    float jumpTime = 1;
-
-    float h;
-
-    Timer jumpTimer = new Timer();
-
-    public JumpState(Farmon thisUnit, Vector3 startingPos, Vector3 endingPos, float height, float duration = 1f)
-    {
-        unit = thisUnit;
-        startingPosition = startingPos;
-
-        Vector2 randomFlatVector = UnityEngine.Random.insideUnitCircle;
-        Vector3 slightOffset = new Vector3(randomFlatVector.x, 0, randomFlatVector.y) * .01f;
-        endingPosition = endingPos + slightOffset;
-
-        jumpTime = duration;
-        h = height;
-    }
-
-    public override void Enter()
-    {
-        base.Enter();
-        jumpTimer.SetTime(jumpTime);
-
-        unit.maxSpeed = 0;
-        unit.rb.isKinematic = true;
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        if (jumpTimer.Tick(Time.deltaTime))
-        {
-            unit.SetState(unit.mainState);
-            unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, .9f));
-            return;
-        }
-
-        float jumpPercent = Mathf.Max(0, 0.9f - jumpTimer.Percent);
-
-        unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, jumpPercent));
-    }
-
-    public override void Exit()
-    {
-        base.Exit();
-        unit.rb.isKinematic = false;
-    }
+    #endregion
 }

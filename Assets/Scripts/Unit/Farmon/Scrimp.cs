@@ -16,7 +16,7 @@ public class Scrimp : Farmon
         Vector3 unitToEnemy = targetEnemy.GetUnitVectorToMe(transform.position);
 
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
-        AttackData fireballAttackData = new AttackData(5 + Power / 5, 4, .15f, false, shootSound, hitSound);
+        AttackData fireballAttackData = new AttackData(5 + Power / 5, 4, false, shootSound, hitSound);
         fireBall.transform.localScale *= (1f + (float)Focus / (StatMax*2));
         fireBall.Pierce += Focus / 3;
         fireBall.OnHitDelegate = (unit) => {
@@ -30,9 +30,14 @@ public class Scrimp : Farmon
         };
         fireBall.Initialize(fireballAttackData, this, team);
 
-        ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
-        cv.velocity = unitToEnemy.normalized * (10f + Agility/2f);
-        cv.ignoreGravity = false;
+        //This is a basic attack so add the basic attack component.
+        BasicProjectile bp = fireBall.gameObject.AddComponent<BasicProjectile>();
+        bp.Velocity = (10f + Agility / 2f);
+        bp.TargetFarmonId = targetEnemy.loadedFarmonMapId;
+
+        //ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
+        //cv.velocity = unitToEnemy.normalized * (10f + Agility/2f);
+        //cv.ignoreGravity = false;
 
         //fireBall = Farmon.Instantiate(farmon.fireBallPrefab, farmon.transform.position, farmon.transform.rotation).GetComponent<Projectile>();
         //fireBall.rigidBody.velocity = Quaternion.Euler(0, 15, 0) * unitToEnemy * 5f;

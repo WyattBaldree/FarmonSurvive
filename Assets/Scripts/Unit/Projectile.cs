@@ -26,11 +26,20 @@ public class Projectile : MonoBehaviour
 
     Timer hitStopTimer = new Timer();
 
-    Rigidbody rb;
-    Collider col;
-    AudioSource audioSource;
+    protected Rigidbody rb;
+    protected Collider col;
+    protected AudioSource audioSource;
+
+    public UnityEvent<Farmon> HitEvent;
+
+    float _hitStun;
 
     bool destroyed = false;
+
+    public void UseGravity(bool value)
+    {
+        rb.useGravity = value;
+    }
 
     private void Start()
     {
@@ -40,7 +49,7 @@ public class Projectile : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
-    public void Initialize(AttackData attackData, Farmon owner, Farmon.TeamEnum team)
+    public void Initialize(AttackData attackData, Farmon owner, Farmon.TeamEnum team, float hitStun = .2f)
     {
         AttackData = attackData;
 
@@ -65,17 +74,19 @@ public class Projectile : MonoBehaviour
                 return;
             }
 
+            HitEvent.Invoke(farmon);
+
             Vector3 center = col.bounds.center;
 
             bool hit = false;
             if (rb)
             {
-                hit = farmon.AttemptDamage(AttackData, center, H.Flatten(rb.velocity).normalized, Owner);
+                hit = farmon.AttemptDamage(AttackData, _hitStun, center, H.Flatten(rb.velocity).normalized, Owner);
             }
             else
             {
                 Vector3 awayFromProjectile = H.Flatten(farmon.transform.position - transform.position).normalized;
-                hit = farmon.AttemptDamage(AttackData, center, awayFromProjectile, Owner);
+                hit = farmon.AttemptDamage(AttackData, _hitStun, center, awayFromProjectile, Owner);
             }
 
             if (hit)
@@ -85,10 +96,8 @@ public class Projectile : MonoBehaviour
 
                 OnHitDelegate(farmon);
 
-                if (AttackData.HitStopTime > 0)
-                {
-                    HitStop();
-                }
+                
+                HitStop();
 
                 Pierce--;
                 if (Pierce <= 0)
@@ -119,7 +128,10 @@ public class Projectile : MonoBehaviour
         }
     }
 
-    private void BeginDestroy()
+    /// <summary>
+    /// Call this function to immediately disable the projectile and to destroy it next frame.
+    /// </summary>
+    public void BeginDestroy()
     {
         destroyed = true;
 
@@ -143,7 +155,7 @@ public class Projectile : MonoBehaviour
         EventDestroy.Invoke();
     }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (destroyed)
         {
@@ -172,9 +184,9 @@ public class Projectile : MonoBehaviour
     {
         if(rb) rb.constraints = RigidbodyConstraints.FreezeAll;
 
-        LifeTime += AttackData.HitStopTime - hitStopTimer.GetTime();
+        LifeTime += _hitStun - hitStopTimer.GetTime();
 
-        hitStopTimer.SetTime(AttackData.HitStopTime);
+        hitStopTimer.SetTime(_hitStun);
     }
 
     public delegate void OnHit(Farmon hitFarmon);

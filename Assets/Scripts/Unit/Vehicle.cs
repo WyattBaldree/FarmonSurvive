@@ -38,14 +38,10 @@ public class Vehicle : MonoBehaviour
 
     [HideInInspector]
     private bool flying = false;
-    public bool Flying
+    public virtual bool Flying
     {
         get => flying;
-        set
-        {
-            flying = value;
-            rb.useGravity = !value;
-        }
+        set => flying = value;
     }
 
     [HideInInspector]
@@ -54,6 +50,9 @@ public class Vehicle : MonoBehaviour
     protected virtual void Awake()
     {
         vehicleList.Add(this);
+
+        rb = GetComponent<Rigidbody>();
+        Assert.IsNotNull(rb);
     }
 
     protected virtual void OnDestroy()
@@ -83,9 +82,6 @@ public class Vehicle : MonoBehaviour
     public virtual void Initialize()
     {
         if (initialized) return;
-
-        rb = GetComponent<Rigidbody>();
-        Assert.IsNotNull(rb);
 
         sphereCollider = GetComponent<SphereCollider>();
         Assert.IsNotNull(sphereCollider);
@@ -118,32 +114,38 @@ public class Vehicle : MonoBehaviour
         }
     }
 
-    Vector3 GetDesiredVelocity(bool flat = true)
+    Vector3 debugTargetLocation = Vector3.zero;
+    Vector3 GetDesiredVelocity(Vector3 targetPosition, bool flat = true, bool ignoreFlightHeight = false)
     {
-        return GetDesiredVelocity(targetTransform.position, flat);
-    }
-
-    Vector3 GetDesiredVelocity(Vector3 targetPosition, bool flat = true)
-    {
+        //Flying farmon fly towards the space above the targetPosition.
+        if (flying && !ignoreFlightHeight) targetPosition += Vector3.up * LevelController.Instance.gridSize * 2;
         Vector3 desired = targetPosition - transform.position;
         if (flat) desired.y = 0;
-        return desired.normalized * maxSpeed;
+
+        debugTargetLocation = targetPosition;
+        return desired.normalized * GetMovementSpeed();
+    }
+
+    public virtual float GetMovementSpeed()
+    {
+        return 1;
     }
 
     public void MoveInDirection(Vector3 direction)
     {
-        Vector3 v = direction.normalized * maxSpeed;
+        Vector3 v = direction.normalized * GetMovementSpeed();
         rb.velocity = new Vector3(v.x, rb.velocity.y, v.z);
     }
 
-    public Vector3 Seek(bool localAvoidance = true)
+    //Choosing disable flight height causes the vehicel to approach the target, even if i
+    public Vector3 Seek(bool localAvoidance = true, bool ignoreFlightHeight = false)
     {
-        Vector3 desired = GetDesiredVelocity();
+        Vector3 desired = GetDesiredVelocity(targetTransform.position, !flying, ignoreFlightHeight);
 
         if (localAvoidance) desired = LocalAvoidance(desired);
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -152,12 +154,12 @@ public class Vehicle : MonoBehaviour
 
     public Vector3 Seek(Vector3 position, bool localAvoidance = true)
     {
-        Vector3 desired = GetDesiredVelocity(position);
+        Vector3 desired = GetDesiredVelocity(position, !flying);
 
         if (localAvoidance) desired = LocalAvoidance(desired);
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -173,7 +175,7 @@ public class Vehicle : MonoBehaviour
 
         Vector3 targetPoint = H.Flatten(path.PeekNode().GridSpace.Center);
 
-        Vector3 desired = GetDesiredVelocity(targetPoint, true);
+        Vector3 desired = GetDesiredVelocity(targetPoint, !flying);
 
         if(localAvoidance) desired = LocalAvoidance(desired);
 
@@ -182,11 +184,11 @@ public class Vehicle : MonoBehaviour
         if(Vector3.Distance(targetPoint, currentPosition) < sphereCollider.radius + .5f)
         {
             PathNode removedNode = path.PopNode();
-            PathNodeReachedEvent.Invoke(removedNode);
+            if(removedNode != null) PathNodeReachedEvent.Invoke(removedNode);
         }
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -199,20 +201,11 @@ public class Vehicle : MonoBehaviour
         bool dropOffDetected = false;
         for(int i = 0; i < 8; i++)
         {
-            Vector3 rotated = Quaternion.Euler(0, i * 360f / 8f, 0) * Vector3.forward * (sphereCollider.radius + 1.5f);
+            Vector3 rotated = Quaternion.Euler(0, i * 360f / 8f, 0) * Vector3.forward * (sphereCollider.radius + LevelController.Instance.gridSize/4f);
 
-            if (Physics.SphereCast(transform.position + rotated + 0.1f * Vector3.up, sphereCollider.radius, Vector3.down, out RaycastHit hitInfo, 100))
+            if (Physics.Raycast(transform.position + rotated, Vector3.down, out RaycastHit hitInfo, sphereCollider.radius + LevelController.Instance.gridSize/4f, LayerMask.GetMask("Default")))
             {
-                if (hitInfo.distance > 0.11)
-                {
-                    // There is a drop off in this direction
-                    dropOffDirectionsAdded += rotated;
-                    dropOffDetected = true;
-                }
-                else
-                {
-                    // There is solid ground in this direction
-                }
+                Debug.Log("test");
             }
             else
             {
@@ -226,10 +219,10 @@ public class Vehicle : MonoBehaviour
         {
             Vector3 backTowardsSafety = -dropOffDirectionsAdded.normalized;
 
-            Vector3 desired = backTowardsSafety * maxSpeed * 1.5f;
+            Vector3 desired = backTowardsSafety * GetMovementSpeed() * 1.5f;
 
             Vector3 steer = desired - rb.velocity;
-            steer.y = 0;
+            if (!flying) steer.y = 0;
 
             steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -243,7 +236,7 @@ public class Vehicle : MonoBehaviour
 
     protected Vector3 Arrive(bool localAvoidance = true, float arriveDistance = -1)
     {
-        if (arriveDistance == -1) arriveDistance = maxSpeed / 2;
+        if (arriveDistance == -1) arriveDistance = GetMovementSpeed() / 2;
 
         Vector3 desired = targetTransform.position - transform.position;
         desired.y = 0;
@@ -252,17 +245,17 @@ public class Vehicle : MonoBehaviour
 
         if(distanceFromTarget < arriveDistance)
         {
-            desired *= (maxSpeed * distanceFromTarget/arriveDistance);
+            desired *= (GetMovementSpeed() * distanceFromTarget/arriveDistance);
         }
         else
         {
-            desired *= maxSpeed;
+            desired *= GetMovementSpeed();
         }
 
         if (localAvoidance) desired = LocalAvoidance(desired);
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -273,28 +266,28 @@ public class Vehicle : MonoBehaviour
     {
         float softDistance = 3f;
 
-        Vector3 myPositionFlat = H.Flatten(transform.position);
-        Vector3 targetPositionFlat = H.Flatten(point);
+        Vector3 myPosition = flying ? transform.position : H.Flatten(transform.position);
+        Vector3 targetPosition = flying ? point : H.Flatten(point);
 
-        float currentDistance = Vector3.Distance(targetPositionFlat, myPositionFlat);
+        float currentDistance = Vector3.Distance(targetPosition, myPosition);
         if (currentDistance < minDistance)
         {
-            Vector3 desired = (myPositionFlat - targetPositionFlat).normalized * (minDistance - currentDistance);
+            Vector3 desired = (myPosition - targetPosition).normalized * (minDistance - currentDistance);
             desired.y = 0;
             float distanceFromTarget = desired.magnitude;
             desired = desired.normalized;
 
             if (distanceFromTarget < softDistance)
             {
-                desired *= maxSpeed * distanceFromTarget / softDistance;
+                desired *= GetMovementSpeed() * distanceFromTarget / softDistance;
             }
             else
             {
-                desired *= maxSpeed;
+                desired *= GetMovementSpeed();
             }
 
             Vector3 steer = desired - rb.velocity;
-            steer.y = 0;
+            if (!flying) steer.y = 0;
 
             steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -308,28 +301,28 @@ public class Vehicle : MonoBehaviour
     {
         float softDistance = 3f;
 
-        Vector3 myPositionFlat = H.Flatten(transform.position);
-        Vector3 targetPositionFlat = H.Flatten(point);
+        Vector3 myPosition = flying ? transform.position : H.Flatten(transform.position);
+        Vector3 targetPosition = flying ? point : H.Flatten(point);
 
-        float currentDistance = Vector3.Distance(targetPositionFlat, myPositionFlat);
+        float currentDistance = Vector3.Distance(targetPosition, myPosition);
         if (currentDistance > MaxDistance)
         {
-            Vector3 desired = (targetPositionFlat - myPositionFlat).normalized * (currentDistance - MaxDistance);
-            desired.y = 0;
+            Vector3 desired = (targetPosition - myPosition).normalized * (currentDistance - MaxDistance);
+            if (!flying) desired.y = 0;
             float distanceFromTarget = desired.magnitude;
             desired = desired.normalized;
 
             if(distanceFromTarget < softDistance)
             {
-                desired *= maxSpeed * distanceFromTarget/softDistance;
+                desired *= GetMovementSpeed() * distanceFromTarget/softDistance;
             }
             else
             {
-                desired *= maxSpeed;
+                desired *= GetMovementSpeed();
             }
 
             Vector3 steer = desired - rb.velocity;
-            steer.y = 0;
+            if (!flying) steer.y = 0;
 
             steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -357,10 +350,10 @@ public class Vehicle : MonoBehaviour
     }
     protected Vector3 Flee()
     {
-        Vector3 desired = GetDesiredVelocity();
+        Vector3 desired = GetDesiredVelocity(targetTransform.position, !flying);
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -377,10 +370,10 @@ public class Vehicle : MonoBehaviour
         wanderCenter = transform.position + (rb.velocity.normalized * wanderDistance);
         wanderVector = new Vector3(Mathf.Cos(wanderAngle) * wanderRadius, 0, Mathf.Sin(wanderAngle) * wanderRadius);
 
-        Vector3 desired = GetDesiredVelocity(wanderCenter + wanderVector);
+        Vector3 desired = GetDesiredVelocity(wanderCenter + wanderVector, !flying);
 
         Vector3 steer = desired - rb.velocity;
-        steer.y = 0;
+        if (!flying) steer.y = 0;
 
         steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -410,8 +403,8 @@ public class Vehicle : MonoBehaviour
         {
             vectorSum /= count;
 
-            Vector3 steer = (vectorSum.normalized * maxSpeed) - rb.velocity;
-            steer.y = 0;
+            Vector3 steer = (vectorSum.normalized * GetMovementSpeed()) - rb.velocity;
+            if (!flying) steer.y = 0;
 
             steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -458,8 +451,8 @@ public class Vehicle : MonoBehaviour
         {
             vectorSum /= count;
 
-            Vector3 steer = Vector3.ClampMagnitude(vectorSum*scale, maxSpeed) - rb.velocity;
-            steer.y = 0;
+            Vector3 steer = Vector3.ClampMagnitude(vectorSum*scale, GetMovementSpeed()) - rb.velocity;
+            if (!flying) steer.y = 0;
 
             steer = Vector3.ClampMagnitude(steer, maxForce);
 
@@ -476,7 +469,7 @@ public class Vehicle : MonoBehaviour
         if(desired.magnitude < 0.1f)
         {
             Vector3 steer = -rb.velocity * frictionScale;
-            steer.y = 0;
+            if (!flying) steer.y = 0;
 
             return steer;
         }
@@ -493,7 +486,14 @@ public class Vehicle : MonoBehaviour
             //DebugExtension.DrawCircle(wanderCenter, Vector3.back, Color.red, wanderRadius);
 
 
+
+
             Debug.DrawLine(wanderCenter, wanderCenter + wanderVector, Color.red);
         }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        DebugExtension.DebugPoint(debugTargetLocation);
     }
 }

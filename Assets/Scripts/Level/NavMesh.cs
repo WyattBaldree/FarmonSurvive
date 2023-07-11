@@ -98,10 +98,10 @@ public class NavMesh : MonoBehaviour
         GridSpace startingSpace = GetGridSpaceArray(H.Vector3ToGridPosition(debugTransform1.position, levelController.gridSize));
         GridSpace endingSpace = GetGridSpaceArray(H.Vector3ToGridPosition(debugTransform2.position, levelController.gridSize));
 
-        return GetPath(startingSpace, endingSpace, 0, (x) => { return Vector3.Distance(x.Center, endingSpace.Center); });
+        return GetPath(startingSpace, endingSpace, 0, false, (x) => { return Vector3.Distance(x.Center, endingSpace.Center); });
     }
 
-    public Path GetPath(GridSpace startingPosition, GridSpace targetLocation, int jumpAbility, HeuristicDelegate heuristic)
+    public Path GetPath(GridSpace startingPosition, GridSpace targetLocation, int jumpAbility, bool flying, HeuristicDelegate heuristic)
     {
         // a sorted list contating spaces that still need to be checked sorted by thier heuristic
         List<GridSpace> openSet = new List<GridSpace>();
@@ -154,8 +154,10 @@ public class NavMesh : MonoBehaviour
             foreach(BlockLink link in current.BlockLinks)
             {
                 bool jump = false;
-                if (!link.walkable)
+                //Check if this link is crossable by this farmon.
+                if (!link.walkable && !flying)
                 {
+                    //Check if the farmon can jump over this link.
                     if (link.jumpable && jumpAbility > 0 ||
                         link.doubleJumpable && jumpAbility > 1)
                     {
@@ -174,6 +176,7 @@ public class NavMesh : MonoBehaviour
                 float tentativeGScore = gScore[current] + 1;// Vector3.Distance(current.Center, neighbor.Center);
                 if (jump)
                 {
+                    //Slightly increase the score of jumps to prevent jump spam.
                     tentativeGScore += .1f;
                 }
 
