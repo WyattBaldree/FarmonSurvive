@@ -117,19 +117,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 656b3ff334560c44fb4e74d5e253e547, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
-  owner: {fileID: 0}
-  damage: 2
-  pierce: 1
-  hitStunTime: 0.1
-  knockBack: 2
-  lifeTime: 5
-  undodgeable: 0
-  CreateSound: {fileID: 0}
-  HitSound: {fileID: 0}
+  Team: 0
+  Owner: {fileID: 0}
+  Pierce: 1
+  LifeTime: 5
   DestroySound: {fileID: 0}
-  specificTarget: {fileID: 0}
+  SpecificTargetId: 4294967295
   EventDestroy:
+    m_PersistentCalls:
+      m_Calls: []
+  worldCol: {fileID: 4035316006938990717}
+  HitEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!114 &2973232379261534019
@@ -144,11 +142,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 230ee51db364f1840818a3536c6414b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationOffset: 0
   myRigidBody: {fileID: 4554706593213399625}
-  moveAwaySpeed: 10
-  rotationSpeed: 120
-  maxSpeed: 5
+  RotationOffset: 0
+  MoveAwaySpeed: 1
+  RotationSpeed: 1
+  MaxSpeed: 5
 --- !u!135 &7603348062644319464
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -331,19 +329,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.34464538
+      value: 0.90984374
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.060770277
+      value: 0.16043
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.9225323
+      value: 0.3768696
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.16266735
+      value: -0.06645228
       objectReference: {fileID: 0}
     - target: {fileID: 4029520138182618513, guid: ddb64c18eda9f36448da0e7e4959566d, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

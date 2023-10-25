@@ -16,9 +16,17 @@ public class Projectile : MonoBehaviour
 
     public float LifeTime = 5f;
 
+    public bool LevelCollision
+    {
+        set
+        {
+            worldCol.enabled = value;
+        }
+    }
+    
     public AudioClip DestroySound;
 
-    public Farmon SpecificTarget = null;
+    public uint SpecificTargetId = uint.MaxValue;
 
     public UnityEvent EventDestroy = new UnityEvent();
 
@@ -28,6 +36,10 @@ public class Projectile : MonoBehaviour
 
     protected Rigidbody rb;
     protected Collider col;
+
+    [SerializeField]
+    Collider worldCol;
+
     protected AudioSource audioSource;
 
     public UnityEvent<Farmon> HitEvent;
@@ -36,12 +48,13 @@ public class Projectile : MonoBehaviour
 
     bool destroyed = false;
 
+
     public void UseGravity(bool value)
     {
         rb.useGravity = value;
     }
 
-    private void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         col = GetComponent<Collider>();
@@ -69,7 +82,7 @@ public class Projectile : MonoBehaviour
 
         if (farmon && !farmon.dead && farmon.team != Team && !hitFarmonList.Contains(farmon))
         {
-            if(SpecificTarget != null && SpecificTarget != farmon)
+            if(SpecificTargetId != uint.MaxValue && SpecificTargetId != farmon.loadedFarmonMapId)
             {
                 return;
             }

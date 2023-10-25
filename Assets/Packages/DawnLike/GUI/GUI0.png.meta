@@ -766,6 +766,27 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: PreRoundScreen
+      rect:
+        serializedVersion: 2
+        x: 232
+        y: 280
+        width: 24
+        height: 24
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 7, y: 6, z: 7, w: 8}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4fbef307c9219b548930f465b5ae7d28
+      internalID: -1660918181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
@@ -777,38 +798,39 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      redGuiEmpty: -1016692986
+      PreRoundScreen: -1660918181
+      backPackIcon: 179277703
+      blueGuiBackground: -1846031412
       blueGuiEmpty: 571207213
-      upArrowBig: -1843571830
+      blueGuiFilled: -223748668
+      coneIcon: 246019963
+      darkGrayGuiBackground: -890952920
+      darkGrayGuiEmpty: -1343997255
+      darkGrayGuiFilled: 682930343
+      downArrowBig: -195684969
+      exclamationIcon: 1849172336
+      grayGuiBackground: -2046014791
+      grayGuiEmpty: -1382975703
+      grayGuiFilled: -1092287323
+      greenGuiBackground: -1378303567
+      greenGuiEmpty: 1543674258
       greenGuiFilled: -211801313
+      heartIcon: 1056349007
+      lightGrayGuiBackground: 567525118
+      lightGrayGuiEmpty: 1094897123
+      lightGrayGuiFilled: 1956093885
+      redGuiBackground: 1460377504
+      redGuiEmpty: -1016692986
       redGuiFilled: -1817097430
       shieldIcon: 159111609
-      heartIcon: 1056349007
-      coneIcon: 246019963
-      backPackIcon: 179277703
-      yellowGuiEmpty: -1955145608
-      lightGrayGuiBackground: 567525118
-      redGuiBackground: 1460377504
-      darkGrayGuiBackground: -890952920
-      downArrowBig: -195684969
-      darkGrayGuiEmpty: -1343997255
-      yellowGuiFilled: -626000995
-      grayGuiFilled: -1092287323
-      yellowGuiBackground: 27976202
       skullIcon: -336945716
-      lightGrayGuiEmpty: 1094897123
-      grayGuiEmpty: -1382975703
-      lightGrayGuiFilled: 1956093885
-      whiteGuiEmpty: 515795272
+      upArrowBig: -1843571830
       whiteGuiBackground: -2133667756
-      greenGuiBackground: -1378303567
-      blueGuiBackground: -1846031412
-      exclamationIcon: 1849172336
-      darkGrayGuiFilled: 682930343
-      grayGuiBackground: -2046014791
-      greenGuiEmpty: 1543674258
-      blueGuiFilled: -223748668
+      whiteGuiEmpty: 515795272
       whiteGuiFilled: -184638757
+      yellowGuiBackground: 27976202
+      yellowGuiEmpty: -1955145608
+      yellowGuiFilled: -626000995
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

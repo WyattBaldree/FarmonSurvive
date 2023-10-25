@@ -13,27 +13,39 @@ public class Scrimp : Farmon
 
     public override void Attack(Farmon targetEnemy)
     {
-        Vector3 unitToEnemy = targetEnemy.GetUnitVectorToMe(transform.position);
+        base.Attack(targetEnemy);
+        AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, false, shootSound, hitSound);
 
+        SetState(new ScrimpAttackState(this, targetEnemy.loadedFarmonMapId, tackleAttackData, 1f, 0.3f));
+    }
+
+    public override float AttackTime()
+    {
+        return 5f - (GetModifiedFocus() / 30f) - (GetModifiedAgility() / 30f);
+    }
+
+    public void CreateProjectile(uint farmonIdToAttack)
+    {
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
         AttackData fireballAttackData = new AttackData(5 + Power / 5, 4, false, shootSound, hitSound);
-        fireBall.transform.localScale *= (1f + (float)Focus / (StatMax*2));
-        fireBall.Pierce += Focus / 3;
+        fireBall.transform.localScale *= (1f + (float)Focus / (StatMax * 2));
         fireBall.OnHitDelegate = (unit) => {
             perkList.TryGetValue(new PerkFiendFire().PerkName, out int fiendFireAbility);
 
             if (fiendFireAbility > 0)
             {
                 int fireDamage = 3 * fiendFireAbility;
-                unit.EffectList.Burn.AddEffect(4,fireDamage);
+                unit.EffectList.Burn.AddEffect(4, fireDamage);
             }
         };
         fireBall.Initialize(fireballAttackData, this, team);
+        fireBall.SpecificTargetId = farmonIdToAttack;
+        fireBall.LevelCollision = false;
 
         //This is a basic attack so add the basic attack component.
         BasicProjectile bp = fireBall.gameObject.AddComponent<BasicProjectile>();
         bp.Velocity = (10f + Agility / 2f);
-        bp.TargetFarmonId = targetEnemy.loadedFarmonMapId;
+        bp.TargetFarmonId = farmonIdToAttack;
 
         //ConstantVelocity cv = fireBall.gameObject.AddComponent<ConstantVelocity>();
         //cv.velocity = unitToEnemy.normalized * (10f + Agility/2f);
@@ -44,13 +56,6 @@ public class Scrimp : Farmon
 
         //fireBall = Farmon.Instantiate(farmon.fireBallPrefab, farmon.transform.position, farmon.transform.rotation).GetComponent<Projectile>();
         //fireBall.rigidBody.velocity = Quaternion.Euler(0, -15, 0) * unitToEnemy * 5f;
-
-        AttackComplete();
-    }
-
-    public override float AttackTime()
-    {
-        return 6f - GetModifiedFocus() / 30f - GetModifiedAgility() / 30f;
     }
 
     public override void OnLevelUp()
@@ -96,5 +101,23 @@ public class Scrimp : Farmon
         {
             agilityPlus++;
         }
+    }
+}
+
+public class ScrimpAttackState : ProjectileAttackState
+{
+    public ScrimpAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = 0.3F) : base(thisFarmon, farmonIdToAttack, attackData, chargeTime, hitStun)
+    {
+    }
+
+    public override void OnAttack()
+    {
+        base.OnAttack();
+
+        ((Scrimp)farmon).CreateProjectile(_farmonIdToAttack);
+        farmon.AttackComplete();
+
+        //farmon.SetState(farmon.mainBattleState);
+        farmon.GetNextAction();
     }
 }

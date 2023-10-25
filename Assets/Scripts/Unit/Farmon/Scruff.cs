@@ -57,6 +57,8 @@ public class ScruffTackleState : MeleeAttackState
     public override void OnAttack()
     {
         base.OnAttack();
-        _farmon.AttackComplete();
+        farmon.AttackComplete();
+        //_farmon.SetState(_farmon.mainBattleState);
+        farmon.GetNextAction();
     }
 }

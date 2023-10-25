@@ -358,7 +358,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioSource: {fileID: 7766060001675562463}
   infoBox: {fileID: 2412599173084040323}
-  farmonDisplay: {fileID: 0}
+  farmonImage: {fileID: 4888043925995337504}
   oldSprite: {fileID: -126739719, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
   newSprite: {fileID: 718799061, guid: ff8913cfcbca0b640977163cf4dc24cf, type: 3}
 --- !u!82 &7766060001675562463
@@ -480,6 +480,8 @@ PlayableDirector:
     value: {fileID: 0}
   - key: {fileID: -5222568815027568762, guid: c2198cc037ff30947a081cd5147d7dcc, type: 2}
     value: {fileID: 0}
+  - key: {fileID: -4514995097364291545, guid: c2198cc037ff30947a081cd5147d7dcc, type: 2}
+    value: {fileID: 0}
   m_ExposedReferences:
     m_References:
     - 10a6f4adcb9da834992616aaa98320fe: {fileID: 8598193110699337433}
@@ -489,7 +491,7 @@ PlayableDirector:
     - bdd6d8ed4bb92be46a78e02ba7fb538e: {fileID: 8598193110699337433}
 --- !u!95 &3400351081660122465
 Animator:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -508,6 +510,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &3456367984051365964
 GameObject:
   m_ObjectHideFlags: 0

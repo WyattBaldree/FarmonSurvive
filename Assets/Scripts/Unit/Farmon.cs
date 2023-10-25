@@ -62,6 +62,17 @@ public abstract class Farmon : Vehicle
         mostHealth
     }
 
+    public enum FormationTypeEnum
+    {
+        none,
+        frontline,
+        backline
+    }
+
+    //Track the farmon's position in the formation
+    public FormationTypeEnum formationType = FormationTypeEnum.none;
+    public int formationPosition = 0;
+
     public string DebugString;
 
     [HideInInspector]
@@ -421,7 +432,7 @@ public abstract class Farmon : Vehicle
 
         Hud = GetComponentInChildren<FarmonHud>();
         Assert.IsNotNull(Hud);
-        Hud.TargetFarmon = this;
+        Hud.Initialize(this);
 
         mySpriteRenderer = Hud.SpriteQuad.GetComponentInChildren<SpriteRenderer>();
         Assert.IsNotNull(mySpriteRenderer);
@@ -612,26 +623,32 @@ public abstract class Farmon : Vehicle
         _highlightList.RemoveHighlight(_selectedHighlight);
     }
 
-    /*public void EnterAttackState(Farmon target)
+    public void SetFormation(int position, FormationTypeEnum type)
     {
-        protectTarget = 0;
-        attackTarget = target.loadedFarmonMapId;
-        mainState = new AttackState(this);
-        SetState(new NewAtt);
+        formationType = type;
+        formationPosition = position;
     }
 
-    public void EnterDefendState(Farmon target)
+    public void GetNextAction()
     {
-        protectTarget = target.loadedFarmonMapId;
-        attackTarget = 0;
-        mainState = new DefendState(this);
-        SetState(mainState);
-    }*/
+        List<Farmon> closestEnemies = Farmon.SearchFarmon(this, Farmon.FarmonFilterEnum.enemyTeam, Farmon.FarmonSortEnum.nearestFlat);
+        WeightedRandomBag<Farmon> enemyFarmonBag = new WeightedRandomBag<Farmon>();
+
+        foreach (Farmon enemyFarmon in closestEnemies)
+        {
+            float weight = enemyFarmon.formationType == FormationTypeEnum.frontline ? 1 : 0.5f;
+            enemyFarmonBag.AddEntry(enemyFarmon, weight);
+        }
+
+        Farmon attackTarget = enemyFarmonBag.GetRandom();
+
+        mainBattleState = new NewAttackState(this, attackTarget.loadedFarmonMapId);
+        SetState(mainBattleState);
+    }
 
     public virtual void AttackComplete()
     {
         attackTimer.SetTime(AttackTime());
-        SetState(mainBattleState);
     }
 
     /// <summary>
@@ -642,10 +659,12 @@ public abstract class Farmon : Vehicle
     /// <returns></returns>
     public static Farmon GetFarmonInstanceFromLoadedID(uint id, bool ignoreDead)
     {
-        Farmon.loadedFarmonMap.TryGetValue(id, out Farmon retValue);
-
-        if (retValue && ignoreDead && retValue.dead) return null;
-        return retValue;
+        if(Farmon.loadedFarmonMap.TryGetValue(id, out Farmon retValue))
+        {
+            if (ignoreDead && retValue.dead) return null;
+            return retValue;
+        }
+        return null;
     }
 
     public static List<Farmon> SearchFarmon(Farmon originFarmon, FarmonFilterEnum farmonFilter = FarmonFilterEnum.any, FarmonSortEnum farmonSort = FarmonSortEnum.nearest, float maxRange = 10000, List<Farmon> exclusions = default, bool excludeDead = true)
@@ -672,6 +691,7 @@ public abstract class Farmon : Vehicle
 
         return searchList;
     }
+
 
     public static List<Farmon> FarmonFilter(List<Farmon> listToFilter, FarmonFilterEnum farmonFilter, Farmon originFarmon = null)
     {
@@ -980,7 +1000,7 @@ public abstract class Farmon : Vehicle
     {
         SetControlState(new DieState(this));
 
-        if(team == TeamEnum.team1)
+        if (team == TeamEnum.team1)
         {
             GameController.SlowMo(2.5f, .3f);
         }
@@ -1346,6 +1366,7 @@ public abstract class Farmon : Vehicle
 
     internal void FlyTowardsPosition(Vector3 position, float speed = 10f)
     {
+        //rb.AddForce((position - transform.position).normalized * speed, ForceMode.VelocityChange);
         rb.velocity = (position - transform.position).normalized * speed;
     }
 
@@ -1364,7 +1385,14 @@ public abstract class Farmon : Vehicle
     {
         Vector3 toEnemy = farmonToSee.transform.position - transform.position;
 
-        return !Physics.Raycast(transform.position, toEnemy.normalized, toEnemy.magnitude, LayerMask.GetMask("Default")); ;
+        return CanSeePosition(farmonToSee.transform.position);
+    }
+
+    public bool CanSeePosition(Vector3 position)
+    {
+        Vector3 toPosition = position - transform.position;
+
+        return !Physics.Raycast(transform.position, toPosition.normalized, toPosition.magnitude, LayerMask.GetMask("Default")); ;
     }
 
     public float GetAttackRange()
@@ -1411,7 +1439,7 @@ public abstract class Farmon : Vehicle
     }
 
     //Called each time this farmon reaches a node in the path
-    private void PathNodeReached(PathNode consumedNode)
+    private void PathNodeReached()
     {
         PathNode pathNode = myPath.PeekNode();
         if (pathNode != null)
@@ -1461,7 +1489,6 @@ public abstract class Farmon : Vehicle
         }
 
         //Next do the same thing for the targetPosition
-        //First get the gridSpace that this farmon will be navigating from (first valid terrain beneath this farmon)
         Vector3Int targetNavigationSpace = H.GetNavigationPosition(targetPosition);
 
         //Now check if this position is different from our current path start position
@@ -1483,6 +1510,8 @@ public abstract class Farmon : Vehicle
 
             //if we were forced to update the path, set the value to false.
             forcePathUpdate = false;
+
+            PathNodeReachedEvent.Invoke();
         }
     }
     #endregion

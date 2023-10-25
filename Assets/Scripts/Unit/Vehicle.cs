@@ -45,7 +45,7 @@ public class Vehicle : MonoBehaviour
     }
 
     [HideInInspector]
-    public UnityEvent<PathNode> PathNodeReachedEvent = new UnityEvent<PathNode>();
+    public UnityEvent PathNodeReachedEvent = new UnityEvent();
 
     protected virtual void Awake()
     {
@@ -184,7 +184,7 @@ public class Vehicle : MonoBehaviour
         if(Vector3.Distance(targetPoint, currentPosition) < sphereCollider.radius + .5f)
         {
             PathNode removedNode = path.PopNode();
-            if(removedNode != null) PathNodeReachedEvent.Invoke(removedNode);
+            if(removedNode != null) PathNodeReachedEvent.Invoke();
         }
 
         Vector3 steer = desired - rb.velocity;
@@ -205,7 +205,7 @@ public class Vehicle : MonoBehaviour
 
             if (Physics.Raycast(transform.position + rotated, Vector3.down, out RaycastHit hitInfo, sphereCollider.radius + LevelController.Instance.gridSize/4f, LayerMask.GetMask("Default")))
             {
-                Debug.Log("test");
+                //Do nothing
             }
             else
             {

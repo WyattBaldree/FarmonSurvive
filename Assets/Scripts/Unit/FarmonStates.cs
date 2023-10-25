@@ -20,11 +20,19 @@ public abstract class NewBattleState : StateMachineState
         NavigationTick();
         //Then handle battle logic
         BattleTick();
+        //Then handle the animation logic
+        AnimationTick();
     }
 
     protected abstract void NavigationTick();
 
     protected abstract void BattleTick();
+
+    protected abstract void AnimationTick();
+
+    public virtual void OnAttack()
+    {
+    }
 }
 
 public class NewIdleState : NewBattleState
@@ -33,14 +41,18 @@ public class NewIdleState : NewBattleState
     {
     }
 
+    protected override void NavigationTick()
+    {
+        farmon.MovementIdle();
+    }
+
     protected override void BattleTick()
     {
         
     }
 
-    protected override void NavigationTick()
+    protected override void AnimationTick()
     {
-        farmon.MovementIdle();
     }
 }
 
@@ -83,8 +95,7 @@ public class NewAttackState : NewBattleState
         //if our target doesn't exist, go to the idle state
         if (!farmonToAttack)
         {
-            farmon.mainBattleState = new NewIdleState(farmon);
-            farmon.SetState(farmon.mainBattleState);
+            farmon.GetNextAction();
             return;
         }
 
@@ -94,6 +105,10 @@ public class NewAttackState : NewBattleState
         }
 
         //if a friendly ability is ready, if there is a friendly farmon in attack range, enter this farmon's specific ability state.
+    }
+
+    protected override void AnimationTick()
+    {
     }
 }
 
@@ -136,8 +151,7 @@ public class NewProtectState : NewBattleState
         //if our target doesn't exist, go to the idle state
         if (!farmonToProtect)
         {
-            farmon.mainBattleState = new NewIdleState(farmon);
-            farmon.SetState(farmon.mainBattleState);
+            farmon.GetNextAction();
             return;
         }
 
@@ -147,6 +161,68 @@ public class NewProtectState : NewBattleState
         }
 
         //if a friendly ability is ready, if there is a friendly farmon in attack range, enter this farmon's specific ability state.
+    }
+
+    protected override void AnimationTick()
+    {
+        
+    }
+}
+
+public class DefendState : NewBattleState
+{
+    GridSpace _defendLocation;
+
+    public DefendState(Farmon thisFarmon, GridSpace defendLocation) : base(thisFarmon)
+    {
+
+        _defendLocation = defendLocation;
+    }
+
+    protected override void NavigationTick()
+    {
+
+        //if our target is doesn't exist, don't move
+        if (_defendLocation == null)
+        {
+            farmon.MovementIdle();
+            return;
+        }
+
+        bool withinGrid = H.Flatten(_defendLocation.Center - farmon.transform.position).magnitude < LevelController.Instance.gridSize;
+
+        //if we can see the target farmon and the target farmon is in range, wander around it
+        if (farmon.CanSeePosition(_defendLocation.Center) && withinGrid)
+        {
+            //Wander around target.
+            farmon.StayInRange(_defendLocation.Center, farmon.GetPotectWanderDistance() / 2, farmon.GetPotectWanderDistance());
+        }
+        //else, pathfind to the target.
+        else
+        {
+            farmon.NavigateToPosition(_defendLocation.Center);
+        }
+    }
+
+    protected override void BattleTick()
+    {
+        //if our target doesn't exist, go to the idle state
+        if (_defendLocation == null)
+        {
+            farmon.GetNextAction();
+            return;
+        }
+
+        if (farmon.attackReady)
+        {
+            farmon.AttemptAttackOnNearestEnemyUnit();
+        }
+
+        //if a friendly ability is ready, if there is a friendly farmon in attack range, enter this farmon's specific ability state.
+    }
+
+    protected override void AnimationTick()
+    {
     }
 }
 
@@ -173,8 +249,6 @@ public class IdleState : StateMachineState
         farmon.MovementIdle();
     }
 }
-
-
 
 /*public class AttackState : StateMachineState
 {
@@ -532,7 +606,13 @@ public class MeleeAttackState : NewBattleState
             OnAttack();
         }
     }*/
-    
+
+    public override void Exit()
+    {
+        base.Exit();
+        farmon.AttackComplete();
+    }
+
     protected override void NavigationTick()
     {
         Farmon farmonToAttack = Farmon.GetFarmonInstanceFromLoadedID(_farmonIdToAttack, true);
@@ -564,7 +644,7 @@ public class MeleeAttackState : NewBattleState
         //if our target doesn't exist, go to the idle state
         if (!farmonToAttack)
         {
-            farmon.SetState(new NewIdleState(farmon));
+            farmon.GetNextAction();
             return;
         }
 
@@ -579,9 +659,11 @@ public class MeleeAttackState : NewBattleState
         }
     }
 
-    public virtual void OnAttack()
+    public override void OnAttack()
     {
-        Farmon attackFarmon = Farmon.loadedFarmonMap[_farmonIdToAttack];
+        base.OnAttack();
+
+        Farmon attackFarmon = Farmon.GetFarmonInstanceFromLoadedID(_farmonIdToAttack, true);
 
         SphereCollider sc = _farmon.sphereCollider;
 
@@ -613,64 +695,124 @@ public class MeleeAttackState : NewBattleState
         _farmon.rb.velocity = Vector3.zero;
     }
 
-    
+    protected override void AnimationTick()
+    {
+    }
 }
 
-public class JumpState : StateMachineState
+// In the melee attack state, farmon moves towards the attackTarget farmon and, after getting within attack range, lunges at the attackTarget farmon.
+public class ProjectileAttackState : NewBattleState
 {
-    Farmon unit;
+    protected AttackData _attackData;
 
-    Vector3 startingPosition, endingPosition;
+    protected Farmon _farmon;
 
-    float jumpTime = 1;
+    protected float _hitStun;
+    protected float _chargeTime;
 
-    float h;
+    protected bool _charging;
+    protected Timer _chargingTimer;
 
-    Timer jumpTimer = new Timer();
+    protected uint _farmonIdToAttack;
 
-    public JumpState(Farmon thisUnit, Vector3 startingPos, Vector3 endingPos, float height, float duration = 1f)
+    readonly Timer flashTimer = new Timer();
+    bool flashFlag = false;
+
+
+    public ProjectileAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = .3f) : base(thisFarmon)
     {
-        unit = thisUnit;
-        startingPosition = startingPos;
+        _farmon = farmon;
+        _hitStun = hitStun;
+        _chargeTime = chargeTime;
+        _attackData = attackData;
+        _charging = false;
 
-        Vector2 randomFlatVector = UnityEngine.Random.insideUnitCircle;
-        Vector3 slightOffset = new Vector3(randomFlatVector.x, 0, randomFlatVector.y) * .01f;
-        endingPosition = endingPos + slightOffset;
 
-        jumpTime = duration;
-        h = height;
-    }
+        _chargingTimer = new Timer();
+        _chargingTimer.SetTime(_chargeTime);
+        _chargingTimer.autoReset = true;
 
-    public override void Enter()
-    {
-        base.Enter();
-        jumpTimer.SetTime(jumpTime);
+        _farmonIdToAttack = farmonIdToAttack;
 
-        unit.maxSpeed = 0;
-        unit.rb.isKinematic = true;
-    }
-
-    public override void Tick()
-    {
-        base.Tick();
-
-        if (jumpTimer.Tick(Time.deltaTime))
-        {
-            unit.SetControlState(new MainState(unit));
-            unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, .9f));
-            return;
-        }
-
-        float jumpPercent = Mathf.Max(0, 0.9f - jumpTimer.Percent);
-
-        unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, jumpPercent));
+        flashTimer.SetTime(.1f);
+        flashTimer.autoReset = true;
     }
 
     public override void Exit()
     {
         base.Exit();
-        unit.rb.isKinematic = false;
+        farmon.mySpriteRenderer.color = new Color(1, 1, 1, 1);
+    }
+
+    protected override void NavigationTick()
+    {
+        Farmon farmonToAttack = Farmon.GetFarmonInstanceFromLoadedID(_farmonIdToAttack, true);
+
+        //if our target doesn't exist, go to the idle state
+        if (!farmonToAttack)
+        {
+            farmon.MovementIdle();
+            return;
+        }
+
+        if (_charging)
+        {
+            farmon.MovementIdle();
+        }
+        //else, pathfind to the target.
+        else
+        {
+            farmon.NavigateToFarmon(farmonToAttack);
+        }
+    }
+
+    protected override void BattleTick()
+    {
+        Farmon farmonToAttack = Farmon.GetFarmonInstanceFromLoadedID(_farmonIdToAttack, true);
+
+        //if our target doesn't exist, go to the idle state
+        if (!farmonToAttack)
+        {
+            farmon.GetNextAction();
+            return;
+        }
+
+        // if charging, charge up then attack
+        if (_charging)
+        {
+            if (_chargingTimer.Tick(Time.deltaTime))
+            {
+                OnAttack();
+            }
+        }
+        else
+        {
+            //if not charging, wait until we are in attack range then start charging.
+            //if we can see the target farmon and the target farmon is in range, fly directly towards it 
+            if (farmon.CanSeeFarmon(farmonToAttack) && farmon.InAttackRange(farmonToAttack))
+            {
+                //Fly towards the target.
+                _charging = true;
+            }
+        }
+    }
+
+    protected override void AnimationTick()
+    {
+        if (_charging)
+        {
+            if (flashTimer.Tick(Time.deltaTime))
+            {
+                if (flashFlag)
+                {
+                    farmon.mySpriteRenderer.color = new Color(.6f, .6f, .6f, 1);
+                }
+                else
+                {
+                    farmon.mySpriteRenderer.color = new Color(1, 1, 1, 1);
+                }
+                flashFlag = !flashFlag;
+            }
+        }
     }
 }
-
-

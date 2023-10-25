@@ -273,13 +273,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      skullIconSmall: -1402043827
-      heartIconSmall: 1588072647
-      shieldIconSmall: -823812107
-      coneIconSmall: 1383918070
       backPackIconSmall: -415183052
+      coneIconSmall: 1383918070
       downArrowSmall: 1515090867
       exclamationIconSmall: -839908500
+      heartIconSmall: 1588072647
+      shieldIconSmall: -823812107
+      skullIconSmall: -1402043827
       upArrowSmall: -583422628
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0

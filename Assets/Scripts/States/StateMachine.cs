@@ -30,8 +30,11 @@ namespace Assets.Scripts.States
         {
             _prevState = _currentState;
 
-            _currentState.Exit();
+            //Set the _currentState to the new state before calling exit on it in case the exit method
+            //changes the state again which would lead to the _currentState value being the previous state.
+            StateMachineState oldState = _currentState;
             _currentState = nextState;
+            oldState.Exit();
 
             nextState._stateMachine = this;
             nextState.Enter();

@@ -32,9 +32,15 @@ public class FarmonHud : MonoBehaviour
     [HideInInspector]
     public SpriteRenderer spriteRenderer;
 
-    private void Start()
+    public void Awake()
     {
         spriteRenderer = SpriteQuad.GetComponentInChildren<SpriteRenderer>();
+    }
+
+    public void Initialize(Farmon target)
+    {
+        
+        TargetFarmon = target;
     }
 
     private void Update()

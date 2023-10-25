@@ -54,6 +54,7 @@ public class Player : MonoBehaviour
     float cameraMaxDistance = 60;
 
     bool hyper = false;
+    public bool selectingEnabled = true;
 
     protected void Awake()
     {
@@ -181,7 +182,7 @@ public class Player : MonoBehaviour
         Vector2 screenSize = new Vector2(Screen.width, Screen.height);
         Vector2 referenceResolutionSize = new Vector2(canvasScaler.referenceResolution.x, canvasScaler.referenceResolution.x * 9f / 16f);
 
-        if (Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0) && selectingEnabled)
         {
             selecting = true;
 
@@ -277,12 +278,12 @@ public class Player : MonoBehaviour
         {
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            bool hitFarmon = Physics.Raycast(ray, out RaycastHit hitInfo, 100, LayerMask.GetMask("Farmon"));
+            bool hitFarmon = Physics.Raycast(ray, out RaycastHit farmonHitInfo, 100, LayerMask.GetMask("Farmon"));
 
             if (hitFarmon)
             {
                 //Select the hit farmon
-                Farmon targetedFarmon = hitInfo.transform.GetComponentInParent<Farmon>();
+                Farmon targetedFarmon = farmonHitInfo.transform.GetComponentInParent<Farmon>();
 
                 if (targetedFarmon.team == playerTeam)
                 {
@@ -297,6 +298,23 @@ public class Player : MonoBehaviour
                     foreach (Farmon selectedFarmon in selectionList)
                     {
                         selectedFarmon.mainBattleState = new NewAttackState(selectedFarmon, targetedFarmon.loadedFarmonMapId);
+                        selectedFarmon.SetState(selectedFarmon.mainBattleState);
+                    }
+                }
+            }
+            else
+            {
+                bool levelHit = Physics.Raycast(ray, out RaycastHit levelHitInfo, 100, LayerMask.GetMask("Default"));
+
+                if (levelHit)
+                {
+                    foreach (Farmon selectedFarmon in selectionList)
+                    {
+                        Vector3Int slectedGridPosition = H.Vector3ToGridPosition(levelHitInfo.point, LevelController.Instance.gridSize);
+
+                        GridSpace selectedGridSpace = NavMesh.instance.GetGridSpaceArray(slectedGridPosition);
+
+                        selectedFarmon.mainBattleState = new DefendState(selectedFarmon, selectedGridSpace);
                         selectedFarmon.SetState(selectedFarmon.mainBattleState);
                     }
                 }

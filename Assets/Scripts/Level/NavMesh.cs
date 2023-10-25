@@ -52,6 +52,8 @@ public class NavMesh : MonoBehaviour
 
     public GridSpace GetGridSpaceArray(Vector3Int vInt)
     {
+        vInt.Clamp(Vector3Int.zero, new Vector3Int(_gridSpaceMatrix.GetLength(0), _gridSpaceMatrix.GetLength(1), _gridSpaceMatrix.GetLength(2)));
+
         return _gridSpaceMatrix[vInt.x, vInt.y, vInt.z];
     }
 

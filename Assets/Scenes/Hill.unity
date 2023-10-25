@@ -153,6 +153,10 @@ MonoBehaviour:
   EnemyTeam1Ids: 
   RoundPlaying: 0
   spawnEnemyTeam: 1
+  PlayerTeamFrontlineIds: 
+  PlayerTeamBacklineIds: 
+  EnemyTeam1FrontlineIds: 
+  EnemyTeam1BacklineIds: 
 --- !u!4 &46913872
 Transform:
   m_ObjectHideFlags: 0
@@ -888,7 +892,7 @@ RectTransform:
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1197230641
 Animator:
-  serializedVersion: 6
+  serializedVersion: 7
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -907,6 +911,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1360442640 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 9144144995966473036, guid: 0b5177f3bc6745b4d93af2596477b798, type: 3}
@@ -1166,6 +1171,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
+  m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0

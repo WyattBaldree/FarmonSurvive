@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 using UnityEngine.Playables;
+using UnityEngine.Timeline;
 using UnityEngine.UI;
 
 public class EvolutionScreen : MonoBehaviour
@@ -18,8 +19,16 @@ public class EvolutionScreen : MonoBehaviour
     [SerializeField]
     InfoBox infoBox;
 
-    [SerializeField]
     FarmonDisplay farmonDisplay;
+
+    [SerializeField]
+    RawImage farmonImage;
+
+    [SerializeField]
+    PlayableDirector timelineDirector;
+    
+    [SerializeField]
+    PlayableAsset playableAsset;
 
     Farmon oldFarmon;
     Farmon newFarmon;
@@ -52,6 +61,29 @@ public class EvolutionScreen : MonoBehaviour
     private void Start()
     {
         gameObject.SetActive(false);
+
+        farmonDisplay = FarmonDisplayController.instance.GetFarmonDisplay();
+        farmonImage.texture = farmonDisplay.RenderTexture;
+
+        farmonDisplay.DisplayCamera.transform.position = new Vector3(0, 0, -4.7f);
+        farmonDisplay.DisplayCamera.fieldOfView = 59.2f;
+
+        //Bind the evolution screens animation to the farmonDisplay and farmonHud
+        var outputs = playableAsset.outputs;
+        foreach (var itm in outputs)
+        {
+            Debug.Log(itm.streamName);
+            if (itm.streamName == "FarmonDisplayAnimationTrack")
+            {
+                timelineDirector.SetGenericBinding(itm.sourceObject, farmonDisplay.GetComponent<Animator>());
+            }
+            else if (itm.streamName == "HudAnimationTrack")
+            {
+                timelineDirector.SetGenericBinding(itm.sourceObject, farmonDisplay.DisplayFarmonHud.GetComponent<Animator>());
+            }
+        }
+
+
     }
 
     private void OnEnable()

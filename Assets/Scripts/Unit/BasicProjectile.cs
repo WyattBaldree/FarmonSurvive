@@ -49,6 +49,8 @@ public class BasicProjectile : MonoBehaviour
             return;
         }
 
+        //rb.AddForce(Velocity * targetFarmon.GetUnitVectorToMe(transform.position), ForceMode.VelocityChange);
+
         rb.velocity = Velocity * targetFarmon.GetUnitVectorToMe(transform.position);
     }
 }

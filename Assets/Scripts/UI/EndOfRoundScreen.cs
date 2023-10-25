@@ -56,7 +56,6 @@ public class EndOfRoundScreen : MonoBehaviour
         Assert.IsNull(instance, "There should only be one instance of this object.");
         instance = this;
     }
-    
 
     private void OnDestroy()
     {

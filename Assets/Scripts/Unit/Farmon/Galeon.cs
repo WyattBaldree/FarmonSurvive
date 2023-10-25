@@ -67,7 +67,7 @@ public class Galeon : Farmon
 
     private void LaunchTornados()
     {
-        //step should be divisible into 360
+        //angleBetweenTornados should be divisible into 360
         int angleBetweenTornados = 120;
         for(int angle = 0; angle < 360; angle += angleBetweenTornados)
         {
@@ -108,5 +108,3 @@ public class Galeon : Farmon
         
     }
 }
-
-

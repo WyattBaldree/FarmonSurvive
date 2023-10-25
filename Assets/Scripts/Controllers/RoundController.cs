@@ -16,17 +16,25 @@ public class RoundController : MonoBehaviour
 
     public bool spawnEnemyTeam = true;
 
+    public List<uint> PlayerTeamFrontlineIds;
+    public List<uint> PlayerTeamBacklineIds;
+
+    public List<uint> EnemyTeam1FrontlineIds;
+    public List<uint> EnemyTeam1BacklineIds;
+
     private void Start()
     {
-        StartMatch();
+        Player.instance.selectingEnabled = false;
+
+        SpawnPlayerTeam();
+        SpawnEnemyTeam();
+
+        PreRoundScreen.instance.Popup(this);
     }
 
     public void StartMatch()
     {
         NavMesh.instance.GenerateNavMesh();
-
-        SpawnPlayerTeam();
-        SpawnEnemyTeam();
 
         List<Farmon> playerTeam = Player.instance.GetFarmon();
         List<Farmon> enemyTeam = GetEnemyTeam();
@@ -35,19 +43,18 @@ public class RoundController : MonoBehaviour
         {
             if (playerTeam[i] && enemyTeam[i])
             {
-                //playerTeam[i].mainBattleState = new NewAttackState(playerTeam[i], enemyTeam[i].loadedFarmonMapId);
-                //playerTeam[i].SetState(playerTeam[i].mainBattleState);
-                //playerTeam[i].mainBattleState = new NewAttackState(playerTeam[i], enemyTeam[i].loadedFarmonMapId);
-                //playerTeam[i].SetState(playerTeam[i].mainBattleState);
+                playerTeam[i].mainBattleState = new NewAttackState(playerTeam[i], enemyTeam[i].loadedFarmonMapId);
+                playerTeam[i].SetState(playerTeam[i].mainBattleState);
 
-                //enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[i].loadedFarmonMapId);
-                //enemyTeam[i].SetState(enemyTeam[i].mainBattleState);
+                enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[i].loadedFarmonMapId);
+                enemyTeam[i].SetState(enemyTeam[i].mainBattleState);
 
                 //enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[0].loadedFarmonMapId);
                 //enemyTeam[i].SetState(enemyTeam[i].mainBattleState);
             }
         }
 
+        Player.instance.selectingEnabled = true;
         startingRound = true;
         RoundUIAnimator.Play("RoundUIRoundStart", 0);
     }
@@ -108,11 +115,13 @@ public class RoundController : MonoBehaviour
             playerTeam[2].transform.position = gridPosition + gridSize * Vector3.one / 2;
             playerTeam[2].team = Farmon.TeamEnum.team1;
         }
+
         if (playerTeam.Count > 3 && playerTeam[3])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(2, 1, 1), gridSize);
             playerTeam[3].transform.position = gridPosition + gridSize * Vector3.one / 2;
         }
+
         if (playerTeam.Count > 4 && playerTeam[4])
         {
             Vector3 gridPosition = H.GridPositionToVector3(new Vector3Int(1, 1, 2), gridSize);
@@ -129,8 +138,8 @@ public class RoundController : MonoBehaviour
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
+        //EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
+        //EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         /*EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy3")).GetComponent<Farmon>().loadedFarmonMapId);
         EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy4")).GetComponent<Farmon>().loadedFarmonMapId);

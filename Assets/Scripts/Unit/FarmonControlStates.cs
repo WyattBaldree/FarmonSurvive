@@ -188,20 +188,81 @@ public class HitStopState2 : StateMachineState
     }
 }
 
+public class JumpState : StateMachineState
+{
+    Farmon unit;
+
+    Vector3 startingPosition, endingPosition;
+
+    float jumpTime = 1;
+
+    float h;
+
+    Timer jumpTimer = new Timer();
+
+    public JumpState(Farmon thisUnit, Vector3 startingPos, Vector3 endingPos, float height, float duration = 1f)
+    {
+        unit = thisUnit;
+        startingPosition = startingPos;
+
+        Vector2 randomFlatVector = UnityEngine.Random.insideUnitCircle;
+        Vector3 slightOffset = new Vector3(randomFlatVector.x, 0, randomFlatVector.y) * .01f;
+        endingPosition = endingPos + slightOffset;
+
+        jumpTime = duration;
+        h = height;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        jumpTimer.SetTime(jumpTime);
+
+        unit.maxSpeed = 0;
+        unit.rb.isKinematic = true;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if (jumpTimer.Tick(Time.deltaTime))
+        {
+            unit.SetControlState(new MainState(unit));
+            unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, .9f));
+            return;
+        }
+
+        float jumpPercent = Mathf.Max(0, 0.9f - jumpTimer.Percent);
+
+        unit.rb.MovePosition(MathParabola.Parabola(startingPosition, endingPosition, h, jumpPercent));
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        unit.rb.isKinematic = false;
+    }
+}
+
 public class DieState : StateMachineState
 {
     Farmon farmon;
 
     SpriteRenderer spriteRenderer;
 
-    readonly Timer dieTimer = new Timer();
+    Timer dieTimer = new Timer();
 
-    readonly Timer flashTimer = new Timer();
+    Timer flashTimer = new Timer();
     bool flashFlag;
+
+    bool animationComplete = false;
 
     public DieState(Farmon _farmon)
     {
         farmon = _farmon;
+
+        Debug.Log("I DIED");
 
         dieTimer.SetTime(1f);
 
@@ -234,6 +295,8 @@ public class DieState : StateMachineState
     {
         base.Tick();
 
+        if (animationComplete) return;
+
         farmon.Hud.SpriteQuad.transform.Rotate(new Vector3(0, 1, 0), 400f * Time.deltaTime);
 
         farmon.maxSpeed = 0;
@@ -245,7 +308,7 @@ public class DieState : StateMachineState
         if (dieTimer.Tick(Time.deltaTime))
         {
             farmon.gameObject.SetActive(false);
-            return;
+            animationComplete = true;
         }
 
         if (flashTimer.Tick(Time.deltaTime))

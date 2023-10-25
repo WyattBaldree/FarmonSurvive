@@ -121,8 +121,12 @@ MonoBehaviour:
   Pierce: 1
   LifeTime: 5
   DestroySound: {fileID: 0}
-  SpecificTarget: {fileID: 0}
+  SpecificTargetId: 4294967295
   EventDestroy:
+    m_PersistentCalls:
+      m_Calls: []
+  worldCol: {fileID: 2909442627040295983}
+  HitEvent:
     m_PersistentCalls:
       m_Calls: []
 --- !u!135 &512737457654959908
