@@ -48,11 +48,6 @@ public class Galeon : Farmon
         AttackComplete();
     }
 
-    public override float AttackTime()
-    {
-        return 9f - GetModifiedAgility()/15;
-    }
-
     private void FireballHit()
     {
         //Every 3 Hits triggers a tornado burst!

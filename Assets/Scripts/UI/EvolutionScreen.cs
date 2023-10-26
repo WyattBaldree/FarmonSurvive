@@ -103,11 +103,7 @@ public class EvolutionScreen : MonoBehaviour
                 }
                 else
                 {
-                    gameObject.SetActive(false);
-
-                    string evolveMessage = newFarmon.nickname + " looks even stronger!";
-
-                    LevelUpScreen.instance.Popup(newFarmon, evolveMessage, oldFarmon.Grit, oldFarmon.Power, oldFarmon.Agility, oldFarmon.Focus, oldFarmon.Luck, oldFarmon.attributePoints);
+                    Close();
                 }
             }
         }

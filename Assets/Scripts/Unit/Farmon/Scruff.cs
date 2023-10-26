@@ -23,11 +23,6 @@ public class Scruff : Farmon
         SetState(new ScruffTackleState(this, _farmon.loadedFarmonMapId, tackleAttackData, .5f));
     }
 
-    public override float AttackTime()
-    {
-        return 10f - GetModifiedAgility()/8;
-    }
-
     protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
     {
         base.GetLevelUpBonusStats(out gritPlus, out powerPlus, out agilityPlus, out focusPlus, out luckPlus, out pointsPlus);

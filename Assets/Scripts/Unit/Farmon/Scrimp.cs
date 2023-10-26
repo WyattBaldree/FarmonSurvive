@@ -19,11 +19,6 @@ public class Scrimp : Farmon
         SetState(new ScrimpAttackState(this, targetEnemy.loadedFarmonMapId, tackleAttackData, 1f, 0.3f));
     }
 
-    public override float AttackTime()
-    {
-        return 5f - (GetModifiedFocus() / 30f) - (GetModifiedAgility() / 30f);
-    }
-
     public void CreateProjectile(uint farmonIdToAttack)
     {
         Projectile fireBall = Instantiate(fireBallPrefab, transform.position, transform.rotation).GetComponent<Projectile>();
@@ -34,7 +29,7 @@ public class Scrimp : Farmon
 
             if (fiendFireAbility > 0)
             {
-                int fireDamage = 3 * fiendFireAbility;
+                int fireDamage = fiendFireAbility * (3 + (GetModifiedFocus()/5));
                 unit.EffectList.Burn.AddEffect(4, fireDamage);
             }
         };

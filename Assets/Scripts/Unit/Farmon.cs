@@ -29,6 +29,11 @@ public abstract class Farmon : Vehicle
     /// </summary>
     public uint uniqueID = 0;
 
+    /// <summary>
+    /// This value scales this farmon's attack speed. A value of 2 will make the farmon attack half as frequently.
+    /// </summary>
+    public float attackSpeedAdjust = 1;
+
     public enum TeamEnum
     {
         team1,
@@ -422,7 +427,21 @@ public abstract class Farmon : Vehicle
     }
     #endregion
 
-    public abstract float AttackTime();
+    public virtual float AttackTime(float scale = 1f)
+    {
+        float baseAttackTime = 4 * scale;
+
+        float finalAttackTime = baseAttackTime;
+
+        finalAttackTime -= GetModifiedFocus() / 60f;
+
+        finalAttackTime -= GetModifiedAgility() / 30f;
+
+        perkList.TryGetValue(new PerkFrenzy().PerkName, out int frenzyAbility);
+        finalAttackTime *= 1 + (0.2f * frenzyAbility);
+
+        return finalAttackTime;
+    }
 
     public override void Initialize()
     {

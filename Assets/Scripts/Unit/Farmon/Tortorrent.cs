@@ -21,11 +21,6 @@ public class Tortorrent : Farmon
         SetState(new TorrentSpinChargeState(this));
     }
 
-    public override float AttackTime()
-    {
-        return 10f;
-    }
-
     protected override void Start()
     {
         base.Start();
