@@ -230,7 +230,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You Lose...
+  m_text: Red Team Wins!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
   m_sharedMaterial: {fileID: 6233759315610733003, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
@@ -365,7 +365,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You Win!
+  m_text: Blue Team Wins!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
   m_sharedMaterial: {fileID: 6233759315610733003, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
@@ -374,8 +374,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255365
-  m_fontColor: {r: 0.020617366, g: 1, b: 0, a: 1}
+    rgba: 4294941745
+  m_fontColor: {r: 0.19339621, g: 0.6118863, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -509,8 +509,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294956032
-  m_fontColor: {r: 0, g: 0.83154964, b: 1, a: 1}
+    rgba: 4280221440
+  m_fontColor: {r: 0, g: 1, b: 0.116336346, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -635,7 +635,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You Lose...
+  m_text: Red Team Wins!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
   m_sharedMaterial: {fileID: 6233759315610733003, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
@@ -770,7 +770,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: You Win!
+  m_text: Blue Team Wins!
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
   m_sharedMaterial: {fileID: 6233759315610733003, guid: e6dd21b1555fa264c843f5d5d6cb56b7, type: 2}
@@ -779,8 +779,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4278255365
-  m_fontColor: {r: 0.019607844, g: 1, b: 0, a: 1}
+    rgba: 4294941745
+  m_fontColor: {r: 0.19339621, g: 0.6118863, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -1006,8 +1006,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294956032
-  m_fontColor: {r: 0, g: 0.83154964, b: 1, a: 1}
+    rgba: 4280221440
+  m_fontColor: {r: 0, g: 1, b: 0.116336346, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

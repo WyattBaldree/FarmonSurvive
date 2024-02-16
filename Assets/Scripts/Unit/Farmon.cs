@@ -473,7 +473,7 @@ public abstract class Farmon : Vehicle
 
         if (team == Player.instance.playerTeam)
         {
-            _highlightList.AddHighlight(Color.white, 100);
+            _highlightList.AddHighlight(Color.blue, 100);
         }
         else
         {
