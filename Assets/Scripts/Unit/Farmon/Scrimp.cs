@@ -99,7 +99,7 @@ public class Scrimp : Farmon
     }
 }
 
-public class ScrimpAttackState : ProjectileAttackState
+public class ScrimpAttackState : ChargeAttackState
 {
     public ScrimpAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = 0.3F) : base(thisFarmon, farmonIdToAttack, attackData, chargeTime, hitStun)
     {

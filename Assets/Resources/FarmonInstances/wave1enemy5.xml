@@ -3,8 +3,8 @@
   <uniqueID>0</uniqueID>
   <FarmonName>Galeon</FarmonName>
   <Nickname />
-  <GritBonus>1</GritBonus>
-  <PowerBonus>1</PowerBonus>
+  <GritBonus>0</GritBonus>
+  <PowerBonus>0</PowerBonus>
   <AgilityBonus>0</AgilityBonus>
   <FocusBonus>0</FocusBonus>
   <LuckBonus>0</LuckBonus>

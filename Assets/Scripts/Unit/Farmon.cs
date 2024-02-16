@@ -661,8 +661,16 @@ public abstract class Farmon : Vehicle
 
         Farmon attackTarget = enemyFarmonBag.GetRandom();
 
-        mainBattleState = new NewAttackState(this, attackTarget.loadedFarmonMapId);
-        SetState(mainBattleState);
+        if (attackTarget)
+        {
+            mainBattleState = new NewAttackState(this, attackTarget.loadedFarmonMapId);
+            SetState(mainBattleState);
+        }
+        else
+        {
+            mainBattleState = new NewIdleState(this);
+            SetState(mainBattleState);
+        }
     }
 
     public virtual void AttackComplete()
@@ -971,7 +979,7 @@ public abstract class Farmon : Vehicle
             return;
         }
 
-        if (attackData.Damage > MaxHealth / 10)
+        if (attackData.Damage > MaxHealth / 5)
         {
             Hud.AudioSource.clip = FarmonController.instance.HitSound2;
             Hud.AudioSource.volume = .3f;

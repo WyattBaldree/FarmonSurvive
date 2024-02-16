@@ -701,7 +701,7 @@ public class MeleeAttackState : NewBattleState
 }
 
 // In the melee attack state, farmon moves towards the attackTarget farmon and, after getting within attack range, lunges at the attackTarget farmon.
-public class ProjectileAttackState : NewBattleState
+public class ChargeAttackState : NewBattleState
 {
     protected AttackData _attackData;
 
@@ -719,7 +719,7 @@ public class ProjectileAttackState : NewBattleState
     bool flashFlag = false;
 
 
-    public ProjectileAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = .3f) : base(thisFarmon)
+    public ChargeAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = .3f) : base(thisFarmon)
     {
         _farmon = farmon;
         _hitStun = hitStun;

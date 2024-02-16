@@ -4,7 +4,7 @@
   <FarmonName>Scrimp</FarmonName>
   <Nickname />
   <GritBonus>0</GritBonus>
-  <PowerBonus>1</PowerBonus>
+  <PowerBonus>0</PowerBonus>
   <AgilityBonus>0</AgilityBonus>
   <FocusBonus>0</FocusBonus>
   <LuckBonus>0</LuckBonus>
@@ -12,4 +12,7 @@
   <experience>0</experience>
   <perkPoints>1</perkPoints>
   <attributePoints>1</attributePoints>
+  <perks>
+    <string>Fiend Fire:1</string>
+  </perks>
 </FarmonSaveData>

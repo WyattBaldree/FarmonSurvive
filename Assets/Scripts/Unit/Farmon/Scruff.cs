@@ -10,11 +10,6 @@ public class Scruff : Farmon
     public AudioClip tackleSound;
     public AudioClip hitSound;
 
-    protected override void Start()
-    {
-        base.Start();
-    }
-
     public override void Attack(Farmon _farmon)
     {
         base.Attack(_farmon);
