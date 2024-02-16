@@ -1,9 +1,13 @@
 using Assets.Scripts.Timer;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class GameController : MonoBehaviour
 {
@@ -31,6 +35,7 @@ public class GameController : MonoBehaviour
     }
 }
 
+#if UNITY_EDITOR
 [CustomEditor(typeof(GameControllerEditor), true)]
 public class GameControllerEditor : Editor
 {
@@ -47,3 +52,4 @@ public class GameControllerEditor : Editor
         }
     }
 }
+#endif

@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using UnityEditor;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using UnityEditor;
 
 [CustomEditor(typeof(Farmon), true)]
 public class FarmonEditor : Editor
@@ -175,3 +177,5 @@ public class FarmonEditor : Editor
         GUILayout.EndHorizontal();
     }
 }
+
+#endif

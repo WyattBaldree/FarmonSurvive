@@ -1,7 +1,11 @@
 using UnityEngine;
-using UnityEditor;
 using System.Linq;
 using System.Collections;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+
 
 public class AddInvertedMeshCollider : MonoBehaviour
 {
@@ -37,7 +41,7 @@ public class AddInvertedMeshCollider : MonoBehaviour
         }
     }
 }
- 
+
 [CustomEditor(typeof(AddInvertedMeshCollider))]
 public class AddInvertedMeshColliderEditor : Editor
 {
@@ -49,3 +53,4 @@ public class AddInvertedMeshColliderEditor : Editor
             script.CreateInvertedMeshCollider();
     }
 }
+#endif

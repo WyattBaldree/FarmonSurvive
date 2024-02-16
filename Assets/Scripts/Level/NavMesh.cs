@@ -1,8 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.Assertions;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class NavMesh : MonoBehaviour
 {
@@ -584,6 +587,8 @@ public class PathNode
     }
 }
 
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(NavMesh), true)]
 public class NavMeshEditor : Editor
 {
@@ -615,3 +620,4 @@ public class NavMeshEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 }
+#endif

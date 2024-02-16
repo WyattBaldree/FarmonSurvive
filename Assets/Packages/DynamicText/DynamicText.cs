@@ -2,10 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEditor;
 using TMPro;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class DynamicText : MonoBehaviour
 {
@@ -686,6 +690,8 @@ public class DynamicText : MonoBehaviour
     }
 }
 
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(DynamicText))]
 public class EntryEditor : Editor
 {
@@ -705,3 +711,4 @@ public class EntryEditor : Editor
         }
     }
 }
+#endif

@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
-using UnityEditor;
 using Assets.Scripts.Timer;
+
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class SpriteEffects : MonoBehaviour
 {
@@ -208,6 +212,8 @@ public class SpriteEffects : MonoBehaviour
     }
 }
 
+
+#if UNITY_EDITOR
 [CustomEditor(typeof(SpriteEffects), true)]
 public class SpriteEffectsEditor : Editor
 {
@@ -253,3 +259,4 @@ public class SpriteEffectsEditor : Editor
         }
     }
 }
+#endif
