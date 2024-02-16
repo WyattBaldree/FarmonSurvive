@@ -22,6 +22,7 @@ public class BasicProjectile : MonoBehaviour
         projectileComponent = GetComponent<Projectile>();
 
         projectileComponent.HitEvent.AddListener(OnHitFarmon);
+        projectileComponent.DodgeEvent.AddListener(OnFarmonDodged);
     }
 
     private void OnHitFarmon(Farmon hitFarmon)
@@ -30,6 +31,18 @@ public class BasicProjectile : MonoBehaviour
         if (hitFarmon == targetFarmon)
         {
             //If we hit the farmon we are target,
+            //destroy this component so the projectile can continue on as normal.
+            Destroy(this);
+            return;
+        }
+    }
+
+    private void OnFarmonDodged(Farmon farmonThatDodged)
+    {
+        Farmon targetFarmon = Farmon.GetFarmonInstanceFromLoadedID(TargetFarmonId, true);
+        if (farmonThatDodged == targetFarmon)
+        {
+            //If we missed the farmon we are targeting,
             //destroy this component so the projectile can continue on as normal.
             Destroy(this);
             return;

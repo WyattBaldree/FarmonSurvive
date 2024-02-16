@@ -43,6 +43,7 @@ public class Projectile : MonoBehaviour
     protected AudioSource audioSource;
 
     public UnityEvent<Farmon> HitEvent;
+    public UnityEvent<Farmon> DodgeEvent;
 
     float _hitStun;
 
@@ -104,12 +105,8 @@ public class Projectile : MonoBehaviour
 
             if (hit)
             {
-                
-
-
                 OnHitDelegate(farmon);
 
-                
                 HitStop();
 
                 Pierce--;
@@ -133,9 +130,11 @@ public class Projectile : MonoBehaviour
                         audioSource.Play();
                     }
                 }
-                
             }
-
+            else
+            {
+                OnDodgeDelegate(farmon);
+            }
 
             hitFarmonList.Add(farmon);
         }
@@ -203,6 +202,10 @@ public class Projectile : MonoBehaviour
     }
 
     public delegate void OnHit(Farmon hitFarmon);
-
     public OnHit OnHitDelegate = (unit) => { };
+
+    public delegate void OnDodge(Farmon hitFarmon);
+    public OnDodge OnDodgeDelegate = (unit) => { };
+
+
 }
