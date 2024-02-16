@@ -1012,7 +1012,7 @@ public abstract class Farmon : Vehicle
         Vector3 meToDamageOrigin = damageOrigin - (sphereCollider.transform.position + sphereCollider.center);
         GameObject hitEffect = Instantiate(FarmonController.instance.HitEffectPrefab, transform);
         hitEffect.transform.position = transform.position + meToDamageOrigin.normalized * sphereCollider.radius;
-        hitEffect.transform.localScale = (.2f + 2.5f * attackData.Knockback/5f) * Vector3.one;
+        hitEffect.transform.localScale = (.5f * attackData.Knockback/8f) * Vector3.one;
     }
 
     private bool IsFlying()

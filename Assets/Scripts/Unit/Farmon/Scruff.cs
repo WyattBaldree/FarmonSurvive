@@ -15,7 +15,7 @@ public class Scruff : Farmon
         base.Attack(_farmon);
         AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, false, tackleSound, hitSound);
 
-        SetState(new ScruffTackleState(this, _farmon.loadedFarmonMapId, tackleAttackData, .5f));
+        SetState(new ScruffTackleState(this, _farmon.loadedFarmonMapId, tackleAttackData, .3f));
     }
 
     protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)

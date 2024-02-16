@@ -21,7 +21,7 @@ public class Tortorrent : Farmon
         base.Attack(targetEnemy);
         AttackData tortorrentAttackData = new AttackData(5, 6, false, ChargeUpSound, ThunkSound);
 
-        SetState(new TortorrentChargeState(this, targetEnemy.loadedFarmonMapId, tortorrentAttackData, 3, .3f));
+        SetState(new TortorrentChargeState(this, targetEnemy.loadedFarmonMapId, tortorrentAttackData, 3, .2f));
     }
 
     protected override void GetLevelUpBonusStats(out int gritPlus, out int powerPlus, out int agilityPlus, out int focusPlus, out int luckPlus, out int pointsPlus)
