@@ -8,6 +8,6 @@ public class StartingScene : MonoBehaviour
     void Start()
     {
         SceneManager.LoadScene("PersistentScene", LoadSceneMode.Single);
-        SceneManager.LoadScene("MainMenu", LoadSceneMode.Single);
+        SceneManager.LoadScene("Hill", LoadSceneMode.Single);
     }
 }

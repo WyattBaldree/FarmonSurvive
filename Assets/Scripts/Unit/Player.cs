@@ -27,9 +27,6 @@ public class Player : MonoBehaviour
     public List<uint> LoadedFarmon = new List<uint>();
 
     [SerializeField]
-    Transform cameraRig;
-
-    [SerializeField]
     float cameraSpeed = 3;
 
     [SerializeField]
@@ -92,13 +89,13 @@ public class Player : MonoBehaviour
     {
         hyper = Input.GetKey(KeyCode.LeftShift);
 
-        PlayerMovement();
+        //PlayerMovement();
 
-        PlayerZoom();
+        //PlayerZoom();
 
-        PlayerRotate();
+        //PlayerRotate();
 
-        SelectionUpdate();
+        //SelectionUpdate();
     }
 
     private void PlayerRotate()
@@ -116,7 +113,7 @@ public class Player : MonoBehaviour
 
         float finalSpeed = hyper ? cameraRotationSpeedHyper : cameraRotationSpeed;
 
-        cameraRig.transform.eulerAngles = cameraRig.transform.eulerAngles + new Vector3(0, rotationInput * finalSpeed * Time.deltaTime, 0);
+        //cameraRig.transform.eulerAngles = cameraRig.transform.eulerAngles + new Vector3(0, rotationInput * finalSpeed * Time.deltaTime, 0);
     }
 
     private void PlayerZoom()

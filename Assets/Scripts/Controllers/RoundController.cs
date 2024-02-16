@@ -29,7 +29,7 @@ public class RoundController : MonoBehaviour
         SpawnPlayerTeam();
         SpawnEnemyTeam();
 
-        PreRoundScreen.instance.Popup(this);
+        StartMatch();
     }
 
     public void StartMatch()
@@ -59,6 +59,17 @@ public class RoundController : MonoBehaviour
         RoundUIAnimator.Play("RoundUIRoundStart", 0);
     }
 
+    public List<Farmon> GetDemoPlayerTeam()
+    {
+        List<Farmon> newList = new List<Farmon>();
+        foreach (uint id in EnemyTeam1Ids)
+        {
+            newList.Add(Farmon.loadedFarmonMap[id]);
+        }
+
+        return newList;
+    }
+
     public List<Farmon> GetEnemyTeam()
     {
         List<Farmon> newList = new List<Farmon>();
@@ -80,16 +91,30 @@ public class RoundController : MonoBehaviour
         Instance = null;
     }
 
+    private Farmon LoadRandomFarmon()
+    {
+        List<string> randomFarmonPossibilities = new List<string>();
+        randomFarmonPossibilities.Add("wave1enemy1");
+        randomFarmonPossibilities.Add("wave1enemy2");
+        randomFarmonPossibilities.Add("wave1enemy3");
+
+        var farmonData = SaveController.LoadFarmon(randomFarmonPossibilities[Mathf.RoundToInt(Random.Range(0, randomFarmonPossibilities.Count))]);
+        return Farmon.ConstructFarmon(farmonData).GetComponent<Farmon>();
+    }
+
     private void SpawnPlayerTeam()
     {
-        foreach (uint i in Player.instance.FarmonSquadSaveIds)
+        List<Farmon> newPlayerFarmon = new List<Farmon>();
+
+        newPlayerFarmon.Add(LoadRandomFarmon());
+        newPlayerFarmon.Add(LoadRandomFarmon());
+        newPlayerFarmon.Add(LoadRandomFarmon());
+
+        foreach (Farmon farmon in newPlayerFarmon)
         {
-            if(i != 0)
-            {
-                Farmon newFarmon = Farmon.ConstructFarmon(SaveController.LoadFarmonPlayer(i), true).GetComponent<Farmon>();
-                newFarmon.team = Player.instance.playerTeam;
-                newFarmon.Initialize();
-            }
+            Player.instance.LoadedFarmon.Add(farmon.loadedFarmonMapId);
+            farmon.team = Player.instance.playerTeam;
+            farmon.Initialize();
         }
 
         List<Farmon> playerTeam = Player.instance.GetFarmon();
@@ -135,9 +160,9 @@ public class RoundController : MonoBehaviour
 
         if (!spawnEnemyTeam) return;
 
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
-        EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(LoadRandomFarmon().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(LoadRandomFarmon().loadedFarmonMapId);
+        EnemyTeam1Ids.Add(LoadRandomFarmon().loadedFarmonMapId);
         //EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         //EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy1")).GetComponent<Farmon>().loadedFarmonMapId);
         /*EnemyTeam1Ids.Add(Farmon.ConstructFarmon(SaveController.LoadFarmon("wave1enemy2")).GetComponent<Farmon>().loadedFarmonMapId);
@@ -242,6 +267,10 @@ public class RoundController : MonoBehaviour
     {
         yield return new WaitForSeconds(2.5f);
 
-        EndOfRoundScreen.instance.Popup(this);
+        Farmon.UnloadFarmon();
+        Start();
+        //LevelController.Instance.ResetLevel();
+        //EndOfRoundScreen.instance.Popup(this);
+        
     }
 }
