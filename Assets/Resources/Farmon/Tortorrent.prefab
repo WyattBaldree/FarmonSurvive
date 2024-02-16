@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 569214195358937776}
+  - {fileID: 4454035081781004711}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -55,26 +56,29 @@ MonoBehaviour:
   PathNodeReachedEvent:
     m_PersistentCalls:
       m_Calls: []
+  loadedFarmonMapId: 0
   uniqueID: 0
+  attackSpeedAdjust: 1
+  formationType: 0
+  formationPosition: 0
+  DebugString: 
   Hud: {fileID: 0}
   mySpriteRenderer: {fileID: 0}
   healthBar: {fileID: 0}
-  loadedFarmonMapId: 0
   farmonName: Tortorrent
   nickname: 
   Description: Default description.
   level: 1
   experience: 0
   canJump: 0
+  attackType: 0
   attributePoints: 1
   perkPoints: 1
   MaxHealth: 40
   Selected: 0
   dead: 0
   attackReady: 0
-  targetRange: 3
-  attackTarget: 0
-  protectTarget: 0
+  attackRangeBase: 5
   team: 1
   LastFarmonToDamageMe: {fileID: 0}
   GridSpaceChangedEvent:
@@ -91,13 +95,18 @@ MonoBehaviour:
   focusBonus: 0
   LuckBase: 10
   luckBonus: 0
+  HealEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  DamageEvent:
+    m_PersistentCalls:
+      m_Calls: []
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   torrentSpinPrefab: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
   ChargeUpSound: {fileID: 8300000, guid: 829a6280f7b995b49b60c91f7c7e58f2, type: 3}
   ThunkSound: {fileID: 8300000, guid: b5d5aaeb35da691468300a3a1eec36ab, type: 3}
-  hitStunTime: 0.4
   shellHitCount: 0
-  spinEffect: {fileID: 0}
+  spinEffect: {fileID: 2763683738408017310}
 --- !u!54 &1541658663025156057
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -146,6 +155,81 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.35
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &1657845063638355102
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 4814722020933401932}
+    m_Modifications:
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_Name
+      value: TortorrentSpin
+      objectReference: {fileID: 0}
+    - target: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+--- !u!1 &2763683738408017310 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+  m_PrefabInstance: {fileID: 1657845063638355102}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4454035081781004711 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3084455587667494201, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
+  m_PrefabInstance: {fileID: 1657845063638355102}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4814722021979009721
 PrefabInstance:
   m_ObjectHideFlags: 0

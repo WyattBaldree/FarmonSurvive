@@ -46,8 +46,50 @@ public class Tortorrent : Farmon
 
 public class TortorrentChargeState : ChargeAttackState
 {
+    Tortorrent tortorrent;
+
+    Timer flipTimer = new Timer();
+
     public TortorrentChargeState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float chargeTime, float hitStun = 0.3F) : base(thisFarmon, farmonIdToAttack, attackData, chargeTime, hitStun)
     {
+        tortorrent = thisFarmon as Tortorrent;
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        flipTimer.SetTime(.001f);
+        tortorrent.spinEffect.SetActive(true);
+
+        Animator animator = tortorrent.Hud.Animator;
+        animator.speed = 0;
+        animator.Play(animator.GetCurrentAnimatorStateInfo(0).shortNameHash, 0, .6f);
+
+        tortorrent.Hud.AudioSource.clip = tortorrent.ChargeUpSound;
+        tortorrent.Hud.AudioSource.volume = .2f;
+        tortorrent.Hud.AudioSource.Play();
+
+        tortorrent.ImmuneToHitStop = true;
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        tortorrent.spinEffect.SetActive(false);
+
+        tortorrent.Hud.Animator.speed = 1;
+
+        tortorrent.ImmuneToHitStop = false;
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if (flipTimer.Tick(Time.deltaTime))
+        {
+            tortorrent.mySpriteRenderer.flipX = !tortorrent.mySpriteRenderer.flipX;
+        }
     }
 
     public override void OnAttack()
@@ -61,10 +103,40 @@ public class TortorrentChargeState : ChargeAttackState
 
 public class TortorrentAttackState : MeleeAttackState
 {
+    Tortorrent tortorrent;
     private int _charges;
+
+
+    Timer flipTimer = new Timer();
     public TortorrentAttackState(Farmon thisFarmon, uint farmonIdToAttack, AttackData attackData, float hitStun = 0.3F, int charges = 3) : base(thisFarmon, farmonIdToAttack, attackData, hitStun)
     {
+        tortorrent = thisFarmon as Tortorrent;
         _charges = charges;
+
+    }
+
+    public override void Enter()
+    {
+        base.Enter();
+        flipTimer.SetTime(.001f);
+        tortorrent.spinEffect.SetActive(true);
+
+    }
+
+    public override void Exit()
+    {
+        base.Exit();
+        tortorrent.spinEffect.SetActive(false);
+    }
+
+    public override void Tick()
+    {
+        base.Tick();
+
+        if (flipTimer.Tick(Time.deltaTime))
+        {
+            tortorrent.mySpriteRenderer.flipX = !tortorrent.mySpriteRenderer.flipX;
+        }
     }
 
     public override void OnAttack()
