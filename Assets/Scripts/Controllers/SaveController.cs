@@ -188,8 +188,12 @@ public class SaveController : MonoBehaviour
         }
         else
         {
+            TextAsset t = Resources.Load<TextAsset>("FarmonInstances/" + fileName);
+            
+
+
             // If that didn't work, try loading it directly (this may not work in an actual build
-            StreamReader reader = new StreamReader("Assets/Resources/FarmonInstances/" + fileName + ".xml");
+            StringReader reader = new StringReader(t.text);
             data = serializer.Deserialize(reader) as FarmonSaveData;
             reader.Close();
         }
