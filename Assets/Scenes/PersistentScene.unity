@@ -2709,13 +2709,13 @@ MonoBehaviour:
   FloatingTextPrefab: {fileID: 7758120274930690129, guid: 67f1ec6eeb05a2e41bbb65375c37b973, type: 3}
   HitEffectPrefab: {fileID: 7758120274930690129, guid: d159dea8595b2eb40bb6af6ffae7f4b4, type: 3}
   EffectTortorrentShieldPrefab: {fileID: 2027087751954636304, guid: 078accd4a4a832d4c8d4453eaaaf058d, type: 3}
-  HitSound: {fileID: 8300000, guid: ef3a8447f0116334cab04a04e4e1008f, type: 3}
-  HitSound2: {fileID: 8300000, guid: 2347c6cc49382b645977575d040e86ed, type: 3}
-  DieSound: {fileID: 8300000, guid: 55a8b2adc5820ab4a8e7063455dda386, type: 3}
-  DodgeSound: {fileID: 8300000, guid: 70a2601f21a051045bf156964d3587b6, type: 3}
-  DeflectSound: {fileID: 8300000, guid: 26b8df1d4ae7a4e45b9a365714ea1830, type: 3}
-  DashSound: {fileID: 8300000, guid: 4ac9629f10719a74ea097470dd9b7108, type: 3}
-  LevelUpSound: {fileID: 8300000, guid: 19a767a90b1bfdb42b591516a1d96a0f, type: 3}
+  HitSound: {fileID: 8300000, guid: c00d2225c28cefc459eca185f32e7f08, type: 3}
+  HitSound2: {fileID: 8300000, guid: 472998dec3591cc4f879debd5ad680d1, type: 3}
+  DieSound: {fileID: 8300000, guid: 0afefff6dbdf79e4e81b8518758d6c88, type: 3}
+  DodgeSound: {fileID: 8300000, guid: 99b86e0754718a54e94acc2dc27d4019, type: 3}
+  DeflectSound: {fileID: 8300000, guid: 9a5fb88bbd5ee044887e02507ca0f910, type: 3}
+  DashSound: {fileID: 8300000, guid: de016397d1613af4c8547b1d812dc42e, type: 3}
+  LevelUpSound: {fileID: 8300000, guid: f0d5e2e09f751fe4295e70721cf09a59, type: 3}
 --- !u!114 &1844712009
 MonoBehaviour:
   m_ObjectHideFlags: 0

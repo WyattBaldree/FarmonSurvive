@@ -103,8 +103,8 @@ MonoBehaviour:
       m_Calls: []
   debugColor: {r: 1, g: 1, b: 1, a: 1}
   torrentSpinPrefab: {fileID: 3556518770851303680, guid: 621d6214c54ea074ea4acf6ef22a3e02, type: 3}
-  ChargeUpSound: {fileID: 8300000, guid: 829a6280f7b995b49b60c91f7c7e58f2, type: 3}
-  ThunkSound: {fileID: 8300000, guid: b5d5aaeb35da691468300a3a1eec36ab, type: 3}
+  ChargeUpSound: {fileID: 8300000, guid: 802095b5f55ca9a43a8e937f47520661, type: 3}
+  ThunkSound: {fileID: 8300000, guid: c00d2225c28cefc459eca185f32e7f08, type: 3}
   shellHitCount: 0
   spinEffect: {fileID: 2763683738408017310}
 --- !u!54 &1541658663025156057
@@ -256,19 +256,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.90984374
+      value: 0.9848078
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.16043
+      value: 0.1736482
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0.3768696
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 847584165257674500, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.06645228
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1486338535116342019, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Controller
@@ -329,6 +329,14 @@ PrefabInstance:
     - target: {fileID: 4987478614920757257, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009614712096971275, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7009614712096971275, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 7734417427859425006, guid: 8d7773f806ae3434d9e069aee7c98f16, type: 3}
       propertyPath: m_Controller

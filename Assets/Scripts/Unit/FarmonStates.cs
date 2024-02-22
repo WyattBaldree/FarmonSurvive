@@ -607,6 +607,18 @@ public class MeleeAttackState : NewBattleState
         }
     }*/
 
+    public override void Enter()
+    {
+        base.Enter();
+
+        if (farmon.Hud.AudioSource && _attackData.InitialSound)
+        {
+            farmon.Hud.AudioSource.clip = _attackData.InitialSound;
+            farmon.Hud.AudioSource.volume = .3f;
+            farmon.Hud.AudioSource.Play();
+        }
+    }
+
     public override void Exit()
     {
         base.Exit();

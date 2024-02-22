@@ -19,7 +19,7 @@ public class Tortorrent : Farmon
     public override void Attack(Farmon targetEnemy)
     {
         base.Attack(targetEnemy);
-        AttackData tortorrentAttackData = new AttackData(5, 6, false, ChargeUpSound, ThunkSound);
+        AttackData tortorrentAttackData = new AttackData(5, 6, false, FarmonController.instance.DashSound, ThunkSound);
 
         SetState(new TortorrentChargeState(this, targetEnemy.loadedFarmonMapId, tortorrentAttackData, 3, .2f));
     }
@@ -120,7 +120,6 @@ public class TortorrentAttackState : MeleeAttackState
         base.Enter();
         flipTimer.SetTime(.001f);
         tortorrent.spinEffect.SetActive(true);
-
     }
 
     public override void Exit()
