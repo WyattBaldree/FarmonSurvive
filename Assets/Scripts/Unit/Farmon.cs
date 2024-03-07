@@ -1291,7 +1291,9 @@ public abstract class Farmon : Vehicle
         rb.AddForce(minDistance);
         rb.AddForce(maxDistance);
 
-        rb.AddForce(avoidEdges);
+        //Only avoid edges if the target position is above us or on the same level.
+        //This should prevent melee farmon from getting stuck above enemy farmon.
+        if(position.y >= transform.position.y) rb.AddForce(avoidEdges);
 
         Vector3 friction = Friction(wander + softSeperate + separate + minDistance + maxDistance);
         rb.AddForce(friction);
