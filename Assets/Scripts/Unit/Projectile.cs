@@ -44,6 +44,7 @@ public class Projectile : MonoBehaviour
 
     public UnityEvent<Farmon> HitEvent;
     public UnityEvent<Farmon> DodgeEvent;
+    public UnityEvent<Farmon> SpecificTargetHitEvent;
 
     float _hitStun;
 
@@ -66,6 +67,8 @@ public class Projectile : MonoBehaviour
     public void Initialize(AttackData attackData, Farmon owner, Farmon.TeamEnum team, float hitStun = .2f)
     {
         AttackData = attackData;
+        Team = team;
+        Owner = owner;
 
         if (audioSource && AttackData.InitialSound)
         {
@@ -81,14 +84,17 @@ public class Projectile : MonoBehaviour
 
         Farmon farmon = collision.GetComponent<Farmon>();
 
+        if (farmon && farmon.loadedFarmonMapId == SpecificTargetId)
+        {
+            SpecificTargetHitEvent.Invoke(farmon);
+        }
+
         if (farmon && !farmon.dead && farmon.team != Team && !hitFarmonList.Contains(farmon))
         {
             if(SpecificTargetId != uint.MaxValue && SpecificTargetId != farmon.loadedFarmonMapId)
             {
                 return;
             }
-
-            HitEvent.Invoke(farmon);
 
             Vector3 center = col.bounds.center;
 
@@ -106,6 +112,7 @@ public class Projectile : MonoBehaviour
             if (hit)
             {
                 OnHitDelegate(farmon);
+                HitEvent.Invoke(farmon);
 
                 HitStop();
 
@@ -134,6 +141,7 @@ public class Projectile : MonoBehaviour
             else
             {
                 OnDodgeDelegate(farmon);
+                DodgeEvent.Invoke(farmon);
             }
 
             hitFarmonList.Add(farmon);

@@ -22,8 +22,16 @@ public class RoundController : MonoBehaviour
     public List<uint> EnemyTeam1FrontlineIds;
     public List<uint> EnemyTeam1BacklineIds;
 
+    AudioSource audioSource;
+    [SerializeField] AudioClip roundStartSound;
+    [SerializeField] AudioClip roundLoseSound;
+    [SerializeField] AudioClip roundWinSound;
+    [SerializeField] AudioClip roundMusic;
+
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+
         Player.instance.selectingEnabled = false;
 
         SpawnPlayerTeam();
@@ -46,10 +54,7 @@ public class RoundController : MonoBehaviour
                 playerTeam[i].mainBattleState = new NewAttackState(playerTeam[i], enemyTeam[i].loadedFarmonMapId);
                 playerTeam[i].SetState(playerTeam[i].mainBattleState);
 
-                enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[i].loadedFarmonMapId);
-                enemyTeam[i].SetState(enemyTeam[i].mainBattleState);
-
-                //enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[0].loadedFarmonMapId);
+                //enemyTeam[i].mainBattleState = new NewAttackState(enemyTeam[i], playerTeam[i].loadedFarmonMapId);
                 //enemyTeam[i].SetState(enemyTeam[i].mainBattleState);
             }
         }
@@ -57,6 +62,19 @@ public class RoundController : MonoBehaviour
         Player.instance.selectingEnabled = true;
         startingRound = true;
         RoundUIAnimator.Play("RoundUIRoundStart", 0);
+
+        audioSource.clip = roundStartSound;
+        audioSource.Play();
+
+        StartCoroutine(DelayedMusicStartCoroutine());
+    }
+
+    IEnumerator DelayedMusicStartCoroutine()
+    {
+        yield return new WaitForSeconds(1.5f);
+
+        audioSource.clip = roundMusic;
+        audioSource.Play();
     }
 
     public List<Farmon> GetDemoPlayerTeam()
@@ -234,11 +252,14 @@ public class RoundController : MonoBehaviour
 
             if (allFarmonDead) // if all team 1 farmon are dead
             {
-                GameController.SlowMo(13f, .175f);
+                GameController.SlowMo(5f, .175f);
 
                 //Team 1 wins
-                RoundUIAnimator.Play("RoundUIRoundWin", 0);
+                RoundUIAnimator.Play("RoundUIRoundLose", 0);
                 RoundPlaying = false;
+
+                audioSource.clip = roundLoseSound;
+                audioSource.Play();
 
                 StartCoroutine(EndOfRoundCoroutine());
                 return;
@@ -256,11 +277,14 @@ public class RoundController : MonoBehaviour
 
             if (allFarmonDead && spawnEnemyTeam) // if all team 2 farmon are dead
             {
-                GameController.SlowMo(13f, .175f);
+                GameController.SlowMo(5f, .175f);
 
                 //Team 1 wins
                 RoundUIAnimator.Play("RoundUIRoundWin", 0);
                 RoundPlaying = false;
+
+                audioSource.clip = roundWinSound;
+                audioSource.Play();
 
                 StartCoroutine(EndOfRoundCoroutine());
                 return;

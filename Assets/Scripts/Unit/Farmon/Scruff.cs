@@ -13,7 +13,7 @@ public class Scruff : Farmon
     public override void Attack(Farmon _farmon)
     {
         base.Attack(_farmon);
-        AttackData tackleAttackData = new AttackData(10 + Power / 3, 6, false, tackleSound, hitSound);
+        AttackData tackleAttackData = new AttackData(8 + Power / 3, 6, false, tackleSound, hitSound);
 
         SetState(new ScruffTackleState(this, _farmon.loadedFarmonMapId, tackleAttackData, .3f));
     }

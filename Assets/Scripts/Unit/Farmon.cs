@@ -1026,11 +1026,6 @@ public abstract class Farmon : Vehicle
     public void Die()
     {
         SetControlState(new DieState(this));
-
-        if (team == TeamEnum.team1)
-        {
-            GameController.SlowMo(2.5f, .3f);
-        }
     }
 
     public void HitStopSelf(float stopTime)

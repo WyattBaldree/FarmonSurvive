@@ -23,6 +23,12 @@ public class BasicProjectile : MonoBehaviour
 
         projectileComponent.HitEvent.AddListener(OnHitFarmon);
         projectileComponent.DodgeEvent.AddListener(OnFarmonDodged);
+        projectileComponent.SpecificTargetHitEvent.AddListener(OnSpecificTargetHit);
+    }
+
+    private void OnSpecificTargetHit(Farmon farmon)
+    {
+        Destroy(this);
     }
 
     private void OnHitFarmon(Farmon hitFarmon)
